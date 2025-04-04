@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+
 public class AdvancementAnnouncer extends JavaPlugin {
     FileConfiguration config = getConfig();
     boolean IsPAPIEnabled;
@@ -30,7 +34,17 @@ public class AdvancementAnnouncer extends JavaPlugin {
             getServer().getConsoleSender().sendMessage("§3[AdvancementAnnouncer] §aPlaceholderAPI found! Enabling placeholder support...");
         }
 
-        loadConfig();
+        loadConfig(); // ön yükleme
+
+        File configFile = new File(getDataFolder(), "config.yml");
+        try {
+            io.github.altkat.advancementannouncer.Handlers.ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        reloadConfig(); // güncellenmiş configi tekrar yükle
+
+        new PlayerData(this);
 
         getCommand("advancementannouncer").setExecutor(new CommandHandler());
         AutoAnnounce.startAutoAnnounce();

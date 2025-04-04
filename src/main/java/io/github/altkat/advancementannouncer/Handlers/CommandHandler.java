@@ -1,6 +1,8 @@
 package io.github.altkat.advancementannouncer.Handlers;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import io.github.altkat.advancementannouncer.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -11,14 +13,27 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
     AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         if(!sender.hasPermission("advancementannouncer.admin")){
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            if(args.length != 1 || !args[0].equalsIgnoreCase("toggle")){
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage")));
+                return true;
+            }else{
+                UUID playerUUID = Bukkit.getPlayer(sender.getName()).getUniqueId();
+                PlayerData.setToggleData(playerUUID, !PlayerData.returnToggleData(playerUUID));
+                if(PlayerData.returnToggleData(playerUUID)){
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on")));
+                }else{
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off")));
+                }
+            }
             return true;
         }
 
@@ -26,11 +41,28 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             sendHelpMessage(sender);
             return true;
         }
+
+        if(args[0].equalsIgnoreCase("toggle")){
+            if(!(sender instanceof Player)){
+                sender.sendMessage(ChatColor.RED + "You must be a player to use this command!");
+                return true;
+            }
+            UUID playerUUID = Bukkit.getPlayer(sender.getName()).getUniqueId();
+            PlayerData.setToggleData(playerUUID, !PlayerData.returnToggleData(playerUUID));
+            if(PlayerData.returnToggleData(playerUUID)){
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on")));
+            }else{
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off")));
+            }
+            return true;
+        }
+
         if(args[0].equalsIgnoreCase("reload")){
             AutoAnnounce.stopAutoAnnounce();
             plugin.loadConfig();
             AutoAnnounce.startAutoAnnounce();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aConfig reloaded!"));
+            PlayerData.reloadPlayerData();
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.config-reloaded")));
             return true;
         }
 
@@ -81,6 +113,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return true;
             }
             for(Player player : sender.getServer().getOnlinePlayers()){
+                if(!PlayerData.returnToggleData(player.getUniqueId())){
+                    continue;
+                }
                 AdvancementHandler.displayTo(player, materialName, message, style);
             }
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to all players"));
@@ -99,18 +134,27 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         final List<String> tab = new ArrayList<>();
-        if(!sender.hasPermission("advancementannouncer.admin")) return tab;
+        if(!sender.hasPermission("advancementannouncer.admin")){
+            if(args.length == 1){
+                tab.add("toggle");
+                return tab;
+            }
+            return tab;
+        }
 
         switch (args.length) {
             case 1:
                 tab.add("reload");
+                tab.add("toggle");
                 for (final AdvancementHandler.Style style : AdvancementHandler.Style.values())
                     tab.add(style.toString().toLowerCase());
                 break;
 
             case 2:
-                for (final Material material : Material.values())
-                    tab.add(material.toString().toLowerCase());
+                if(args[0].equalsIgnoreCase("goal") || args[0].equalsIgnoreCase("challenge") || args[0].equalsIgnoreCase("task")) {
+                    for (final Material material : Material.values())
+                        tab.add(material.toString().toLowerCase());
+                }
                 break;
 
             case 3:
@@ -132,5 +176,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aCommands: "));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa <style> <material> <player> <message>"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle"));
     }
 }

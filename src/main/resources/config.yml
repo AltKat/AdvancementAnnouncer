@@ -1,5 +1,5 @@
 ###################################################################################################################################################
-##                                           This plugin made by Altkat(StreetMelodeez) V1.0                                                     ##
+##                                           This plugin made by Altkat(StreetMelodeez)                                                     ##
 ##                                   Feel free to contact me for anything on discord: streetmelodeez                                             ##
 ##              Please use /aa reload to reload the plugin, or restart the server after you changed something in the config file.                ##
 ###################################################################################################################################################
@@ -31,3 +31,14 @@ auto-announce:
       message: "&6You can get ranks|&6on our store &b/store"
       style: "CHALLENGE"
       icon: "GOLD_INGOT"
+
+
+
+
+#These are the messages shown to players
+#You can edit these messages
+lang-messages:
+  config-reloaded: "&3[AdvancementAnnouncer] &aConfig reloaded!"
+  wrong-usage: "&cWrong usage! Please use /aa toggle"
+  announcements-toggled-on: "&aYou now see the advancement announcements!"
+  announcements-toggled-off: "&cYou no longer see the advancement announcements!"

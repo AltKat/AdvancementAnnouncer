@@ -1,6 +1,7 @@
 package io.github.altkat.advancementannouncer.Handlers;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import io.github.altkat.advancementannouncer.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -72,6 +73,7 @@ public class AutoAnnounce {
                             failedAttempts = 0;
                         }
 
+                        if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
                         AdvancementHandler.displayTo(player, icon, message, style);
                     }
                     lastMessageIndex = order;
@@ -99,6 +101,7 @@ public class AutoAnnounce {
                     Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
                     if(playerList.isEmpty()) return;
                     for(Player player : playerList) {
+                        if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
                         AdvancementHandler.displayTo(player, icon, message, style);
                     }
                     order++;
