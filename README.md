@@ -21,11 +21,14 @@
 ---
 
 ### Commands
-- `/aa <style> <icon> <player's name/all> <preset/message>`
+- **`/aa <style> <icon> <player's name/all> <preset/message>`**
   - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
   - Possible options for **icon** can be found <a href="https://discordapp.com/users/247441109888925697" target="_blank">here</a>.
   - Target either a specific player's name or use `all`.
   - Write your own message in the command or use one of the presets defined in the config.
+- **`/aa toggle`**: Players can set if they want to see announcement messages (Player-specific announcements are not affected by this command).
+  - No permission required. 
+
 
 
 ### Permissions
@@ -56,7 +59,7 @@
 
 ```yaml
 ###################################################################################################################################################
-##                                           This plugin made by Altkat(StreetMelodeez) V1.0                                                     ##
+##                                           This plugin made by Altkat(StreetMelodeez) V1.1                                                     ##
 ##                                   Feel free to contact me for anything on discord: streetmelodeez                                             ##
 ##              Please use /aa reload to reload the plugin, or restart the server after you changed something in the config file.                ##
 ###################################################################################################################################################
@@ -88,6 +91,19 @@ auto-announce:
       message: "&6You can get ranks|&6on our store &b/store"
       style: "CHALLENGE"
       icon: "GOLD_INGOT"
+
+
+
+
+#These are the messages shown to players
+#You can edit these messages
+lang-messages:
+  config-reloaded: "&3[AdvancementAnnouncer] &aConfig reloaded!"
+  wrong-usage: "&cWrong usage! Please use /aa toggle"
+  announcements-toggled-on: "&aYou now see the advancement announcements!"
+  announcements-toggled-off: "&cYou no longer see the advancement announcements!"
+
+
 
 ```
 
