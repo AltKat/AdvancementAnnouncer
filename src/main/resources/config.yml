@@ -1,8 +1,11 @@
-###################################################################################################################################################
-##                                           This plugin made by Altkat(StreetMelodeez) V1.1                                                     ##
-##                                   Feel free to contact me for anything on discord: streetmelodeez                                             ##
-##              Please use /aa reload to reload the plugin, or restart the server after you changed something in the config file.                ##
-###################################################################################################################################################
+# ######################################################################################################
+# ##                                                                                                  ##
+# ##   AdvancementAnnouncer v${project.version} by Altkat(StreetMelodeez)                                            ##
+# ##   Discord: streetmelodeez                                                                        ##
+# ##   Please use /aa reload to apply changes.                                                        ##
+# ##   You can use /aa edit in game chat to edit this file.                                           ##
+# ##                                                                                                  ##
+# ######################################################################################################
 bstats: true # Should the plugin send data to bStats?
 
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
@@ -42,3 +45,7 @@ lang-messages:
   wrong-usage: "&cWrong usage! Please use /aa toggle"
   announcements-toggled-on: "&aYou now see the advancement announcements!"
   announcements-toggled-off: "&cYou no longer see the advancement announcements!"
+  edit-gui-title: "&3Advancement Announcer Edit"
+  presets-gui-title: "&3Advancement Announcer Presets"
+  auto-announce-gui-title: "&3Auto Announce Config"
+  input-cancelled: "&cInput process cancelled."

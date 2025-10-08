@@ -24,7 +24,6 @@ public class PlayerData {
         }
         config = YamlConfiguration.loadConfiguration(file);
         if (config.getKeys(false).isEmpty()) {
-            // Initialize the file with default content if it's empty
             config.createSection("default");
             save();
         }

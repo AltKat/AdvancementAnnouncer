@@ -1,51 +1,35 @@
 package io.github.altkat.advancementannouncer.Handlers;
 
-import org.bukkit.configuration.InvalidConfigurationException;
+import com.google.common.base.Charsets;
+import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 public class ConfigUpdater {
 
-    public static void update(Plugin plugin, String resourceName, File toUpdate, List<String> ignoreSections) throws IOException {
-        InputStream resourceStream = plugin.getResource(resourceName);
-        if (resourceStream == null) {
-            throw new FileNotFoundException("Resource '" + resourceName + "' not found inside plugin jar!");
-        }
+    public static void update(AdvancementAnnouncer plugin) throws IOException {
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
 
-        YamlConfiguration defaultConfig = new YamlConfiguration();
-        try {
-            defaultConfig.load(new InputStreamReader(resourceStream));
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-            return;
-        }
+        FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("config.yml"), Charsets.UTF_8));
+        FileConfiguration userConfig = YamlConfiguration.loadConfiguration(configFile);
 
-        YamlConfiguration existingConfig = new YamlConfiguration();
-        try {
-            existingConfig.load(toUpdate);
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        boolean changed = false;
+        userConfig.options().copyHeader(true);
+        userConfig.options().header(defaultConfig.options().header());
 
         for (String key : defaultConfig.getKeys(true)) {
-            if (ignoreSections != null && ignoreSections.stream().anyMatch(key::startsWith)) {
-                continue; // Bu bölümü atla
-            }
-
-            if (!existingConfig.contains(key)) {
-                existingConfig.set(key, defaultConfig.get(key));
-                changed = true;
+            if (!userConfig.contains(key)) {
+                userConfig.set(key, defaultConfig.get(key));
             }
         }
 
-        if (changed) {
-            existingConfig.save(toUpdate);
-        }
+        userConfig.save(configFile);
     }
 }

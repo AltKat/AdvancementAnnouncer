@@ -1,6 +1,8 @@
 package io.github.altkat.advancementannouncer;
 import io.github.altkat.advancementannouncer.Handlers.AutoAnnounce;
 import io.github.altkat.advancementannouncer.Handlers.CommandHandler;
+import io.github.altkat.advancementannouncer.Handlers.ConfigUpdater;
+import io.github.altkat.advancementannouncer.Handlers.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,7 +13,6 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class AdvancementAnnouncer extends JavaPlugin {
-    FileConfiguration config = getConfig();
     boolean IsPAPIEnabled;
     int version;
     @Override
@@ -34,28 +35,45 @@ public class AdvancementAnnouncer extends JavaPlugin {
             getServer().getConsoleSender().sendMessage("§3[AdvancementAnnouncer] §aPlaceholderAPI found! Enabling placeholder support...");
         }
 
-        loadConfig(); // ön yükleme
-
-        File configFile = new File(getDataFolder(), "config.yml");
-        try {
-            io.github.altkat.advancementannouncer.Handlers.ConfigUpdater.update(this, "config.yml", configFile, Collections.emptyList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reloadConfig(); // güncellenmiş configi tekrar yükle
+        updateConfig();
 
         new PlayerData(this);
 
-        getCommand("advancementannouncer").setExecutor(new CommandHandler());
+        CommandHandler commandHandler = new CommandHandler();
+        getCommand("advancementannouncer").setExecutor(commandHandler);
+        getServer().getPluginManager().registerEvents(commandHandler, this);
+
         AutoAnnounce.startAutoAnnounce();
 
+        FileConfiguration config = getConfig();
         if(config.getBoolean("bstats")) {
             int pluginId = 24282;
             Metrics metrics = new Metrics(this, pluginId);
         }
 
+        new UpdateChecker(this, 121602).getVersion(newVersion -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(newVersion)) {
+                getLogger().info("Plugin is up to date.");
+            } else {
+                getLogger().warning("There is a new update available for AdvancementAnnouncer! Version: " + newVersion);
+                getLogger().warning("Download it from: https://www.spigotmc.org/resources/advancement-announcer.121602/");
+            }
+        });
+
         getServer().getConsoleSender().sendMessage("§3[AdvancementAnnouncer] §aPlugin has been enabled!");
     }
+
+    private void updateConfig() {
+        saveDefaultConfig();
+        try {
+            ConfigUpdater.update(this);
+            reloadConfig();
+        } catch (IOException e) {
+            getLogger().severe("Could not update config.yml!");
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onDisable() {
@@ -65,13 +83,6 @@ public class AdvancementAnnouncer extends JavaPlugin {
 
     public static AdvancementAnnouncer getInstance() {
         return getPlugin(AdvancementAnnouncer.class);
-    }
-
-    public void loadConfig() {
-        if (!getConfig().isSet("presets")) {
-            saveDefaultConfig();
-        }
-        reloadConfig();
     }
 
     public boolean isPAPIEnabled() {
