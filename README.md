@@ -17,7 +17,7 @@
 - Set **automated messages** to send on a specified interval to your players.
 - **AA** supports **PlaceholderAPI (PAPI)**, allowing you to use any placeholders supported by PAPI.
 - **Update Checker**: Notifies admins in-game when a new version of the plugin is available.
-- Tested on Minecraft versions **1.16.5 - 1.21.4**.
+- Tested on Minecraft versions **1.16.5 - 1.21.8**.
 - Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a> for questions, issues, or suggestions.
 
 ---
