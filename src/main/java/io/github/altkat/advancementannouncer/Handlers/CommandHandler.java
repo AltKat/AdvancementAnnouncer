@@ -2,6 +2,9 @@ package io.github.altkat.advancementannouncer.Handlers;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.PlayerData;
+import io.github.altkat.advancementannouncer.Handlers.guis.ConfirmationGUI;
+import io.github.altkat.advancementannouncer.Handlers.guis.IconSelectionGUI;
+import io.github.altkat.advancementannouncer.Handlers.guis.StyleSelectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,18 +37,25 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
     private static final int SLOT_AA_MODE = 50;
     private static final int SLOT_ADD_ITEM = 53;
 
+
+    private static final int SLOT_SET_NAME = 10;
+    private static final int SLOT_SET_MESSAGE = 13;
+    private static final int SLOT_SET_STYLE = 16;
+    private static final int SLOT_SET_ICON = 19;
+    private static final int SLOT_SAVE = 49;
+
+
     private static final String STEP_NAME = "name";
     private static final String STEP_MESSAGE = "message";
     private static final String STEP_STYLE = "style";
     private static final String STEP_ICON = "icon";
     private static final String STEP_INTERVAL = "interval";
 
-    private final Map<UUID, String> presetCreators = new HashMap<>();
-    private final Map<UUID, String> presetEditors = new HashMap<>();
-    private final Map<UUID, Map<String, String>> autoAnnounceCreators = new HashMap<>();
-    private final Map<UUID, Map<String, String>> autoAnnounceEditors = new HashMap<>();
+    private final Map<UUID, Map<String, Object>> activeSessions = new HashMap<>();
+    private final Map<UUID, Runnable> confirmationActions = new HashMap<>();
 
     private final Set<UUID> isNavigating = new HashSet<>();
+
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -226,6 +236,16 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));
     }
 
+    private void addFormattedMessage(List<String> lore, String message) {
+        if (message.contains("|")) {
+            for (String line : message.split("\\|")) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+            }
+        } else {
+            lore.add(ChatColor.translateAlternateColorCodes('&', message));
+        }
+    }
+
     private void openEditGUI(Player player) {
         Inventory gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title")));
 
@@ -255,14 +275,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.translateAlternateColorCodes('&', "&f&nCurrent Message:"));
                 lore.add(" ");
-                String presetMessage = presetsSection.getString(key);
-                if (presetMessage.contains("|")) {
-                    for (String line : presetMessage.split("\\|")) {
-                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
-                    }
-                } else {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', presetMessage));
-                }
+                addFormattedMessage(lore, presetsSection.getString(key));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit this preset.");
                 lore.add(ChatColor.RED + "Right click to delete this preset.");
@@ -325,7 +338,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.WHITE + "Message: " + ChatColor.translateAlternateColorCodes('&', messagesSection.getString(key + ".message")));
+                lore.add(ChatColor.WHITE + "Message: ");
+                addFormattedMessage(lore, messagesSection.getString(key + ".message"));
+                lore.add(" ");
                 lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
                 lore.add(ChatColor.WHITE + "Icon: " + messagesSection.getString(key + ".icon"));
                 lore.add(" ");
@@ -352,19 +367,101 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         player.openInventory(gui);
     }
 
+    private void openCreatorEditorGUI(Player player, Map<String, Object> data) {
+        boolean isCreator = (boolean) data.get("isCreator");
+        String type = (String) data.get("type");
+        String title = isCreator ? "Creating new " + type : "Editing " + type + ": " + data.get("name");
+
+        Inventory gui = Bukkit.createInventory(null, 54, title);
+
+        activeSessions.put(player.getUniqueId(), data);
+
+        ItemStack nameItem = new ItemStack(Material.NAME_TAG);
+        ItemMeta nameMeta = nameItem.getItemMeta();
+        nameMeta.setDisplayName(ChatColor.YELLOW + "Set Name");
+        List<String> nameLore = new ArrayList<>();
+        nameLore.add(ChatColor.GRAY + "Current: " + data.get("name"));
+        nameLore.add(" ");
+        nameLore.add(ChatColor.GREEN + "Click to change the name via chat.");
+        nameMeta.setLore(nameLore);
+        nameItem.setItemMeta(nameMeta);
+        gui.setItem(SLOT_SET_NAME, nameItem);
+
+        ItemStack messageItem = new ItemStack(Material.WRITABLE_BOOK);
+        ItemMeta messageMeta = messageItem.getItemMeta();
+        messageMeta.setDisplayName(ChatColor.AQUA + "Set Message");
+        List<String> messageLore = new ArrayList<>();
+        messageLore.add(ChatColor.GRAY + "Current: ");
+        addFormattedMessage(messageLore, (String) data.get("message"));
+        messageLore.add(" ");
+        messageLore.add(ChatColor.GREEN + "Click to change the message via chat.");
+        messageMeta.setLore(messageLore);
+        messageItem.setItemMeta(messageMeta);
+        gui.setItem(SLOT_SET_MESSAGE, messageItem);
+
+        if (type.equals("auto-announce")) {
+            ItemStack styleItem = new ItemStack(Material.PAINTING);
+            ItemMeta styleMeta = styleItem.getItemMeta();
+            styleMeta.setDisplayName(ChatColor.GOLD + "Set Style");
+            List<String> styleLore = new ArrayList<>();
+            styleLore.add(ChatColor.GRAY + "Current: " + data.get("style"));
+            styleLore.add(" ");
+            styleLore.add(ChatColor.GREEN + "Click to choose a style.");
+            styleMeta.setLore(styleLore);
+            styleItem.setItemMeta(styleMeta);
+            gui.setItem(SLOT_SET_STYLE, styleItem);
+
+            Material iconMaterial;
+            try {
+                iconMaterial = Material.valueOf(((String) data.get("icon")).toUpperCase());
+            } catch (Exception e) {
+                iconMaterial = Material.STONE;
+            }
+            ItemStack iconItem = new ItemStack(iconMaterial);
+            ItemMeta iconMeta = iconItem.getItemMeta();
+            iconMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Set Icon");
+            List<String> iconLore = new ArrayList<>();
+            iconLore.add(ChatColor.GRAY + "Current: " + data.get("icon"));
+            iconLore.add(" ");
+            iconLore.add(ChatColor.GREEN + "Click to choose an icon.");
+            iconMeta.setLore(iconLore);
+            iconItem.setItemMeta(iconMeta);
+            gui.setItem(SLOT_SET_ICON, iconItem);
+        }
+
+        ItemStack saveItem = new ItemStack(Material.GREEN_WOOL);
+        ItemMeta saveMeta = saveItem.getItemMeta();
+        saveMeta.setDisplayName(ChatColor.GREEN + "Save");
+        saveItem.setItemMeta(saveMeta);
+        gui.setItem(SLOT_SAVE, saveItem);
+
+        ItemStack backItem = new ItemStack(Material.BARRIER);
+        ItemMeta backMeta = backItem.getItemMeta();
+        backMeta.setDisplayName(ChatColor.RED + "Cancel");
+        backItem.setItemMeta(backMeta);
+        gui.setItem(45, backItem);
+
+        player.openInventory(gui);
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        String editGUITitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title"));
-        String presetsGUITitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title"));
-        String autoAnnounceGUITitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title"));
         String clickedGUITitle = event.getView().getTitle();
+        Player player = (Player) event.getWhoClicked();
 
-        if (!clickedGUITitle.equals(editGUITitle) && !clickedGUITitle.equals(presetsGUITitle) && !clickedGUITitle.equals(autoAnnounceGUITitle)) {
+        boolean isRelevantGUI = Arrays.asList(
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title")),
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title")),
+                ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title")),
+                "Select a Style",
+                "Confirm Deletion"
+        ).contains(clickedGUITitle) || clickedGUITitle.startsWith("Editing ") || clickedGUITitle.startsWith("Creating ") || clickedGUITitle.startsWith("Select an Icon");
+
+        if (!isRelevantGUI) {
             return;
         }
 
         event.setCancelled(true);
-        Player player = (Player) event.getWhoClicked();
         ItemStack clickedItem = event.getCurrentItem();
 
         if (clickedItem == null || clickedItem.getType().isAir()) {
@@ -372,19 +469,208 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         }
         isNavigating.add(player.getUniqueId());
 
-        if (clickedGUITitle.equals(editGUITitle)) {
+        if (clickedGUITitle.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title")))) {
             if (event.getSlot() == SLOT_EDIT_AUTO_ANNOUNCE) {
                 openAutoAnnounceGUI(player);
             } else if (event.getSlot() == SLOT_EDIT_PRESETS) {
                 openPresetsGUI(player);
             }
-        } else if (clickedGUITitle.equals(presetsGUITitle)) {
+        } else if (clickedGUITitle.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title")))) {
             handlePresetsGUIClick(event);
-        } else if (clickedGUITitle.equals(autoAnnounceGUITitle)) {
+        } else if (clickedGUITitle.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title")))) {
             handleAutoAnnounceGUIClick(event);
+        } else if (clickedGUITitle.startsWith("Editing ") || clickedGUITitle.startsWith("Creating ")) {
+            handleCreatorEditorGUIClick(event);
+        } else if (clickedGUITitle.equals("Select a Style")) {
+            handleStyleSelectionGUIClick(event);
+        } else if (clickedGUITitle.startsWith("Select an Icon")) {
+            handleIconSelectionGUIClick(event);
+        } else if (clickedGUITitle.equals("Confirm Deletion")) {
+            handleConfirmationGUIClick(event);
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> isNavigating.remove(player.getUniqueId()), 1L);
+    }
+
+    private void handleCreatorEditorGUIClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Map<String, Object> data = activeSessions.get(player.getUniqueId());
+
+        switch (event.getSlot()) {
+            case SLOT_SET_NAME:
+                player.closeInventory();
+                player.sendMessage(ChatColor.GREEN + "Please type the new name in chat. (Type 'cancel' to abort)");
+                player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("name"));
+                data.put("step", STEP_NAME);
+                break;
+            case SLOT_SET_MESSAGE:
+                player.closeInventory();
+                player.sendMessage(ChatColor.GREEN + "Please type the new message in chat. (Use | for new line, type 'cancel' to abort)");
+                player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("message"));
+                data.put("step", STEP_MESSAGE);
+                break;
+            case SLOT_SET_STYLE:
+                StyleSelectionGUI.open(player);
+                break;
+            case SLOT_SET_ICON:
+                IconSelectionGUI.open(player, 0);
+                break;
+            case SLOT_SAVE:
+                saveChanges(player);
+                break;
+            case 45:
+                activeSessions.remove(player.getUniqueId());
+                if (data != null) {
+                    if (((String)data.get("type")).equals("preset")) {
+                        openPresetsGUI(player);
+                    } else {
+                        openAutoAnnounceGUI(player);
+                    }
+                }
+                break;
+        }
+    }
+
+    private void handleStyleSelectionGUIClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        ItemStack clickedItem = event.getCurrentItem();
+
+        if (clickedItem.getType() == Material.WRITABLE_BOOK) {
+            player.closeInventory();
+            player.sendMessage(ChatColor.GREEN + "Please type the style name (GOAL, TASK, CHALLENGE) in chat. (Type 'cancel' to abort)");
+            activeSessions.get(player.getUniqueId()).put("step", STEP_STYLE);
+            return;
+        }
+
+        if (clickedItem.getType() == Material.BARRIER) {
+            Map<String, Object> data = activeSessions.get(player.getUniqueId());
+            if (data != null) {
+                openCreatorEditorGUI(player, data);
+            }
+            return;
+        }
+
+        String styleName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+        Map<String, Object> data = activeSessions.get(player.getUniqueId());
+        if (data != null) {
+            data.put("style", styleName);
+            player.sendMessage(ChatColor.GREEN + "Style set to " + styleName + "!");
+            openCreatorEditorGUI(player, data);
+        }
+    }
+
+    private void handleIconSelectionGUIClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        ItemStack clickedItem = event.getCurrentItem();
+        String title = event.getView().getTitle();
+
+        if (clickedItem == null) return;
+
+        if (clickedItem.getType() == Material.WRITABLE_BOOK) {
+            player.closeInventory();
+            player.sendMessage(ChatColor.GREEN + "Please type the material name for the icon in chat. (Type 'cancel' to abort)");
+            activeSessions.get(player.getUniqueId()).put("step", STEP_ICON);
+            return;
+        }
+
+        if (clickedItem.getType() == Material.BARRIER) {
+            Map<String, Object> data = activeSessions.get(player.getUniqueId());
+            if (data != null) {
+                openCreatorEditorGUI(player, data);
+            }
+            return;
+        }
+
+        if (clickedItem.getType() == Material.ARROW) {
+            String currentPageStr = title.substring(title.indexOf("Page ") + 5, title.indexOf("/"));
+            int currentPage = Integer.parseInt(currentPageStr) - 1;
+            String itemName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+
+            if (itemName.equals("Next Page")) {
+                IconSelectionGUI.open(player, currentPage + 1);
+            } else if (itemName.equals("Previous Page")) {
+                IconSelectionGUI.open(player, currentPage - 1);
+            }
+            return;
+        }
+
+        Material selectedMaterial = clickedItem.getType();
+        Map<String, Object> data = activeSessions.get(player.getUniqueId());
+        if (data != null) {
+            data.put("icon", selectedMaterial.name());
+            player.sendMessage(ChatColor.GREEN + "Icon set to " + selectedMaterial.name() + "!");
+            openCreatorEditorGUI(player, data);
+        }
+    }
+
+    private void handleConfirmationGUIClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        if (event.getSlot() == 11) {
+            Runnable action = confirmationActions.remove(player.getUniqueId());
+            if (action != null) {
+                action.run();
+            }
+        } else if (event.getSlot() == 15) {
+            confirmationActions.remove(player.getUniqueId());
+            String rawLore = event.getInventory().getItem(13).getItemMeta().getLore().get(0);
+            String itemName = ChatColor.stripColor(rawLore).replace("Delete '", "").replace("'?", "");
+            if (plugin.getConfig().isSet("presets." + itemName)) {
+                openPresetsGUI(player);
+            } else {
+                openAutoAnnounceGUI(player);
+            }
+        }
+    }
+
+    private void saveChanges(Player player) {
+        Map<String, Object> data = activeSessions.get(player.getUniqueId());
+        String name = (String) data.get("name");
+
+        if (name == null || name.isBlank() || name.equals("<not set>")) {
+            player.sendMessage(ChatColor.RED + "You must set a name before saving!");
+            return;
+        }
+        if (name.contains(".") || name.contains(" ")) {
+            player.sendMessage(ChatColor.RED + "The name cannot contain periods or spaces.");
+            return;
+        }
+
+        boolean isCreator = (boolean) data.get("isCreator");
+        String type = (String) data.get("type");
+        String originalName = (String) data.get("originalName");
+
+        if (!isCreator && originalName != null && !originalName.equals(name)) {
+            String oldPath = type.equals("preset") ? "presets." + originalName : "auto-announce.messages." + originalName;
+            plugin.getConfig().set(oldPath, null);
+        }
+
+        String newPathCheck = type.equals("preset") ? "presets." : "auto-announce.messages.";
+        if (plugin.getConfig().contains(newPathCheck + name) && (isCreator || !originalName.equals(name))) {
+            player.sendMessage(ChatColor.RED + "An item with this name already exists!");
+            return;
+        }
+
+        activeSessions.remove(player.getUniqueId());
+
+        if (type.equals("preset")) {
+            plugin.getConfig().set("presets." + name, data.get("message"));
+        } else {
+            String path = "auto-announce.messages." + name;
+            plugin.getConfig().set(path + ".message", data.get("message"));
+            plugin.getConfig().set(path + ".style", data.get("style"));
+            plugin.getConfig().set(path + ".icon", data.get("icon"));
+        }
+
+        plugin.saveConfig();
+        AutoAnnounce.stopAutoAnnounce();
+        AutoAnnounce.startAutoAnnounce();
+        player.sendMessage(ChatColor.GREEN + "Changes saved successfully!");
+
+        if (type.equals("preset")) {
+            openPresetsGUI(player);
+        } else {
+            openAutoAnnounceGUI(player);
+        }
     }
 
     private void handlePresetsGUIClick(InventoryClickEvent event) {
@@ -397,23 +683,33 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
         }
 
         if (event.getSlot() == SLOT_ADD_ITEM) {
-            player.closeInventory();
-            player.sendMessage(ChatColor.GREEN + "Please type the name of the new preset in chat. " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-            presetCreators.put(player.getUniqueId(), STEP_NAME);
-        } else if (clickedItem.getType() == Material.PAPER) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("isCreator", true);
+            data.put("type", "preset");
+            data.put("name", "<not set>");
+            data.put("message", "Default message");
+            openCreatorEditorGUI(player, data);
+            return;
+        }
+
+        if (clickedItem.getType() == Material.PAPER) {
             String presetName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
             if (event.isRightClick()) {
-                plugin.getConfig().set("presets." + presetName, null);
-                plugin.saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Preset '" + presetName + "' has been deleted.");
-                openPresetsGUI(player);
+                ConfirmationGUI.open(player, presetName);
+                confirmationActions.put(player.getUniqueId(), () -> {
+                    plugin.getConfig().set("presets." + presetName, null);
+                    plugin.saveConfig();
+                    player.sendMessage(ChatColor.GREEN + "Preset '" + presetName + "' has been deleted.");
+                    openPresetsGUI(player);
+                });
             } else if (event.isLeftClick()){
-                player.closeInventory();
-                String currentMessage = plugin.getConfig().getString("presets." + presetName);
-                player.sendMessage(ChatColor.YELLOW + "Please type the new message for the preset '" + presetName + "'. (Use | for a new line)");
-                player.sendMessage(ChatColor.GRAY + "Current: " + currentMessage);
-                player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
-                presetEditors.put(player.getUniqueId(), presetName);
+                Map<String, Object> data = new HashMap<>();
+                data.put("isCreator", false);
+                data.put("originalName", presetName);
+                data.put("type", "preset");
+                data.put("name", presetName);
+                data.put("message", plugin.getConfig().getString("presets." + presetName));
+                openCreatorEditorGUI(player, data);
             }
         }
     }
@@ -442,7 +738,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 player.sendMessage(ChatColor.YELLOW + "Please type the new interval (in seconds) in chat.");
                 player.sendMessage(ChatColor.GRAY + "Current: " + currentInterval);
                 player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
-                autoAnnounceCreators.put(player.getUniqueId(), new HashMap<>() {{ put("step", STEP_INTERVAL); }});
+                activeSessions.put(player.getUniqueId(), new HashMap<>() {{ put("step", STEP_INTERVAL); }});
                 break;
             case SLOT_AA_MODE:
                 String currentMode = plugin.getConfig().getString("auto-announce.mode");
@@ -454,207 +750,124 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 openAutoAnnounceGUI(player);
                 break;
             case SLOT_ADD_ITEM:
-                player.closeInventory();
-                player.sendMessage(ChatColor.GREEN + "Please type the name for the new auto-announce message in chat. " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-                autoAnnounceCreators.put(player.getUniqueId(), new HashMap<>() {{ put("step", STEP_NAME); }});
-                break;
+                Map<String, Object> data = new HashMap<>();
+                data.put("isCreator", true);
+                data.put("type", "auto-announce");
+                data.put("name", "<not set>");
+                data.put("message", "Default message");
+                data.put("style", "GOAL");
+                data.put("icon", "STONE");
+                openCreatorEditorGUI(player, data);
+                return;
             default:
                 if (event.getCurrentItem() != null && event.getCurrentItem().getItemMeta() != null && slot < SLOT_BACK_BUTTON) {
                     String messageName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
                     if (event.isRightClick()) {
-                        plugin.getConfig().set("auto-announce.messages." + messageName, null);
-                        plugin.saveConfig();
-                        AutoAnnounce.stopAutoAnnounce();
-                        AutoAnnounce.startAutoAnnounce();
-                        player.sendMessage(ChatColor.GREEN + "Auto-announce message '" + messageName + "' has been deleted.");
-                        openAutoAnnounceGUI(player);
+                        ConfirmationGUI.open(player, messageName);
+                        confirmationActions.put(player.getUniqueId(), () -> {
+                            plugin.getConfig().set("auto-announce.messages." + messageName, null);
+                            plugin.saveConfig();
+                            AutoAnnounce.stopAutoAnnounce();
+                            AutoAnnounce.startAutoAnnounce();
+                            player.sendMessage(ChatColor.GREEN + "Auto-announce message '" + messageName + "' has been deleted.");
+                            openAutoAnnounceGUI(player);
+                        });
+
                     } else if (event.isLeftClick()) {
-                        player.closeInventory();
-                        String currentMessage = plugin.getConfig().getString("auto-announce.messages." + messageName + ".message");
-                        player.sendMessage(ChatColor.YELLOW + "Please type the new message content for '" + messageName + "'. (Use | for a new line)");
-                        player.sendMessage(ChatColor.GRAY + "Current: " + currentMessage);
-                        player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
-                        autoAnnounceEditors.put(player.getUniqueId(), new HashMap<>() {{ put("name", messageName); put("step", STEP_MESSAGE); }});
+                        Map<String, Object> editData = new HashMap<>();
+                        String path = "auto-announce.messages." + messageName;
+                        editData.put("isCreator", false);
+                        editData.put("originalName", messageName);
+                        editData.put("type", "auto-announce");
+                        editData.put("name", messageName);
+                        editData.put("message", plugin.getConfig().getString(path + ".message", ""));
+                        editData.put("style", plugin.getConfig().getString(path + ".style", "GOAL"));
+                        editData.put("icon", plugin.getConfig().getString(path + ".icon", "STONE"));
+                        openCreatorEditorGUI(player, editData);
                     }
                 }
                 break;
         }
     }
-
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-        UUID playerUUID = player.getUniqueId();
-
-        if (isNavigating.contains(playerUUID) || presetCreators.containsKey(playerUUID) || presetEditors.containsKey(playerUUID) || autoAnnounceCreators.containsKey(playerUUID) || autoAnnounceEditors.containsKey(playerUUID)) {
-            return;
-        }
-
-        String presetsGUITitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title"));
-        String autoAnnounceGUITitle = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title"));
-        String closedGUITitle = event.getView().getTitle();
-
-        if (closedGUITitle.equals(presetsGUITitle) || closedGUITitle.equals(autoAnnounceGUITitle)) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> openEditGUI(player), 1L);
-        }
-    }
-
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
+
+        if (!activeSessions.containsKey(playerUUID)) return;
+
+        Map<String, Object> data = activeSessions.get(playerUUID);
         String message = event.getMessage();
 
-        if (message.equalsIgnoreCase("cancel")) {
-            if (presetCreators.containsKey(playerUUID) || presetEditors.containsKey(playerUUID) || autoAnnounceCreators.containsKey(playerUUID) || autoAnnounceEditors.containsKey(playerUUID)) {
-                event.setCancelled(true);
-                presetCreators.remove(playerUUID);
-                presetEditors.remove(playerUUID);
-                autoAnnounceCreators.remove(playerUUID);
-                autoAnnounceEditors.remove(playerUUID);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.input-cancelled")));
+        if (data.containsKey("step")) {
+            event.setCancelled(true);
+            if (message.equalsIgnoreCase("cancel")) {
+                data.remove("step");
+                player.sendMessage(ChatColor.RED + "Input cancelled.");
+
+
+                if (!data.containsKey("type")) {
+                    activeSessions.remove(playerUUID);
+                    Bukkit.getScheduler().runTask(plugin, () -> openAutoAnnounceGUI(player));
+                } else {
+                    Bukkit.getScheduler().runTask(plugin, () -> openCreatorEditorGUI(player, data));
+                }
                 return;
             }
-        }
 
-        if (presetCreators.containsKey(playerUUID)) {
-            event.setCancelled(true);
-            if (presetCreators.get(playerUUID).equals(STEP_NAME)) {
-                if (message.contains(".")) {
-                    player.sendMessage(ChatColor.RED + "The preset name cannot contain a period (.). Please choose another name.");
-                    return;
-                }
-                presetCreators.put(playerUUID, message);
-                player.sendMessage(ChatColor.GREEN + "Preset name set to '" + message + "'. Now, please type the message for this preset. (Use | for a new line) " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-            } else {
-                String presetName = presetCreators.get(playerUUID);
-                presetCreators.remove(playerUUID);
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    plugin.getConfig().set("presets." + presetName, message);
-                    plugin.saveConfig();
-                    player.sendMessage(ChatColor.GREEN + "Preset '" + presetName + "' has been added successfully!");
-                });
-            }
-        } else if (presetEditors.containsKey(playerUUID)) {
-            event.setCancelled(true);
-            String presetName = presetEditors.get(playerUUID);
-            presetEditors.remove(playerUUID);
+            String step = (String) data.get("step");
             Bukkit.getScheduler().runTask(plugin, () -> {
-                plugin.getConfig().set("presets." + presetName, message);
-                plugin.saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Preset '" + presetName + "' has been updated successfully!");
-            });
-        } else if (autoAnnounceCreators.containsKey(playerUUID)) {
-            event.setCancelled(true);
-            Map<String, String> creatorData = autoAnnounceCreators.get(playerUUID);
-            String step = creatorData.get("step");
-
-            switch (step) {
-                case STEP_INTERVAL:
-                    try {
-                        int interval = Integer.parseInt(message);
-                        autoAnnounceCreators.remove(playerUUID);
-                        Bukkit.getScheduler().runTask(plugin, () -> {
+                switch(step) {
+                    case STEP_NAME:
+                        if (message.contains(".") || message.contains(" ")) {
+                            player.sendMessage(ChatColor.RED + "The name cannot contain periods or spaces. Please try again.");
+                        } else {
+                            data.put("name", message);
+                            player.sendMessage(ChatColor.GREEN + "Name set to '" + message + "'");
+                        }
+                        break;
+                    case STEP_MESSAGE:
+                        data.put("message", message);
+                        player.sendMessage(ChatColor.GREEN + "Message updated!");
+                        break;
+                    case STEP_STYLE:
+                        try {
+                            AdvancementHandler.Style.valueOf(message.toUpperCase());
+                            data.put("style", message.toUpperCase());
+                            player.sendMessage(ChatColor.GREEN + "Style set to " + message.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            player.sendMessage(ChatColor.RED + "Invalid style! Please use GOAL, TASK, or CHALLENGE.");
+                        }
+                        break;
+                    case STEP_ICON:
+                        try {
+                            Material.valueOf(message.toUpperCase());
+                            data.put("icon", message.toUpperCase());
+                            player.sendMessage(ChatColor.GREEN + "Icon set to " + message.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            player.sendMessage(ChatColor.RED + "Invalid material name! Please try again.");
+                        }
+                        break;
+                    case STEP_INTERVAL:
+                        try {
+                            int interval = Integer.parseInt(message);
                             plugin.getConfig().set("auto-announce.interval", interval);
                             plugin.saveConfig();
                             AutoAnnounce.stopAutoAnnounce();
                             AutoAnnounce.startAutoAnnounce();
                             player.sendMessage(ChatColor.GREEN + "Interval has been set to " + interval + " seconds.");
-                        });
-                    } catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid number. Please type a valid interval in seconds.");
-                    }
-                    break;
-                case STEP_NAME:
-                    if (message.contains(".")) {
-                        player.sendMessage(ChatColor.RED + "The message name cannot contain a period (.). Please choose another name.");
-                        return;
-                    }
-                    creatorData.put("name", message);
-                    creatorData.put("step", STEP_MESSAGE);
-                    player.sendMessage(ChatColor.GREEN + "Name set to '" + message + "'. Now, please type the message content. (Use | for a new line) " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-                    break;
-                case STEP_MESSAGE:
-                    creatorData.put("message", message);
-                    creatorData.put("step", STEP_STYLE);
-                    player.sendMessage(ChatColor.GREEN + "Message content set. Now, please type the style (GOAL, TASK, or CHALLENGE). " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-                    break;
-                case STEP_STYLE:
-                    if (message.equalsIgnoreCase("GOAL") || message.equalsIgnoreCase("TASK") || message.equalsIgnoreCase("CHALLENGE")) {
-                        creatorData.put("style", message.toUpperCase());
-                        creatorData.put("step", STEP_ICON);
-                        player.sendMessage(ChatColor.GREEN + "Style set to '" + message.toUpperCase() + "'. Now, please type the icon material name. " + ChatColor.GRAY + "(Type 'cancel' to exit)");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "Invalid style. Please type GOAL, TASK, or CHALLENGE.");
-                    }
-                    break;
-                case STEP_ICON:
-                    try {
-                        Material.valueOf(message.toUpperCase());
-                        creatorData.put("icon", message.toUpperCase());
-                        autoAnnounceCreators.remove(playerUUID);
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            String name = creatorData.get("name");
-                            plugin.getConfig().set("auto-announce.messages." + name + ".message", creatorData.get("message"));
-                            plugin.getConfig().set("auto-announce.messages." + name + ".style", creatorData.get("style"));
-                            plugin.getConfig().set("auto-announce.messages." + name + ".icon", creatorData.get("icon"));
-                            plugin.saveConfig();
-                            AutoAnnounce.stopAutoAnnounce();
-                            AutoAnnounce.startAutoAnnounce();
-                            player.sendMessage(ChatColor.GREEN + "Auto-announce message '" + name + "' has been added successfully!");
-                        });
-                    } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid material name. Please try again.");
-                    }
-                    break;
-            }
-        } else if (autoAnnounceEditors.containsKey(playerUUID)) {
-            event.setCancelled(true);
-            Map<String, String> editorData = autoAnnounceEditors.get(playerUUID);
-            String name = editorData.get("name");
-            String step = editorData.get("step");
-            String currentStyle = plugin.getConfig().getString("auto-announce.messages." + name + ".style");
-            String currentIcon = plugin.getConfig().getString("auto-announce.messages." + name + ".icon");
-
-
-            switch (step) {
-                case STEP_MESSAGE:
-                    editorData.put("message", message);
-                    editorData.put("step", STEP_STYLE);
-                    player.sendMessage(ChatColor.GREEN + "Message content updated. Now, please type the new style (GOAL, TASK, or CHALLENGE).");
-                    player.sendMessage(ChatColor.GRAY + "Current: " + currentStyle);
-                    player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
-                    break;
-                case STEP_STYLE:
-                    if (message.equalsIgnoreCase("GOAL") || message.equalsIgnoreCase("TASK") || message.equalsIgnoreCase("CHALLENGE")) {
-                        editorData.put("style", message.toUpperCase());
-                        editorData.put("step", STEP_ICON);
-                        player.sendMessage(ChatColor.GREEN + "Style updated to '" + message.toUpperCase() + "'. Now, please type the new icon material name.");
-                        player.sendMessage(ChatColor.GRAY + "Current: " + currentIcon);
-                        player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "Invalid style. Please type GOAL, TASK, or CHALLENGE.");
-                    }
-                    break;
-                case STEP_ICON:
-                    try {
-                        Material.valueOf(message.toUpperCase());
-                        autoAnnounceEditors.remove(playerUUID);
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            plugin.getConfig().set("auto-announce.messages." + name + ".message", editorData.get("message"));
-                            plugin.getConfig().set("auto-announce.messages." + name + ".style", editorData.get("style"));
-                            plugin.getConfig().set("auto-announce.messages." + name + ".icon", message.toUpperCase());
-                            plugin.saveConfig();
-                            AutoAnnounce.stopAutoAnnounce();
-                            AutoAnnounce.startAutoAnnounce();
-                            player.sendMessage(ChatColor.GREEN + "Auto-announce message '" + name + "' has been updated successfully!");
-                        });
-                    } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid material name. Please try again.");
-                    }
-                    break;
-            }
+                            activeSessions.remove(playerUUID);
+                            openAutoAnnounceGUI(player);
+                            return;
+                        } catch (NumberFormatException e) {
+                            player.sendMessage(ChatColor.RED + "Invalid number. Please type a valid interval in seconds. Type 'cancel' to exit.");
+                            return;
+                        }
+                }
+                data.remove("step");
+                openCreatorEditorGUI(player, data);
+            });
         }
     }
 }

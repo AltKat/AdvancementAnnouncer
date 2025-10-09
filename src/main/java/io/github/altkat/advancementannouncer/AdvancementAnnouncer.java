@@ -52,11 +52,11 @@ public class AdvancementAnnouncer extends JavaPlugin {
         }
 
         new UpdateChecker(this, 121602).getVersion(newVersion -> {
-            if (this.getDescription().getVersion().equalsIgnoreCase(newVersion)) {
-                getLogger().info("Plugin is up to date.");
-            } else {
+            if (UpdateChecker.isNewerVersion(this.getDescription().getVersion(), newVersion)) {
                 getLogger().warning("There is a new update available for AdvancementAnnouncer! Version: " + newVersion);
                 getLogger().warning("Download it from: https://www.spigotmc.org/resources/advancement-announcer.121602/");
+            } else {
+                getLogger().info("Plugin is up to date.");
             }
         });
 
