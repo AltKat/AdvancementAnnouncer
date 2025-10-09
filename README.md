@@ -1,6 +1,6 @@
 <div align="center">
   <h1><img src="https://altkat.github.io/AdvancementAnnouncer/title.png" alt="Title Image"></h1>
-  
+
 </div>
 
 <div align="center"><b>Important!</b></div><br>
@@ -12,29 +12,38 @@
 
 ### Advancement Announcer Features
 - **Advancement Announcer** gives you the ability to send toast advancement messages to desired players.
-- You can set up **presets** to easily send them with a simple command.
+- **In-Game GUI Editor**: Manage everything from an easy-to-use in-game interface. No more YAML editing!
+- You can set up **presets** to easily send them with a simple command or the GUI.
 - Set **automated messages** to send on a specified interval to your players.
 - **AA** supports **PlaceholderAPI (PAPI)**, allowing you to use any placeholders supported by PAPI.
+- **Update Checker**: Notifies admins in-game when a new version of the plugin is available.
 - Tested on Minecraft versions **1.16.5 - 1.21.4**.
 - Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a> for questions, issues, or suggestions.
 
 ---
 
 ### Commands
+- **`/aa edit`**: Opens the main configuration GUI. From here, you can manage presets and auto-announcements.
 - **`/aa <style> <icon> <player's name/all> <preset/message>`**
-  - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
-  - Possible options for **icon** can be found <a href="https://discordapp.com/users/247441109888925697" target="_blank">here</a>.
-  - Target either a specific player's name or use `all`.
-  - Write your own message in the command or use one of the presets defined in the config.
+    - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
+    - Possible options for **icon** can be found <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html" target="_blank">here</a>.
+    - Target a specific player's name or use `all`.
+    - Write your own message in the command or use one of the presets defined in the config.
 - **`/aa toggle`**: Players can set if they want to see announcement messages (Player-specific announcements are not affected by this command).
-  - No permission required. 
-
-
+- **`/aa reload`**: Reloads the configuration file.
 
 ### Permissions
-- The only permission required: `advancementannouncer.admin`.
+- **`advancementannouncer.admin`**: Required for all commands except `/aa toggle`.
 
 ---
+### The In-Game GUI Editor
+Manage everything with the new `/aa edit` command. Add, remove, or edit presets and auto-messages on the fly without ever needing to open the config file.
+
+<div align="center">
+  <img src="https://altkat.github.io/AdvancementAnnouncer/aaeditmenu.gif" alt="edit-gui-gif"><br>
+</div>
+<br>
+
 ### Images from Advancement Announcer
 
 <div align="center">
@@ -47,22 +56,22 @@
   <img src="https://altkat.github.io/AdvancementAnnouncer/fourthcommand.gif" alt="command-gif1"><br>
   <img src="https://altkat.github.io/AdvancementAnnouncer/firstcommand.gif" alt="command-gif2"><br>
   <img src="https://altkat.github.io/AdvancementAnnouncer/secondcommand.gif" alt="command-gif3"><br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/thirdcommand.gif" alt="command-gif4"><br> 
+  <img src="https://altkat.github.io/AdvancementAnnouncer/thirdcommand.gif" alt="command-gif4"><br>
 </div>
-
  
-
-
 ---
 
 ### Configuration (YAML)
+While you can manage everything from the in-game GUI, you can still edit the `config.yml` manually.
 
 ```yaml
-###################################################################################################################################################
-##                                           This plugin made by Altkat(StreetMelodeez) V1.1                                                     ##
-##                                   Feel free to contact me for anything on discord: streetmelodeez                                             ##
-##              Please use /aa reload to reload the plugin, or restart the server after you changed something in the config file.                ##
-###################################################################################################################################################
+# ######################################################################################################
+# ##                                                                                                  ##
+# ##   AdvancementAnnouncer v1.2 by Altkat(StreetMelodeez)                                            ##
+# ##   Discord: streetmelodeez                                                                        ##
+# ##   Please use /aa reload to apply changes.                                                        ##
+# ##                                                                                                  ##
+# ######################################################################################################
 bstats: true # Should the plugin send data to bStats?
 
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
@@ -82,7 +91,7 @@ auto-announce:
     custommessage1:
       message: "&eHello &a%player_name%|&eHow is it going?"
       style: "GOAL"   # GOAL, TASK, CHALLENGE
-      icon: "EMERALD" # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+      icon: "EMERALD" # [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
     custommessage2:
       message: "&9Join our discord server|&bdiscord.gg/yourdc"
       style: "TASK"
@@ -102,9 +111,9 @@ lang-messages:
   wrong-usage: "&cWrong usage! Please use /aa toggle"
   announcements-toggled-on: "&aYou now see the advancement announcements!"
   announcements-toggled-off: "&cYou no longer see the advancement announcements!"
-
-
-
+  edit-gui-title: "&3Advancement Announcer Edit"
+  presets-gui-title: "&3Advancement Announcer Presets"
+  auto-announce-gui-title: "&3Auto Announce Config"
+  input-cancelled: "&cInput process cancelled."
 ```
-
-Need help? Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a>
+Need help? Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a>.
