@@ -1,5 +1,8 @@
 <div align="center">
   <h1><img src="https://altkat.github.io/AdvancementAnnouncer/title.png" alt="Title Image"></h1>
+  <img src="https://altkat.github.io/AdvancementAnnouncer/a.png" alt="toast-example1"><br><br>
+  <img src="https://altkat.github.io/AdvancementAnnouncer/b.png" alt="toast-example2"><br><br>
+  <img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3"><br><br>
 
 </div>
 
@@ -47,10 +50,6 @@ Manage everything with the new `/aa edit` command. Add, remove, or edit presets 
 ### Images from Advancement Announcer
 
 <div align="center">
-  <br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/a.png" alt="toast-example1"><br><br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/b.png" alt="toast-example2"><br><br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3"><br><br>
   <a>Due to file limits, GIFs are low quality and sped up 2x</a><br>
   <img src="https://altkat.github.io/AdvancementAnnouncer/autoannouncegif.gif" alt="command-gif0"><br>
   <img src="https://altkat.github.io/AdvancementAnnouncer/fourthcommand.gif" alt="command-gif1"><br>
