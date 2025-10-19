@@ -25,9 +25,20 @@ public class ConfigUpdater {
         userConfig.options().header(defaultConfig.options().header());
 
         for (String key : defaultConfig.getKeys(true)) {
+            if (key.startsWith("presets.") || key.startsWith("auto-announce.messages.")) {
+                continue; // Bu anahtarı atla
+            }
+
             if (!userConfig.contains(key)) {
                 userConfig.set(key, defaultConfig.get(key));
             }
+        }
+
+        if (!userConfig.contains("presets")) {
+            userConfig.createSection("presets");
+        }
+        if (!userConfig.contains("auto-announce.messages")) {
+            userConfig.createSection("auto-announce.messages");
         }
 
         userConfig.save(configFile);

@@ -46,10 +46,9 @@ public class AdvancementAnnouncer extends JavaPlugin {
         AutoAnnounce.startAutoAnnounce();
 
         FileConfiguration config = getConfig();
-        if(config.getBoolean("bstats")) {
-            int pluginId = 24282;
-            Metrics metrics = new Metrics(this, pluginId);
-        }
+        int pluginId = 24282;
+        Metrics metrics = new Metrics(this, pluginId);
+
 
         new UpdateChecker(this, 121602).getVersion(newVersion -> {
             if (UpdateChecker.isNewerVersion(this.getDescription().getVersion(), newVersion)) {

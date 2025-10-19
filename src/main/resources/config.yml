@@ -6,7 +6,6 @@
 # ##   You can use /aa edit in game chat to edit this file.                                           ##
 # ##                                                                                                  ##
 # ######################################################################################################
-bstats: true # Should the plugin send data to bStats?
 
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
