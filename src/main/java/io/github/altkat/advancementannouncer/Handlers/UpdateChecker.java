@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -19,6 +20,7 @@ public class UpdateChecker implements Listener {
     private final AdvancementAnnouncer plugin;
     private final int resourceId;
     private String latestVersion;
+    private boolean updateCheckCompleted = false;
 
     public UpdateChecker(AdvancementAnnouncer plugin, int resourceId) {
         this.plugin = plugin;
@@ -28,14 +30,41 @@ public class UpdateChecker implements Listener {
 
     public void getVersion(final Consumer<String> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
+            InputStream inputStream = null;
+            Scanner scanner = null;
+            try {
+                URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId);
+                URLConnection connection = url.openConnection();
+                connection.setConnectTimeout(5000); // 5 saniye
+                connection.setReadTimeout(5000);
+                connection.addRequestProperty("User-Agent", "AdvancementAnnouncer-UpdateChecker");
+
+                inputStream = connection.getInputStream();
+                scanner = new Scanner(inputStream);
+
                 if (scanner.hasNext()) {
                     String version = scanner.next();
                     this.latestVersion = version;
+                    this.updateCheckCompleted = true;
                     consumer.accept(version);
+                } else {
+                    this.plugin.getLogger().warning("Update checker received empty response from SpigotMC API");
+                    this.updateCheckCompleted = true;
                 }
             } catch (IOException exception) {
-                this.plugin.getLogger().info("Unable to check for updates: " + exception.getMessage());
+                this.plugin.getLogger().warning("Unable to check for updates: " + exception.getMessage());
+                this.updateCheckCompleted = true;
+            } finally {
+                if (scanner != null) {
+                    scanner.close();
+                }
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        this.plugin.getLogger().warning("Error closing input stream: " + e.getMessage());
+                    }
+                }
             }
         });
     }
@@ -44,18 +73,25 @@ public class UpdateChecker implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (player.hasPermission("advancementannouncer.admin")) {
-
-            if (latestVersion != null && isNewerVersion(plugin.getDescription().getVersion(), latestVersion)) {
+            if (!updateCheckCompleted) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    player.sendMessage(ChatColor.YELLOW + "A new version of AdvancementAnnouncer is available! (" + latestVersion + ")");
-                    player.sendMessage(ChatColor.YELLOW + "Download it from: " + ChatColor.AQUA + "https://www.spigotmc.org/resources/advancementannouncer." + resourceId + "/");
-                }, 20L);
+                    checkAndNotifyPlayer(player);
+                }, 40L);
+                return;
             }
+
+            checkAndNotifyPlayer(player);
+        }
+    }
+
+    private void checkAndNotifyPlayer(Player player) {
+        if (latestVersion != null && isNewerVersion(plugin.getDescription().getVersion(), latestVersion)) {
+            player.sendMessage(ChatColor.YELLOW + "A new version of AdvancementAnnouncer is available! (" + latestVersion + ")");
+            player.sendMessage(ChatColor.YELLOW + "Download it from: " + ChatColor.AQUA + "https://www.spigotmc.org/resources/advancementannouncer." + resourceId + "/");
         }
     }
 
     public static boolean isNewerVersion(String currentVersion, String latestVersion) {
-
         String current = currentVersion.replaceAll("[vV]", "");
         String latest = latestVersion.replaceAll("[vV]", "");
 
@@ -75,7 +111,6 @@ public class UpdateChecker implements Listener {
                     return false;
                 }
             } catch (NumberFormatException e) {
-
                 return !currentVersion.equalsIgnoreCase(latestVersion);
             }
         }

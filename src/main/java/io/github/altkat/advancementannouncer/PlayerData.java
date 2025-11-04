@@ -53,7 +53,7 @@ public class PlayerData {
         if(config.getConfigurationSection(uuid.toString()) == null) {
             addPlayerData(uuid);
         }
-        return config.getConfigurationSection(uuid.toString()).getBoolean("toggleStatus");
+        return config.getConfigurationSection(uuid.toString()).getBoolean("toggleStatus", true);
     }
 
     public static void updatePlayerData(UUID uuid) {

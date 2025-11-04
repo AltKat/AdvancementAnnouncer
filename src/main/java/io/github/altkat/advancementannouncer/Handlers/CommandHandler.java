@@ -167,20 +167,22 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
                 sender.sendMessage(ChatColor.RED + "There are no online players in the server!");
                 return true;
             }
+            int sentCount = 0;
             for(Player player : sender.getServer().getOnlinePlayers()){
                 if(!PlayerData.returnToggleData(player.getUniqueId())){
                     continue;
                 }
-                AdvancementHandler.displayTo(player, materialName, message, style);
+                AdvancementHandler.displayTo(player, materialName.toLowerCase(), message, style);
+                sentCount++;
             }
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to all players"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + sentCount + " player(s)"));
         }else{
             Player player = sender.getServer().getPlayer(audience);
             if(player == null){
                 sender.sendMessage(ChatColor.RED + "Player not found: " + audience);
                 return true;
             }
-            AdvancementHandler.displayTo(player, materialName, message, style);
+            AdvancementHandler.displayTo(player, materialName.toLowerCase(), message, style);
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + player.getName()));
         }
         return true;

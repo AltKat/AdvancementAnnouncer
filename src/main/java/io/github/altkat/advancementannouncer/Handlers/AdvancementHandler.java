@@ -5,9 +5,11 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdvancementHandler {
     private final NamespacedKey key;
@@ -16,16 +18,26 @@ public class AdvancementHandler {
     private final Style style;
     private AdvancementAnnouncer plugin;
 
+    private static final Map<String, NamespacedKey> cachedAdvancements = new HashMap<>();
+
     private AdvancementHandler(String icon, String message, Style style) {
         this.plugin = AdvancementAnnouncer.getInstance();
-        this.key = new NamespacedKey(plugin, UUID.randomUUID().toString());
         this.icon = icon;
         this.message = message;
         this.style = style;
+
+        String cacheKey = icon.toLowerCase() + "_" + style.toString().toLowerCase();
+
+        if (!cachedAdvancements.containsKey(cacheKey)) {
+            this.key = new NamespacedKey(plugin, "toast_" + cacheKey);
+            createAdvancement();
+            cachedAdvancements.put(cacheKey, this.key);
+        } else {
+            this.key = cachedAdvancements.get(cacheKey);
+        }
     }
 
     private void start(Player player){
-        createAdvancement();
         grantAdvancement(player);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -70,17 +82,39 @@ public class AdvancementHandler {
                 "        ]\n" +
                 "    ]\n" +
                 "}";
-        Bukkit.getUnsafe().loadAdvancement(key, advancementJson);
+
+        try {
+            Bukkit.getUnsafe().loadAdvancement(key, advancementJson);
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to create advancement: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-
-
     private void grantAdvancement(Player player) {
-        player.getAdvancementProgress(Bukkit.getAdvancement(key)).awardCriteria("trigger");
+        try {
+            Advancement adv = Bukkit.getAdvancement(key);
+            if (adv != null) {
+                player.getAdvancementProgress(adv).awardCriteria("trigger");
+            } else {
+                plugin.getLogger().warning("Advancement not found for key: " + key);
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Error granting advancement to " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void revokeAdvancement(Player player) {
-        player.getAdvancementProgress(Bukkit.getAdvancement(key)).revokeCriteria("trigger");
+        try {
+            Advancement adv = Bukkit.getAdvancement(key);
+            if (adv != null) {
+                player.getAdvancementProgress(adv).revokeCriteria("trigger");
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Error revoking advancement from " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static void displayTo(Player player, String icon, String message, Style style) {
@@ -98,5 +132,4 @@ public class AdvancementHandler {
         TASK,
         CHALLENGE
     }
-
 }
