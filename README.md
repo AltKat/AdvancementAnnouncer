@@ -63,6 +63,9 @@ Manage everything with the new `/aa edit` command. Add, remove, or edit presets 
 ### Configuration (YAML)
 While you can manage everything from the in-game GUI, you can still edit the `config.yml` manually.
 
+<details>
+  <summary>Click to see default config</summary>
+
 ```yaml
 # ######################################################################################################
 # ##                                                                                                  ##
@@ -115,4 +118,7 @@ lang-messages:
   auto-announce-gui-title: "&3Auto Announce Config"
   input-cancelled: "&cInput process cancelled."
 ```
+
+</details>
+
 Need help? Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a>.
