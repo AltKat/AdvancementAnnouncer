@@ -69,7 +69,7 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 ```yaml
 # ######################################################################################################
 # ##                                                                                                  ##
-# ##   AdvancementAnnouncer v1.2 by Altkat(StreetMelodeez)                                            ##
+# ##   AdvancementAnnouncer v1.3.2 by Altkat(StreetMelodeez)                                            ##
 # ##   Discord: streetmelodeez                                                                        ##
 # ##   Please use /aa reload to apply changes.                                                        ##
 # ##                                                                                                  ##
