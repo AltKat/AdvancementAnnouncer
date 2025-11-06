@@ -7,8 +7,8 @@
 </div>
 
 <div align="center"><b>Important!</b></div><br>
-<div align="center">This plugin uses Java 17, if you are using another java version you may need to add this line to your batch file:<br>
-"<b>-DPaper.IgnoreJavaVersion=true ^</b>"​<br><br>
+<div align="center">This plugin requires Java 17 or newer.​<br>
+<br><br>
 </div>
 
 ---
