@@ -6,6 +6,13 @@ authors: [StreetMelodeez(AltKat)]
 softdepend: ["PlaceholderAPI"]
 commands:
   advancementannouncer:
-    usage: /advancementannouncer <style> <icon> <target> <message>
+    usage: /advancementannouncer send <style> <icon> <target> <message>
     aliases:
       - aa
+permissions:
+  advancementannouncer.admin:
+    description: Allows full control of Advancement Announcer
+    default: op
+  advancementannouncer.toggle:
+    description: Allows toggling announcements
+    default: true

@@ -1,8 +1,5 @@
 package io.github.altkat.advancementannouncer;
-import io.github.altkat.advancementannouncer.Handlers.AutoAnnounce;
-import io.github.altkat.advancementannouncer.Handlers.CommandHandler;
-import io.github.altkat.advancementannouncer.Handlers.ConfigUpdater;
-import io.github.altkat.advancementannouncer.Handlers.UpdateChecker;
+import io.github.altkat.advancementannouncer.Handlers.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,7 +38,12 @@ public class AdvancementAnnouncer extends JavaPlugin {
 
         CommandHandler commandHandler = new CommandHandler();
         getCommand("advancementannouncer").setExecutor(commandHandler);
+        getCommand("advancementannouncer").setTabCompleter(commandHandler);
+
         getServer().getPluginManager().registerEvents(commandHandler, this);
+        getServer().getPluginManager().registerEvents(new GUIHandler(), this);
+        getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+        getServer().getPluginManager().registerEvents(new UpdateChecker(this, 121602), this);
 
         AutoAnnounce.startAutoAnnounce();
 

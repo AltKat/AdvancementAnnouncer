@@ -25,7 +25,6 @@ public class UpdateChecker implements Listener {
     public UpdateChecker(AdvancementAnnouncer plugin, int resourceId) {
         this.plugin = plugin;
         this.resourceId = resourceId;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void getVersion(final Consumer<String> consumer) {
@@ -35,7 +34,7 @@ public class UpdateChecker implements Listener {
             try {
                 URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId);
                 URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(5000); // 5 saniye
+                connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
                 connection.addRequestProperty("User-Agent", "AdvancementAnnouncer-UpdateChecker");
 

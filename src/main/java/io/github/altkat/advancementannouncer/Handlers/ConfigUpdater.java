@@ -26,7 +26,7 @@ public class ConfigUpdater {
 
         for (String key : defaultConfig.getKeys(true)) {
             if (key.startsWith("presets.") || key.startsWith("auto-announce.messages.")) {
-                continue; // Bu anahtarı atla
+                continue;
             }
 
             if (!userConfig.contains(key)) {

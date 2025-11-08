@@ -1,15 +1,18 @@
-package io.github.altkat.advancementannouncer.Handlers.guis;
+package io.github.altkat.advancementannouncer.guis;
 
+import io.github.altkat.advancementannouncer.Handlers.ChatInputListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class IconSelectionGUI {
@@ -41,7 +44,6 @@ public class IconSelectionGUI {
             }
         }
 
-
         if (page > 0) {
             ItemStack prevPage = new ItemStack(Material.ARROW);
             ItemMeta prevMeta = prevPage.getItemMeta();
@@ -58,14 +60,12 @@ public class IconSelectionGUI {
             gui.setItem(53, nextPage);
         }
 
-
         ItemStack chatItem = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta chatMeta = chatItem.getItemMeta();
         chatMeta.setDisplayName(ChatColor.AQUA + "Input via Chat");
         chatMeta.setLore(Arrays.asList(ChatColor.GRAY + "Click to type the material", ChatColor.GRAY + "name in chat."));
         chatItem.setItemMeta(chatMeta);
         gui.setItem(48, chatItem);
-
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
@@ -74,5 +74,49 @@ public class IconSelectionGUI {
         gui.setItem(49, backItem);
 
         player.openInventory(gui);
+    }
+
+    public static void handleClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        ItemStack clickedItem = event.getCurrentItem();
+        String title = event.getView().getTitle();
+
+        if (clickedItem == null) return;
+
+        if (clickedItem.getType() == Material.WRITABLE_BOOK) {
+            player.closeInventory();
+            player.sendMessage(ChatColor.GREEN + "Please type the material name for the icon in chat. (Type 'cancel' to abort)");
+            ChatInputListener.activeSessions.get(player.getUniqueId()).put("step", ChatInputListener.STEP_ICON);
+            return;
+        }
+
+        if (clickedItem.getType() == Material.BARRIER) {
+            Map<String, Object> data = ChatInputListener.activeSessions.get(player.getUniqueId());
+            if (data != null) {
+                EditorGUI.open(player, data);
+            }
+            return;
+        }
+
+        if (clickedItem.getType() == Material.ARROW) {
+            String currentPageStr = title.substring(title.indexOf("Page ") + 5, title.indexOf("/"));
+            int currentPage = Integer.parseInt(currentPageStr) - 1;
+            String itemName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+
+            if (itemName.equals("Next Page")) {
+                open(player, currentPage + 1);
+            } else if (itemName.equals("Previous Page")) {
+                open(player, currentPage - 1);
+            }
+            return;
+        }
+
+        Material selectedMaterial = clickedItem.getType();
+        Map<String, Object> data = ChatInputListener.activeSessions.get(player.getUniqueId());
+        if (data != null) {
+            data.put("icon", selectedMaterial.name());
+            player.sendMessage(ChatColor.GREEN + "Icon set to " + selectedMaterial.name() + "!");
+            EditorGUI.open(player, data);
+        }
     }
 }
