@@ -17,8 +17,9 @@ public class AutoAnnounce {
     static int taskID;
 
     static int order = 0;
-    static int lastMessageIndex;
+    static int lastMessageIndex = -1;
     static int failedAttempts = 0;
+
     public static void startAutoAnnounce() {
         if(plugin.getConfig().getConfigurationSection("auto-announce").getBoolean("enabled")){
             ConfigurationSection mainSection = plugin.getConfig().getConfigurationSection("auto-announce");
@@ -30,6 +31,7 @@ public class AutoAnnounce {
             String mode = mainSection.getString("mode");
             order = 0;
             failedAttempts = 0;
+            lastMessageIndex = -1;
             Set<String> keySet = subSection.getKeys(false);
             List<String> keyList = keySet.stream().toList();
             int messageCount = keyList.size();
@@ -45,9 +47,15 @@ public class AutoAnnounce {
                         stopAutoAnnounce();
                         return;
                     }
-                    do {
-                        order = ThreadLocalRandom.current().nextInt(messageCount);
-                    } while (order == lastMessageIndex);
+
+                    if (messageCount > 1) {
+                        do {
+                            order = ThreadLocalRandom.current().nextInt(messageCount);
+                        } while (order == lastMessageIndex);
+                    } else {
+                        order = 0;
+                    }
+
                     String message = subSection.getConfigurationSection(keyList.get(order)).getString("message");
                     String styleString = subSection.getConfigurationSection(keyList.get(order)).getString("style").toUpperCase();
                     AdvancementHandler.Style style;
