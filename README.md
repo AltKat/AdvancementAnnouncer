@@ -15,6 +15,7 @@
 
 ### Advancement Announcer Features
 - **Advancement Announcer** gives you the ability to send toast advancement messages to desired players.
+- **Join & First Join Messages**: Welcome your players with stylish custom announcements when they join the server.
 - **In-Game GUI Editor**: Manage everything from an easy-to-use in-game interface. No more YAML editing!
 - You can set up **presets** to easily send them with a simple command or the GUI.
 - Set **automated messages** to send on a specified interval to your players.
@@ -27,7 +28,7 @@
 
 ### Commands
 - **`/aa edit`**: Opens the main configuration GUI. From here, you can manage presets and auto-announcements.
-- **`/aa <style> <icon> <player's name/all> <preset/message>`**
+- **`/aa send <style> <icon> <player's name/all> <preset/message>`**
     - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
     - Possible options for **icon** can be found <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html" target="_blank">here</a>.
     - Target a specific player's name or use `all`.
@@ -36,7 +37,8 @@
 - **`/aa reload`**: Reloads the configuration file.
 
 ### Permissions
-- **`advancementannouncer.admin`**: Required for all commands except `/aa toggle`.
+- **`advancementannouncer.admin`**: Full access to all plugin features and commands.
+- **`advancementannouncer.toggle`**: Allows players to use the `/aa toggle` command (Default: true).
 
 ---
 ### The In-Game GUI Editor
@@ -69,54 +71,82 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 ```yaml
 # ######################################################################################################
 # ##                                                                                                  ##
-# ##   AdvancementAnnouncer v1.3.2 by Altkat(StreetMelodeez)                                            ##
+# ##   AdvancementAnnouncer v1.4.0 by Altkat(StreetMelodeez)                                          ##
 # ##   Discord: streetmelodeez                                                                        ##
 # ##   Please use /aa reload to apply changes.                                                        ##
+# ##   You can use /aa edit in game chat to edit this file.                                           ##
 # ##                                                                                                  ##
 # ######################################################################################################
-bstats: true # Should the plugin send data to bStats?
 
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
 presets: # you can add as many presets as you want
-  preset1: "&aThis is &6my cool| &amessage wow!"
-  store-preset: "&6You can get ranks|&6on our store &b/store"
-  discord-preset: "&9Join our discord server|&bdiscord.gg/yourdc"
-  greeting: "&eHello &a%player_name%|&eHow is it going?"
+  preset1: '&aThis is &6my cool| &amessage wow!'
+  store-preset: '&6You can get ranks|&6on our store &b/store'
+  discord-preset: '&9Join our discord server|&bdiscord.gg/yourdc'
+  greeting: '&eHello &a%player_name%|&eHow is it going?'
 
 
 auto-announce:
-  enabled: false    # should the plugin announce messages automatically
-  interval: 30      # in seconds
-  mode: "ORDERED"   # ORDERED, RANDOM
-  messages:         # you can add as many messages as you want
+  enabled: false # should the plugin announce messages automatically
+  interval: 30 # in seconds
+  mode: ORDERED # ORDERED, RANDOM
+  messages: # you can add as many messages as you want
     custommessage1:
-      message: "&eHello &a%player_name%|&eHow is it going?"
-      style: "GOAL"   # GOAL, TASK, CHALLENGE
-      icon: "EMERALD" # [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
+      message: '&eHello &a%player_name%|&eHow is it going?'
+      style: GOAL # GOAL, TASK, CHALLENGE
+      icon: EMERALD # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
     custommessage2:
-      message: "&9Join our discord server|&bdiscord.gg/yourdc"
-      style: "TASK"
-      icon: "DIAMOND"
+      message: '&9Join our discord server|&bdiscord.gg/yourdc'
+      style: TASK
+      icon: DIAMOND
     vipmessage:
-      message: "&6You can get ranks|&6on our store &b/store"
-      style: "CHALLENGE"
-      icon: "GOLD_INGOT"
+      message: '&6You can get ranks|&6on our store &b/store'
+      style: CHALLENGE
+      icon: GOLD_INGOT
+
+
+# Messages to be displayed when players join the server.
+# If you add more than one message, a random one will be selected and displayed.
+join-features:
+  join-messages:
+    enabled: true
+    messages:
+      welcome-back-1:
+        message: '&eWelcome back, &a%player_name%!'
+        style: GOAL
+        icon: GOLDEN_APPLE
+      welcome-back-2:
+        message: '&7[&a+&7] &f%player_name%'
+        style: TASK
+        icon: OAK_DOOR
+  
+  first-join-messages:
+    enabled: true
+    messages:
+      first-join-1:
+        message: '&dWelcome to the server, &b%player_name%!'
+        style: CHALLENGE
+        icon: CAKE
+      first-join-2:
+        message: '&b%player_name% &ejoined for the first time!'
+        style: GOAL
+        icon: TOTEM_OF_UNDYING
 
 
 
-
-#These are the messages shown to players
-#You can edit these messages
+# These are the messages shown to players
+# You can edit these messages
 lang-messages:
-  config-reloaded: "&3[AdvancementAnnouncer] &aConfig reloaded!"
-  wrong-usage: "&cWrong usage! Please use /aa toggle"
-  announcements-toggled-on: "&aYou now see the advancement announcements!"
-  announcements-toggled-off: "&cYou no longer see the advancement announcements!"
-  edit-gui-title: "&3Advancement Announcer Edit"
-  presets-gui-title: "&3Advancement Announcer Presets"
-  auto-announce-gui-title: "&3Auto Announce Config"
-  input-cancelled: "&cInput process cancelled."
+  config-reloaded: '&3[AdvancementAnnouncer] &aConfig reloaded!'
+  wrong-usage: '&cWrong usage! Please use /aa toggle'
+  announcements-toggled-on: '&aYou now see the advancement announcements!'
+  announcements-toggled-off: '&cYou no longer see the advancement announcements!'
+  edit-gui-title: '&3Advancement Announcer Edit'
+  presets-gui-title: '&3Advancement Announcer Presets'
+  auto-announce-gui-title: '&3Auto Announce Config'
+  input-cancelled: '&cInput process cancelled.'
+
 ```
 
 </details>
