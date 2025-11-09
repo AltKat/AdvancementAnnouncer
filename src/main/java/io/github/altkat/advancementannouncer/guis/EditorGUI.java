@@ -28,7 +28,9 @@ public class EditorGUI {
     public static void open(Player player, Map<String, Object> data) {
         boolean isCreator = (boolean) data.get("isCreator");
         String type = (String) data.get("type");
-        String title = isCreator ? "Creating new " + type : "Editing " + type + ": " + data.get("name");
+        String readableType = type.replace("-", " ");
+        String title = (isCreator ? "Creating " : "Editing ") + readableType;
+        if (title.length() > 32) title = title.substring(0, 32);
 
         Inventory gui = Bukkit.createInventory(null, 54, title);
 
@@ -57,7 +59,7 @@ public class EditorGUI {
         messageItem.setItemMeta(messageMeta);
         gui.setItem(SLOT_SET_MESSAGE, messageItem);
 
-        if (type.equals("auto-announce")) {
+        if (!type.equals("preset")) {
             ItemStack styleItem = new ItemStack(Material.PAINTING);
             ItemMeta styleMeta = styleItem.getItemMeta();
             styleMeta.setDisplayName(ChatColor.GOLD + "Set Style");
@@ -135,11 +137,27 @@ public class EditorGUI {
                 break;
             case SLOT_CANCEL:
                 ChatInputListener.activeSessions.remove(player.getUniqueId());
-                if (((String) data.get("type")).equals("preset")) {
-                    PresetsGUI.open(player);
-                } else {
-                    AutoAnnounceGUI.open(player);
-                }
+                returnToPreviousMenu(player, (String) data.get("type"));
+                break;
+        }
+    }
+
+    private static void returnToPreviousMenu(Player player, String type) {
+        switch (type) {
+            case "preset":
+                PresetsGUI.open(player);
+                break;
+            case "auto-announce":
+                AutoAnnounceGUI.open(player);
+                break;
+            case "join-message":
+                JoinMessageListGUI.open(player, "join");
+                break;
+            case "first-join-message":
+                JoinMessageListGUI.open(player, "first-join");
+                break;
+            default:
+                MainMenuGUI.open(player);
                 break;
         }
     }
@@ -156,13 +174,30 @@ public class EditorGUI {
         String type = (String) data.get("type");
         String originalName = (String) data.get("originalName");
 
-        if (!isCreator && originalName != null && !originalName.equals(name)) {
-            String oldPath = type.equals("preset") ? "presets." + originalName : "auto-announce.messages." + originalName;
-            plugin.getConfig().set(oldPath, null);
+        String basePath;
+        switch (type) {
+            case "preset":
+                basePath = "presets.";
+                break;
+            case "auto-announce":
+                basePath = "auto-announce.messages.";
+                break;
+            case "join-message":
+                basePath = "join-features.join-messages.messages.";
+                break;
+            case "first-join-message":
+                basePath = "join-features.first-join-messages.messages.";
+                break;
+            default:
+                player.sendMessage(ChatColor.RED + "Error: Unknown data type.");
+                return;
         }
 
-        String newPathCheck = type.equals("preset") ? "presets." : "auto-announce.messages.";
-        if (plugin.getConfig().contains(newPathCheck + name) && (isCreator || !originalName.equals(name))) {
+        if (!isCreator && originalName != null && !originalName.equals(name)) {
+            plugin.getConfig().set(basePath + originalName, null);
+        }
+
+        if (plugin.getConfig().contains(basePath + name) && (isCreator || !originalName.equals(name))) {
             player.sendMessage(ChatColor.RED + "An item with this name already exists!");
             return;
         }
@@ -170,24 +205,21 @@ public class EditorGUI {
         ChatInputListener.activeSessions.remove(player.getUniqueId());
 
         if (type.equals("preset")) {
-            plugin.getConfig().set("presets." + name, data.get("message"));
+            plugin.getConfig().set(basePath + name, data.get("message"));
         } else {
-            String path = "auto-announce.messages." + name;
-            plugin.getConfig().set(path + ".message", data.get("message"));
-            plugin.getConfig().set(path + ".style", data.get("style"));
-            plugin.getConfig().set(path + ".icon", data.get("icon"));
+            plugin.getConfig().set(basePath + name + ".message", data.get("message"));
+            plugin.getConfig().set(basePath + name + ".style", data.get("style"));
+            plugin.getConfig().set(basePath + name + ".icon", data.get("icon"));
         }
 
         plugin.saveConfig();
-        AutoAnnounce.stopAutoAnnounce();
-        AutoAnnounce.startAutoAnnounce();
+        if (type.equals("auto-announce")) {
+            AutoAnnounce.stopAutoAnnounce();
+            AutoAnnounce.startAutoAnnounce();
+        }
         player.sendMessage(ChatColor.GREEN + "Changes saved successfully!");
 
-        if (type.equals("preset")) {
-            PresetsGUI.open(player);
-        } else {
-            AutoAnnounceGUI.open(player);
-        }
+        returnToPreviousMenu(player, type);
     }
 
     private static void addFormattedMessage(List<String> lore, String message) {

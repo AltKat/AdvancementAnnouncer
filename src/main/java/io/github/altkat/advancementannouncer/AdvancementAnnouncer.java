@@ -5,9 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 public class AdvancementAnnouncer extends JavaPlugin {
     boolean IsPAPIEnabled;
@@ -43,6 +41,7 @@ public class AdvancementAnnouncer extends JavaPlugin {
         getServer().getPluginManager().registerEvents(commandHandler, this);
         getServer().getPluginManager().registerEvents(new GUIHandler(), this);
         getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(this, 121602), this);
 
         AutoAnnounce.startAutoAnnounce();

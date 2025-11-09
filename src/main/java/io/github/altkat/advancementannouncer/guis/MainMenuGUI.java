@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class MainMenuGUI {
     private static final AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
     private static final int SLOT_EDIT_AUTO_ANNOUNCE = 11;
+    private static final int SLOT_JOIN_FEATURES = 13;
     private static final int SLOT_EDIT_PRESETS = 15;
 
     public static void open(Player player) {
@@ -23,6 +24,12 @@ public class MainMenuGUI {
         autoAnnounceMeta.setDisplayName(ChatColor.AQUA + "Edit Auto Announce");
         autoAnnounceItem.setItemMeta(autoAnnounceMeta);
         gui.setItem(SLOT_EDIT_AUTO_ANNOUNCE, autoAnnounceItem);
+
+        ItemStack joinFeaturesItem = new ItemStack(Material.IRON_DOOR);
+        ItemMeta joinFeaturesMeta = joinFeaturesItem.getItemMeta();
+        joinFeaturesMeta.setDisplayName(ChatColor.GOLD + "Edit Join Features");
+        joinFeaturesItem.setItemMeta(joinFeaturesMeta);
+        gui.setItem(SLOT_JOIN_FEATURES, joinFeaturesItem);
 
         ItemStack presetsItem = new ItemStack(Material.PAPER);
         ItemMeta presetsMeta = presetsItem.getItemMeta();
@@ -41,6 +48,8 @@ public class MainMenuGUI {
             AutoAnnounceGUI.open(player);
         } else if (slot == SLOT_EDIT_PRESETS) {
             PresetsGUI.open(player);
+        } else if (slot == SLOT_JOIN_FEATURES) {
+            JoinFeaturesGUI.open(player);
         }
     }
 }

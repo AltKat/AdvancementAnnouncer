@@ -37,6 +37,12 @@ public class GUIHandler implements Listener {
             PresetsGUI.handleClick(event);
         } else if (title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title")))) {
             AutoAnnounceGUI.handleClick(event);
+        } else if (title.contains("Join Features") || title.contains("Join Messages")) {
+            if (title.contains("Join Features")) {
+                JoinFeaturesGUI.handleClick(event);
+            } else {
+                JoinMessageListGUI.handleClick(event);
+            }
         } else if (title.startsWith("Editing ") || title.startsWith("Creating ")) {
             EditorGUI.handleClick(event);
         } else if (title.equals("Select a Style")) {
@@ -52,6 +58,8 @@ public class GUIHandler implements Listener {
         return title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title"))) ||
                 title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title"))) ||
                 title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title"))) ||
+                title.contains("Join Features") ||
+                title.contains("Join Messages") ||
                 title.startsWith("Editing ") ||
                 title.startsWith("Creating ") ||
                 title.equals("Select a Style") ||

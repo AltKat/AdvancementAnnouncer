@@ -35,6 +35,33 @@ auto-announce:
       icon: "GOLD_INGOT"
 
 
+# Messages to be displayed when players join the server.
+# If you add more than one message, a random one will be selected and displayed.
+join-features:
+  join-messages:
+    enabled: true
+    messages:
+      welcome-back-1:
+        message: '&eWelcome back, &a%player_name%!'
+        style: GOAL
+        icon: GOLDEN_APPLE
+      welcome-back-2:
+        message: '&7[&a+&7] &f%player_name%'
+        style: TASK
+        icon: OAK_DOOR
+
+  first-join-messages:
+    enabled: true
+    messages:
+      first-join-1:
+        message: '&dWelcome to the server, &b%player_name%!'
+        style: CHALLENGE
+        icon: CAKE
+      first-join-2:
+        message: '&b%player_name% &ejoined for the first time!'
+        style: GOAL
+        icon: TOTEM_OF_UNDYING
+
 
 
 #These are the messages shown to players
