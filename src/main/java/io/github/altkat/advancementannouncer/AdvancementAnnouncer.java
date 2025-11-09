@@ -2,7 +2,6 @@ package io.github.altkat.advancementannouncer;
 import io.github.altkat.advancementannouncer.Handlers.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -38,27 +37,17 @@ public class AdvancementAnnouncer extends JavaPlugin {
         getCommand("advancementannouncer").setExecutor(commandHandler);
         getCommand("advancementannouncer").setTabCompleter(commandHandler);
 
-        getServer().getPluginManager().registerEvents(commandHandler, this);
         getServer().getPluginManager().registerEvents(new GUIHandler(), this);
         getServer().getPluginManager().registerEvents(new ChatInputListener(), this);
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
-        getServer().getPluginManager().registerEvents(new UpdateChecker(this, 121602), this);
 
         AutoAnnounce.startAutoAnnounce();
 
-        FileConfiguration config = getConfig();
         int pluginId = 24282;
-        Metrics metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
 
 
-        new UpdateChecker(this, 121602).getVersion(newVersion -> {
-            if (UpdateChecker.isNewerVersion(this.getDescription().getVersion(), newVersion)) {
-                getLogger().warning("There is a new update available for AdvancementAnnouncer! Version: " + newVersion);
-                getLogger().warning("Download it from: https://www.spigotmc.org/resources/advancement-announcer.121602/");
-            } else {
-                getLogger().info("Plugin is up to date.");
-            }
-        });
+        new UpdateChecker(this, "altkat/AdvancementAnnouncer").checkAsync();
 
         getServer().getConsoleSender().sendMessage("§3[AdvancementAnnouncer] §aPlugin has been enabled!");
     }
