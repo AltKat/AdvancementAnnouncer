@@ -59,35 +59,35 @@ public class EditorGUI {
         messageItem.setItemMeta(messageMeta);
         gui.setItem(SLOT_SET_MESSAGE, messageItem);
 
-        if (!type.equals("preset")) {
-            ItemStack styleItem = new ItemStack(Material.PAINTING);
-            ItemMeta styleMeta = styleItem.getItemMeta();
-            styleMeta.setDisplayName(ChatColor.GOLD + "Set Style");
-            List<String> styleLore = new ArrayList<>();
-            styleLore.add(ChatColor.GRAY + "Current: " + data.get("style"));
-            styleLore.add(" ");
-            styleLore.add(ChatColor.GREEN + "Click to choose a style.");
-            styleMeta.setLore(styleLore);
-            styleItem.setItemMeta(styleMeta);
-            gui.setItem(SLOT_SET_STYLE, styleItem);
 
-            Material iconMaterial;
-            try {
-                iconMaterial = Material.valueOf(((String) data.get("icon")).toUpperCase());
-            } catch (Exception e) {
-                iconMaterial = Material.STONE;
-            }
-            ItemStack iconItem = new ItemStack(iconMaterial);
-            ItemMeta iconMeta = iconItem.getItemMeta();
-            iconMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Set Icon");
-            List<String> iconLore = new ArrayList<>();
-            iconLore.add(ChatColor.GRAY + "Current: " + data.get("icon"));
-            iconLore.add(" ");
-            iconLore.add(ChatColor.GREEN + "Click to choose an icon.");
-            iconMeta.setLore(iconLore);
-            iconItem.setItemMeta(iconMeta);
-            gui.setItem(SLOT_SET_ICON, iconItem);
+        ItemStack styleItem = new ItemStack(Material.PAINTING);
+        ItemMeta styleMeta = styleItem.getItemMeta();
+        styleMeta.setDisplayName(ChatColor.GOLD + "Set Style");
+        List<String> styleLore = new ArrayList<>();
+        styleLore.add(ChatColor.GRAY + "Current: " + data.get("style"));
+        styleLore.add(" ");
+        styleLore.add(ChatColor.GREEN + "Click to choose a style.");
+        styleMeta.setLore(styleLore);
+        styleItem.setItemMeta(styleMeta);
+        gui.setItem(SLOT_SET_STYLE, styleItem);
+
+        Material iconMaterial;
+        try {
+            iconMaterial = Material.valueOf(((String) data.get("icon")).toUpperCase());
+        } catch (Exception e) {
+            iconMaterial = Material.STONE;
         }
+        ItemStack iconItem = new ItemStack(iconMaterial);
+        ItemMeta iconMeta = iconItem.getItemMeta();
+        iconMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Set Icon");
+        List<String> iconLore = new ArrayList<>();
+        iconLore.add(ChatColor.GRAY + "Current: " + data.get("icon"));
+        iconLore.add(" ");
+        iconLore.add(ChatColor.GREEN + "Click to choose an icon.");
+        iconMeta.setLore(iconLore);
+        iconItem.setItemMeta(iconMeta);
+        gui.setItem(SLOT_SET_ICON, iconItem);
+
 
         ItemStack saveItem = new ItemStack(Material.GREEN_WOOL);
         ItemMeta saveMeta = saveItem.getItemMeta();
@@ -204,13 +204,9 @@ public class EditorGUI {
 
         ChatInputListener.activeSessions.remove(player.getUniqueId());
 
-        if (type.equals("preset")) {
-            plugin.getConfig().set(basePath + name, data.get("message"));
-        } else {
-            plugin.getConfig().set(basePath + name + ".message", data.get("message"));
-            plugin.getConfig().set(basePath + name + ".style", data.get("style"));
-            plugin.getConfig().set(basePath + name + ".icon", data.get("icon"));
-        }
+        plugin.getConfig().set(basePath + name + ".message", data.get("message"));
+        plugin.getConfig().set(basePath + name + ".style", data.get("style"));
+        plugin.getConfig().set(basePath + name + ".icon", data.get("icon"));
 
         plugin.saveConfig();
         if (type.equals("auto-announce")) {

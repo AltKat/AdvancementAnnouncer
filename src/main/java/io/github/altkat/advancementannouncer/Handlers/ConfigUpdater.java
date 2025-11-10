@@ -2,16 +2,21 @@ package io.github.altkat.advancementannouncer.Handlers;
 
 import com.google.common.base.Charsets;
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class ConfigUpdater {
 
     public static void update(AdvancementAnnouncer plugin) throws IOException {
+        migratePresets(plugin);
+
         File configFile = new File(plugin.getDataFolder(), "config.yml");
 
         FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(
@@ -49,5 +54,52 @@ public class ConfigUpdater {
         }
 
         userConfig.save(configFile);
+    }
+
+    private static void migratePresets(AdvancementAnnouncer plugin) {
+        FileConfiguration config = plugin.getConfig();
+        ConfigurationSection presets = config.getConfigurationSection("presets");
+
+        if (presets == null) return;
+
+        boolean migrated = false;
+        boolean backupCreated = false;
+
+        for (String key : presets.getKeys(false)) {
+            if (presets.isString(key)) {
+                if (!backupCreated) {
+                    createBackup(plugin);
+                    backupCreated = true;
+                }
+
+                String oldMessage = presets.getString(key);
+                presets.set(key, null);
+
+                ConfigurationSection newSection = presets.createSection(key);
+                newSection.set("message", oldMessage);
+                newSection.set("style", "GOAL");
+                newSection.set("icon", "PAPER");
+
+                plugin.getLogger().info("Migrated legacy preset to new format: " + key);
+                migrated = true;
+            }
+        }
+
+        if (migrated) {
+            plugin.saveConfig();
+            plugin.reloadConfig();
+        }
+    }
+
+    private static void createBackup(AdvancementAnnouncer plugin) {
+        try {
+            File configFile = new File(plugin.getDataFolder(), "config.yml");
+            File backupFile = new File(plugin.getDataFolder(), "config.yml.backup");
+
+            Files.copy(configFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            plugin.getLogger().info("Created backup of config.yml before migration.");
+        } catch (IOException e) {
+            plugin.getLogger().warning("Failed to create config backup: " + e.getMessage());
+        }
     }
 }

@@ -27,13 +27,26 @@ public class PresetsGUI {
         ConfigurationSection presetsSection = plugin.getConfig().getConfigurationSection("presets");
         if (presetsSection != null) {
             for (String key : presetsSection.getKeys(false)) {
-                ItemStack item = new ItemStack(Material.PAPER);
+                ConfigurationSection preset = presetsSection.getConfigurationSection(key);
+                if (preset == null) continue;
+
+                String iconStr = preset.getString("icon", "PAPER");
+                Material iconMaterial;
+                try {
+                    iconMaterial = Material.valueOf(iconStr.toUpperCase());
+                } catch (Exception e) {
+                    iconMaterial = Material.PAPER;
+                }
+
+                ItemStack item = new ItemStack(iconMaterial);
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.translateAlternateColorCodes('&', "&f&nCurrent Message:"));
                 lore.add(" ");
-                addFormattedMessage(lore, presetsSection.getString(key));
+                addFormattedMessage(lore, preset.getString("message"));
+                lore.add(" ");
+                lore.add(ChatColor.GRAY + "Style: " + ChatColor.WHITE + preset.getString("style", "GOAL"));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit this preset.");
                 lore.add(ChatColor.RED + "Right click to delete this preset.");
@@ -74,12 +87,19 @@ public class PresetsGUI {
             data.put("type", "preset");
             data.put("name", "<not set>");
             data.put("message", "Default message");
+            data.put("style", "GOAL");
+            data.put("icon", "GRASS_BLOCK");
             EditorGUI.open(player, data);
             return;
         }
 
-        if (clickedItem != null && clickedItem.getType() == Material.PAPER) {
+        if (clickedItem != null && clickedItem.getType() != Material.AIR && slot < 45) {
+            if (!clickedItem.hasItemMeta() || !clickedItem.getItemMeta().hasDisplayName()) return;
+
             String presetName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+
+            if (!plugin.getConfig().contains("presets." + presetName)) return;
+
             if (event.isRightClick()) {
                 ConfirmationGUI.open(player, presetName);
                 GUIHandler.confirmationActions.put(player.getUniqueId(), () -> {
@@ -89,12 +109,15 @@ public class PresetsGUI {
                     open(player);
                 });
             } else if (event.isLeftClick()) {
+                ConfigurationSection preset = plugin.getConfig().getConfigurationSection("presets." + presetName);
                 Map<String, Object> data = new HashMap<>();
                 data.put("isCreator", false);
                 data.put("originalName", presetName);
                 data.put("type", "preset");
                 data.put("name", presetName);
-                data.put("message", plugin.getConfig().getString("presets." + presetName));
+                data.put("message", preset.getString("message"));
+                data.put("style", preset.getString("style", "GOAL"));
+                data.put("icon", preset.getString("icon", "STONE"));
                 EditorGUI.open(player, data);
             }
         }

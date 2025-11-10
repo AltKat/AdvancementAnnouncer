@@ -10,10 +10,22 @@
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
 presets: # you can add as many presets as you want
-  preset1: "&aThis is &6my cool| &amessage wow!"
-  store-preset: "&6You can get ranks|&6on our store &b/store"
-  discord-preset: "&9Join our discord server|&bdiscord.gg/yourdc"
-  greeting: "&eHello &a%player_name%|&eHow is it going?"
+  preset1:
+    message: "&aThis is &6my cool| &amessage wow!"
+    style: "GOAL"
+    icon: "DIAMOND"
+  store-preset:
+    message: "&6You can get ranks|&6on our store &b/store"
+    style: "TASK"
+    icon: "EMERALD"
+  discord-preset:
+    message: "&9Join our discord server|&bdiscord.gg/yourdc"
+    style: "CHALLENGE"
+    icon: "BOOK"
+  greeting:
+    message: "&eHello &a%player_name%|&eHow is it going?"
+    style: "GOAL"
+    icon: "APPLE"
 
 
 auto-announce:

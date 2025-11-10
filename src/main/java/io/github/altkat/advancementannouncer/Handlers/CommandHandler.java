@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -96,42 +97,99 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private void handleSendCommand(CommandSender sender, String[] args) {
-        if (args.length < 5) {
-            sender.sendMessage(ChatColor.RED + "Usage: /aa send <style> <icon> <player/all> <message/preset>");
+        if (args.length < 2) {
+            sendHelpMessage(sender);
             return;
         }
 
-        final AdvancementHandler.Style style;
-        try {
-            style = AdvancementHandler.Style.valueOf(args[1].toUpperCase());
-        } catch (final Throwable t) {
-            sender.sendMessage(ChatColor.RED + "Invalid style: " + args[1]);
-            return;
-        }
-
-        final String materialName = args[2];
-        try {
-            Material.valueOf(materialName.toUpperCase());
-        } catch (final Throwable t) {
-            sender.sendMessage(ChatColor.RED + "Invalid material: " + materialName);
-            return;
-        }
-
-        String audience = args[3];
-        String message = "";
-
-        if (plugin.getConfig().getConfigurationSection("presets").getKeys(false).contains(args[4])) {
-            message = plugin.getConfig().getString("presets." + args[4]);
-        } else {
-            StringBuilder messageBuilder = new StringBuilder();
-            for (int i = 4; i < args.length; i++) {
-                messageBuilder.append(args[i]).append(" ");
+        if (args[1].equalsIgnoreCase("preset")) {
+            if (args.length < 4) {
+                sender.sendMessage(ChatColor.RED + "Usage: /aa send preset <presetName> <target>");
+                return;
             }
-            message = messageBuilder.toString();
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message.trim());
+            String presetName = args[2];
+            String targetName = args[3];
 
-        if (audience.equalsIgnoreCase("all")) {
+            ConfigurationSection presetSection = plugin.getConfig().getConfigurationSection("presets." + presetName);
+            if (presetSection == null) {
+                sender.sendMessage(ChatColor.RED + "Preset not found: " + presetName);
+                return;
+            }
+
+            String message;
+            String styleStr;
+            String iconStr;
+
+            if (plugin.getConfig().isConfigurationSection("presets." + presetName)) {
+                message = presetSection.getString("message");
+                styleStr = presetSection.getString("style", "GOAL");
+                iconStr = presetSection.getString("icon", "STONE");
+            } else {
+                message = plugin.getConfig().getString("presets." + presetName);
+                styleStr = "GOAL";
+                iconStr = "PAPER";
+            }
+
+            AdvancementHandler.Style style;
+            try {
+                style = AdvancementHandler.Style.valueOf(styleStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                style = AdvancementHandler.Style.GOAL;
+            }
+
+            sendToTarget(sender, targetName, message, style, iconStr);
+            return;
+        }
+
+        if (args.length >= 5) {
+            final AdvancementHandler.Style style;
+            try {
+                style = AdvancementHandler.Style.valueOf(args[1].toUpperCase());
+            } catch (final IllegalArgumentException t) {
+                sender.sendMessage(ChatColor.RED + "Invalid style or option: " + args[1]);
+                sender.sendMessage(ChatColor.GRAY + "Did you mean '/aa send preset'?");
+                return;
+            }
+
+            final String materialName = args[2];
+            try {
+                Material.valueOf(materialName.toUpperCase());
+            } catch (final IllegalArgumentException t) {
+                sender.sendMessage(ChatColor.RED + "Invalid material: " + materialName);
+                return;
+            }
+
+            String targetName = args[3];
+            String message = "";
+
+            String potentialPresetName = args[4];
+            if (plugin.getConfig().isConfigurationSection("presets." + potentialPresetName)) {
+                message = plugin.getConfig().getString("presets." + potentialPresetName + ".message");
+            } else if (plugin.getConfig().isString("presets." + potentialPresetName)) {
+                message = plugin.getConfig().getString("presets." + potentialPresetName);
+            } else {
+                StringBuilder messageBuilder = new StringBuilder();
+                for (int i = 4; i < args.length; i++) {
+                    messageBuilder.append(args[i]).append(" ");
+                }
+                message = messageBuilder.toString().trim();
+            }
+
+            if (message == null || message.isEmpty()) {
+                sender.sendMessage(ChatColor.RED + "Could not find message for preset or custom input.");
+                return;
+            }
+
+            sendToTarget(sender, targetName, message, style, materialName);
+            return;
+        }
+
+        sender.sendMessage(ChatColor.YELLOW + "Usage 1: /aa send preset <presetName> <target>");
+        sender.sendMessage(ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
+    }
+
+    private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon) {
+        if (targetName.equalsIgnoreCase("all")) {
             if (sender.getServer().getOnlinePlayers().isEmpty()) {
                 sender.sendMessage(ChatColor.RED + "There are no online players in the server!");
                 return;
@@ -141,17 +199,17 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 if (!PlayerData.returnToggleData(player.getUniqueId())) {
                     continue;
                 }
-                AdvancementHandler.displayTo(player, materialName.toLowerCase(), message, style);
+                AdvancementHandler.displayTo(player, icon.toLowerCase(), message, style);
                 sentCount++;
             }
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + sentCount + " player(s)"));
         } else {
-            Player player = sender.getServer().getPlayer(audience);
+            Player player = sender.getServer().getPlayer(targetName);
             if (player == null) {
-                sender.sendMessage(ChatColor.RED + "Player not found: " + audience);
+                sender.sendMessage(ChatColor.RED + "Player not found: " + targetName);
                 return;
             }
-            AdvancementHandler.displayTo(player, materialName.toLowerCase(), message, style);
+            AdvancementHandler.displayTo(player, icon.toLowerCase(), message, style);
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + player.getName()));
         }
     }
@@ -166,49 +224,74 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return tab;
         }
 
-        switch (args.length) {
-            case 1:
-                tab.add("reload");
-                tab.add("toggle");
-                tab.add("edit");
-                tab.add("send");
-                break;
-            case 2:
-                if (args[0].equalsIgnoreCase("send")) {
-                    for (final AdvancementHandler.Style style : AdvancementHandler.Style.values())
+        if (args.length == 1) {
+            tab.add("reload");
+            tab.add("toggle");
+            tab.add("edit");
+            tab.add("send");
+            return filter(tab, args);
+        }
+
+        if (args[0].equalsIgnoreCase("send")) {
+            switch (args.length) {
+                case 2:
+                    tab.add("preset");
+                    for (final AdvancementHandler.Style style : AdvancementHandler.Style.values()) {
                         tab.add(style.toString().toLowerCase());
-                }
-                break;
-            case 3:
-                if (args[0].equalsIgnoreCase("send")) {
-                    for (final Material material : Material.values())
-                        if (material.isItem() && material != Material.AIR) {
-                            tab.add(material.toString().toLowerCase());
+                    }
+                    break;
+                case 3:
+                    if (args[1].equalsIgnoreCase("preset")) {
+                        if (plugin.getConfig().getConfigurationSection("presets") != null) {
+                            tab.addAll(plugin.getConfig().getConfigurationSection("presets").getKeys(false));
                         }
-                }
-                break;
-            case 4:
-                if (args[0].equalsIgnoreCase("send")) {
+                    } else if (isStyle(args[1])) {
+                        for (final Material material : Material.values()) {
+                            if (material.isItem() && material != Material.AIR) {
+                                tab.add(material.toString().toLowerCase());
+                            }
+                        }
+                    }
+                    break;
+                case 4:
                     tab.add("all");
                     for (final Player player : sender.getServer().getOnlinePlayers()) {
                         tab.add(player.getName());
                     }
-                }
-                break;
-            case 5:
-                if (args[0].equalsIgnoreCase("send")) {
-                    tab.addAll(plugin.getConfig().getConfigurationSection("presets").getKeys(false));
-                    tab.add("your message");
-                }
-                break;
+                    break;
+                case 5:
+                    if (isStyle(args[1])) {
+                        if (plugin.getConfig().getConfigurationSection("presets") != null) {
+                            tab.addAll(plugin.getConfig().getConfigurationSection("presets").getKeys(false));
+                        }
+                        tab.add("<message>");
+                    }
+                    break;
+            }
         }
 
-        return tab.stream().filter(completion -> completion.toLowerCase().startsWith(args[args.length - 1].toLowerCase())).collect(Collectors.toList());
+        return filter(tab, args);
+    }
+
+    private List<String> filter(List<String> list, String[] args) {
+        return list.stream()
+                .filter(completion -> completion.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isStyle(String arg) {
+        try {
+            AdvancementHandler.Style.valueOf(arg.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private void sendHelpMessage(CommandSender sender) {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aCommands: "));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player> <message>"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send preset <presetName> <player/all>"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player/all> <message/presetName>"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));

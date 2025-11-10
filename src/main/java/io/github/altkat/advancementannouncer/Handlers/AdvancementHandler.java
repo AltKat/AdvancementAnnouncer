@@ -16,9 +16,8 @@ public class AdvancementHandler {
     private final String icon;
     private final String message;
     private final Style style;
-    private AdvancementAnnouncer plugin;
-
-    private static final Map<String, NamespacedKey> cachedAdvancements = new HashMap<>();
+    private final AdvancementAnnouncer plugin;
+    private static final Map<String, NamespacedKey> cachedKeys = new HashMap<>();
 
     private AdvancementHandler(String icon, String message, Style style) {
         this.plugin = AdvancementAnnouncer.getInstance();
@@ -26,33 +25,31 @@ public class AdvancementHandler {
         this.message = message;
         this.style = style;
 
-        String cacheKey = icon.toLowerCase() + "_" + style.toString().toLowerCase();
+        String cacheId = icon.toLowerCase() + "_" + style.toString().toLowerCase() + "_" + Integer.toHexString(message.hashCode());
 
-        if (!cachedAdvancements.containsKey(cacheKey)) {
-            this.key = new NamespacedKey(plugin, "toast_" + cacheKey);
+        if (!cachedKeys.containsKey(cacheId)) {
+            this.key = new NamespacedKey(plugin, "t_" + cacheId);
             createAdvancement();
-            cachedAdvancements.put(cacheKey, this.key);
+            cachedKeys.put(cacheId, this.key);
         } else {
-            this.key = cachedAdvancements.get(cacheKey);
+            this.key = cachedKeys.get(cacheId);
         }
     }
 
-    private void start(Player player){
+    private void start(Player player) {
+        revokeAdvancement(player);
         grantAdvancement(player);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            revokeAdvancement(player);
-        }, 10);
+            if (player.isOnline()) {
+                revokeAdvancement(player);
+            }
+        }, 40L);
     }
 
+    @SuppressWarnings("deprecation")
     private void createAdvancement() {
-        String itemKey;
-        int version = plugin.getVersion();
-        if (version <= 20) {
-            itemKey = "item";
-        }else {
-            itemKey = "id";
-        }
+        String itemKey = (plugin.getVersion() <= 20) ? "item" : "id";
 
         String advancementJson = "{\n" +
                 "    \"criteria\": {\n" +
@@ -86,8 +83,7 @@ public class AdvancementHandler {
         try {
             Bukkit.getUnsafe().loadAdvancement(key, advancementJson);
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to create advancement: " + e.getMessage());
-            e.printStackTrace();
+            plugin.getLogger().warning("Error creating advancement: " + e.getMessage());
         }
     }
 
@@ -96,35 +92,31 @@ public class AdvancementHandler {
             Advancement adv = Bukkit.getAdvancement(key);
             if (adv != null) {
                 player.getAdvancementProgress(adv).awardCriteria("trigger");
-            } else {
-                plugin.getLogger().warning("Advancement not found for key: " + key);
             }
         } catch (Exception e) {
-            plugin.getLogger().severe("Error granting advancement to " + player.getName() + ": " + e.getMessage());
-            e.printStackTrace();
+            // ignored
         }
     }
 
     private void revokeAdvancement(Player player) {
         try {
             Advancement adv = Bukkit.getAdvancement(key);
-            if (adv != null) {
+            if (adv != null && player.isOnline()) {
                 player.getAdvancementProgress(adv).revokeCriteria("trigger");
             }
         } catch (Exception e) {
-            plugin.getLogger().severe("Error revoking advancement from " + player.getName() + ": " + e.getMessage());
-            e.printStackTrace();
+            // ignored
         }
     }
 
     public static void displayTo(Player player, String icon, String message, Style style) {
-        String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
-        if(AdvancementAnnouncer.getInstance().isPAPIEnabled()) {
-            String parsedMessage = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, coloredMessage));
-            new AdvancementHandler(icon, parsedMessage, style).start(player);
-        }else {
-            new AdvancementHandler(icon, coloredMessage, style).start(player);
+        String finalMessage = ChatColor.translateAlternateColorCodes('&', message);
+
+        if (AdvancementAnnouncer.getInstance().isPAPIEnabled()) {
+            finalMessage = PlaceholderAPI.setPlaceholders(player, finalMessage);
         }
+
+        new AdvancementHandler(icon, finalMessage, style).start(player);
     }
 
     public static enum Style {
