@@ -28,11 +28,14 @@
 
 ### Commands
 - **`/aa edit`**: Opens the main configuration GUI. From here, you can manage presets and auto-announcements.
-- **`/aa send <style> <icon> <player's name/all> <preset/message>`**
+- **`/aa send` Commands**:
+    - **Send a Preset:** `/aa send preset <presetname> <target>`
+      - Sends a pre-configured preset with its saved style and icon.
+    - **Send Custom/Override:** `/aa send <style> <icon> <target> <message/presetname>`
+      - Send a fully custom message OR override a preset's visual settings while keeping its message.
     - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
     - Possible options for **icon** can be found <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html" target="_blank">here</a>.
     - Target a specific player's name or use `all`.
-    - Write your own message in the command or use one of the presets defined in the config.
 - **`/aa toggle`**: Players can set if they want to see announcement messages (Player-specific announcements are not affected by this command).
 - **`/aa reload`**: Reloads the configuration file.
 
@@ -71,7 +74,7 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 ```yaml
 # ######################################################################################################
 # ##                                                                                                  ##
-# ##   AdvancementAnnouncer v1.4.0 by Altkat(StreetMelodeez)                                          ##
+# ##   AdvancementAnnouncer v1.5.0 by Altkat(StreetMelodeez)                                            ##
 # ##   Discord: streetmelodeez                                                                        ##
 # ##   Please use /aa reload to apply changes.                                                        ##
 # ##   You can use /aa edit in game chat to edit this file.                                           ##
@@ -81,29 +84,41 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
 presets: # you can add as many presets as you want
-  preset1: '&aThis is &6my cool| &amessage wow!'
-  store-preset: '&6You can get ranks|&6on our store &b/store'
-  discord-preset: '&9Join our discord server|&bdiscord.gg/yourdc'
-  greeting: '&eHello &a%player_name%|&eHow is it going?'
+  preset1:
+    message: "&aThis is &6my cool| &amessage wow!"
+    style: "GOAL"
+    icon: "DIAMOND"
+  store-preset:
+    message: "&6You can get ranks|&6on our store &b/store"
+    style: "TASK"
+    icon: "EMERALD"
+  discord-preset:
+    message: "&9Join our discord server|&bdiscord.gg/yourdc"
+    style: "CHALLENGE"
+    icon: "BOOK"
+  greeting:
+    message: "&eHello &a%player_name%|&eHow is it going?"
+    style: "GOAL"
+    icon: "APPLE"
 
 
 auto-announce:
-  enabled: false # should the plugin announce messages automatically
-  interval: 30 # in seconds
-  mode: ORDERED # ORDERED, RANDOM
-  messages: # you can add as many messages as you want
+  enabled: false    # should the plugin announce messages automatically
+  interval: 30      # in seconds
+  mode: "ORDERED"   # ORDERED, RANDOM
+  messages:         # you can add as many messages as you want
     custommessage1:
-      message: '&eHello &a%player_name%|&eHow is it going?'
-      style: GOAL # GOAL, TASK, CHALLENGE
-      icon: EMERALD # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+      message: "&eHello &a%player_name%|&eHow is it going?"
+      style: "GOAL"   # GOAL, TASK, CHALLENGE
+      icon: "EMERALD" # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
     custommessage2:
-      message: '&9Join our discord server|&bdiscord.gg/yourdc'
-      style: TASK
-      icon: DIAMOND
+      message: "&9Join our discord server|&bdiscord.gg/yourdc"
+      style: "TASK"
+      icon: "DIAMOND"
     vipmessage:
-      message: '&6You can get ranks|&6on our store &b/store'
-      style: CHALLENGE
-      icon: GOLD_INGOT
+      message: "&6You can get ranks|&6on our store &b/store"
+      style: "CHALLENGE"
+      icon: "GOLD_INGOT"
 
 
 # Messages to be displayed when players join the server.
@@ -120,7 +135,7 @@ join-features:
         message: '&7[&a+&7] &f%player_name%'
         style: TASK
         icon: OAK_DOOR
-  
+
   first-join-messages:
     enabled: true
     messages:
@@ -135,17 +150,17 @@ join-features:
 
 
 
-# These are the messages shown to players
-# You can edit these messages
+#These are the messages shown to players
+#You can edit these messages
 lang-messages:
-  config-reloaded: '&3[AdvancementAnnouncer] &aConfig reloaded!'
-  wrong-usage: '&cWrong usage! Please use /aa toggle'
-  announcements-toggled-on: '&aYou now see the advancement announcements!'
-  announcements-toggled-off: '&cYou no longer see the advancement announcements!'
-  edit-gui-title: '&3Advancement Announcer Edit'
-  presets-gui-title: '&3Advancement Announcer Presets'
-  auto-announce-gui-title: '&3Auto Announce Config'
-  input-cancelled: '&cInput process cancelled.'
+  config-reloaded: "&3[AdvancementAnnouncer] &aConfig reloaded!"
+  wrong-usage: "&cWrong usage! Please use /aa toggle"
+  announcements-toggled-on: "&aYou now see the advancement announcements!"
+  announcements-toggled-off: "&cYou no longer see the advancement announcements!"
+  edit-gui-title: "&3Advancement Announcer Edit"
+  presets-gui-title: "&3Advancement Announcer Presets"
+  auto-announce-gui-title: "&3Auto Announce Config"
+  input-cancelled: "&cInput process cancelled."
 
 ```
 
