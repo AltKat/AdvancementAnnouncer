@@ -6,6 +6,22 @@
 
 </div>
 
+<p align="center">
+  <br/>
+    <img src="https://img.shields.io/badge/MC-1.16.5+-green?style=for-the-badge" alt="Minecraft 1.21+" />
+  <img src="https://img.shields.io/badge/Java-17+-blueviolet?style=for-the-badge" alt="Java 17+" />
+  <a href="https://github.com/altkat/AdvancementAnnouncer/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License: MIT" />
+  </a>
+  <a href="https://bstats.org/plugin/bukkit/AdvancementAnnouncer/24282">
+    <img src="https://img.shields.io/bstats/servers/24282?label=bStats&style=for-the-badge" alt="bStats Servers" />
+  </a>
+  <br>
+  <a href="https://discordapp.com/users/247441109888925697">
+    <img src="https://img.shields.io/badge/Discord-Profile-5865F2?style=for-the-badge&logo=discord" alt="Discord Profile" />
+  </a>
+</p>
+
 <div align="center"><b>Important!</b></div><br>
 <div align="center">This plugin requires Java 17 or newer.​<br>
 <br><br>
