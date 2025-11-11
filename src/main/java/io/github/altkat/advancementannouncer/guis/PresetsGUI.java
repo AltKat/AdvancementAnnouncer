@@ -47,6 +47,8 @@ public class PresetsGUI {
                 addFormattedMessage(lore, preset.getString("message"));
                 lore.add(" ");
                 lore.add(ChatColor.GRAY + "Style: " + ChatColor.WHITE + preset.getString("style", "GOAL"));
+                String cmd = preset.getString("custom-model-data", "");
+                lore.add(ChatColor.GRAY + "CustomModelData: " + ChatColor.WHITE + (cmd.isEmpty() ? "None" : cmd));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit this preset.");
                 lore.add(ChatColor.RED + "Right click to delete this preset.");
@@ -89,6 +91,7 @@ public class PresetsGUI {
             data.put("message", "Default message");
             data.put("style", "GOAL");
             data.put("icon", "GRASS_BLOCK");
+            data.put("custom-model-data", "");
             EditorGUI.open(player, data);
             return;
         }
@@ -118,6 +121,7 @@ public class PresetsGUI {
                 data.put("message", preset.getString("message"));
                 data.put("style", preset.getString("style", "GOAL"));
                 data.put("icon", preset.getString("icon", "STONE"));
+                data.put("custom-model-data", preset.getString("custom-model-data", ""));
                 EditorGUI.open(player, data);
             }
         }

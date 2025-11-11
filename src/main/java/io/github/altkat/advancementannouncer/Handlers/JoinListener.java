@@ -50,13 +50,15 @@ public class JoinListener implements Listener {
         String styleString = plugin.getConfig().getString(messagePath + ".style", "GOAL").toUpperCase();
         String iconString = plugin.getConfig().getString(messagePath + ".icon", "STONE").toUpperCase();
 
+        String customModelDataString = plugin.getConfig().getString(messagePath + ".custom-model-data", null);
+
         try {
             AdvancementHandler.Style style = AdvancementHandler.Style.valueOf(styleString);
             Material icon = Material.valueOf(iconString);
 
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
-                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), message, style);
+                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), customModelDataString, message, style);
                 }
             }, 20L);
 

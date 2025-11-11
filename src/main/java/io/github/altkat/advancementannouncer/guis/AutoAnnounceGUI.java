@@ -68,6 +68,8 @@ public class AutoAnnounceGUI {
                 lore.add(" ");
                 lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
                 lore.add(ChatColor.WHITE + "Icon: " + messagesSection.getString(key + ".icon"));
+                String cmd = messagesSection.getString(key + ".custom-model-data", "");
+                lore.add(ChatColor.WHITE + "CustomModelData: " + (cmd.isEmpty() ? "None" : cmd));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit.");
                 lore.add(ChatColor.RED + "Right click to delete.");
@@ -136,6 +138,7 @@ public class AutoAnnounceGUI {
                 data.put("message", "Default message");
                 data.put("style", "GOAL");
                 data.put("icon", "STONE");
+                data.put("custom-model-data", "");
                 EditorGUI.open(player, data);
                 break;
             default:
@@ -161,6 +164,7 @@ public class AutoAnnounceGUI {
                         editData.put("message", plugin.getConfig().getString(path + ".message", ""));
                         editData.put("style", plugin.getConfig().getString(path + ".style", "GOAL"));
                         editData.put("icon", plugin.getConfig().getString(path + ".icon", "STONE"));
+                        editData.put("custom-model-data", plugin.getConfig().getString(path + ".custom-model-data", ""));
                         EditorGUI.open(player, editData);
                     }
                 }

@@ -72,6 +72,9 @@ public class AutoAnnounce {
                         failedAttempts++;
                         return;
                     }
+
+                    String customModelData = subSection.getConfigurationSection(keyList.get(order)).getString("custom-model-data", null);
+
                     Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
                     if(playerList.isEmpty()) return;
                     for(Player player : playerList) {
@@ -82,7 +85,7 @@ public class AutoAnnounce {
                         }
 
                         if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
-                        AdvancementHandler.displayTo(player, icon, message, style);
+                        AdvancementHandler.displayTo(player, icon, customModelData, message, style);
                     }
                     lastMessageIndex = order;
                 }, 60L, mainSection.getInt("interval") * 20L).getTaskId();
@@ -106,11 +109,14 @@ public class AutoAnnounce {
                         order++;
                         return;
                     }
+
+                    String customModelData = subSection.getConfigurationSection(keyList.get(order)).getString("custom-model-data", null);
+
                     Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
                     if(playerList.isEmpty()) return;
                     for(Player player : playerList) {
                         if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
-                        AdvancementHandler.displayTo(player, icon, message, style);
+                        AdvancementHandler.displayTo(player, icon, customModelData, message, style);
                     }
                     order++;
                 }, 60L, mainSection.getInt("interval") * 20L).getTaskId();

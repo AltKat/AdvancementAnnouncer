@@ -119,15 +119,18 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             String message;
             String styleStr;
             String iconStr;
+            String customModelDataStr;
 
             if (plugin.getConfig().isConfigurationSection("presets." + presetName)) {
                 message = presetSection.getString("message");
                 styleStr = presetSection.getString("style", "GOAL");
                 iconStr = presetSection.getString("icon", "STONE");
+                customModelDataStr = presetSection.getString("custom-model-data", null);
             } else {
                 message = plugin.getConfig().getString("presets." + presetName);
                 styleStr = "GOAL";
                 iconStr = "PAPER";
+                customModelDataStr = null;
             }
 
             AdvancementHandler.Style style;
@@ -137,7 +140,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 style = AdvancementHandler.Style.GOAL;
             }
 
-            sendToTarget(sender, targetName, message, style, iconStr);
+            sendToTarget(sender, targetName, message, style, iconStr, customModelDataStr);
             return;
         }
 
@@ -180,7 +183,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            sendToTarget(sender, targetName, message, style, materialName);
+            sendToTarget(sender, targetName, message, style, materialName, null);
             return;
         }
 
@@ -188,7 +191,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
     }
 
-    private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon) {
+    private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon, String customModelData) {
         if (targetName.equalsIgnoreCase("all")) {
             if (sender.getServer().getOnlinePlayers().isEmpty()) {
                 sender.sendMessage(ChatColor.RED + "There are no online players in the server!");
@@ -199,7 +202,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 if (!PlayerData.returnToggleData(player.getUniqueId())) {
                     continue;
                 }
-                AdvancementHandler.displayTo(player, icon.toLowerCase(), message, style);
+                AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
                 sentCount++;
             }
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + sentCount + " player(s)"));
@@ -209,7 +212,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.RED + "Player not found: " + targetName);
                 return;
             }
-            AdvancementHandler.displayTo(player, icon.toLowerCase(), message, style);
+            AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + player.getName()));
         }
     }

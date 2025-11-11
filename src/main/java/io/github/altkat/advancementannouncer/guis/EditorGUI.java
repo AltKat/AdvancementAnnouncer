@@ -22,6 +22,7 @@ public class EditorGUI {
     private static final int SLOT_SET_MESSAGE = 13;
     private static final int SLOT_SET_STYLE = 16;
     private static final int SLOT_SET_ICON = 19;
+    private static final int SLOT_SET_CUSTOM_MODEL_DATA = 22;
     private static final int SLOT_SAVE = 49;
     private static final int SLOT_CANCEL = 45;
 
@@ -33,6 +34,8 @@ public class EditorGUI {
         if (title.length() > 32) title = title.substring(0, 32);
 
         Inventory gui = Bukkit.createInventory(null, 54, title);
+
+        data.putIfAbsent("custom-model-data", "");
 
         ChatInputListener.activeSessions.put(player.getUniqueId(), data);
 
@@ -58,7 +61,6 @@ public class EditorGUI {
         messageMeta.setLore(messageLore);
         messageItem.setItemMeta(messageMeta);
         gui.setItem(SLOT_SET_MESSAGE, messageItem);
-
 
         ItemStack styleItem = new ItemStack(Material.PAINTING);
         ItemMeta styleMeta = styleItem.getItemMeta();
@@ -87,6 +89,27 @@ public class EditorGUI {
         iconMeta.setLore(iconLore);
         iconItem.setItemMeta(iconMeta);
         gui.setItem(SLOT_SET_ICON, iconItem);
+
+        ItemStack iconCmdItem = new ItemStack(Material.COMMAND_BLOCK);
+        ItemMeta iconCmdMeta = iconCmdItem.getItemMeta();
+        iconCmdMeta.setDisplayName(ChatColor.DARK_AQUA + "Set CustomModelData");
+        List<String> iconCmdLore = new ArrayList<>();
+        String currentCmd = data.get("custom-model-data").toString();
+        iconCmdLore.add(ChatColor.GRAY + "Current: " + (currentCmd.isEmpty() ? "None" : currentCmd));
+        iconCmdLore.add(" ");
+        iconCmdLore.add(ChatColor.GREEN + "Click to change via chat.");
+        iconCmdLore.add(ChatColor.GRAY + "(e.g., '12345' or 'itemsadder:my_item' or 'none')");
+        iconCmdLore.add(" ");
+        if (!plugin.isApiAvailable()) {
+            iconCmdLore.add(ChatColor.RED + "WARNING: This feature is disabled.");
+            iconCmdLore.add(ChatColor.RED + "Install 'UltimateAdvancementAPI' and set");
+            iconCmdLore.add(ChatColor.RED + "'enable-custom-model-support' to true.");
+        } else {
+            iconCmdLore.add(ChatColor.GREEN + "Custom Model Support is ENABLED.");
+        }
+        iconCmdMeta.setLore(iconCmdLore);
+        iconCmdItem.setItemMeta(iconCmdMeta);
+        gui.setItem(SLOT_SET_CUSTOM_MODEL_DATA, iconCmdItem);
 
 
         ItemStack saveItem = new ItemStack(Material.GREEN_WOOL);
@@ -132,6 +155,15 @@ public class EditorGUI {
             case SLOT_SET_ICON:
                 IconSelectionGUI.open(player, 0);
                 break;
+
+            case SLOT_SET_CUSTOM_MODEL_DATA:
+                player.closeInventory();
+                player.sendMessage(ChatColor.GREEN + "Please type the new CustomModelData value.");
+                player.sendMessage(ChatColor.GRAY + "(e.g., '12345', 'itemsadder:my_item', or 'none' to clear)");
+                player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("custom-model-data"));
+                data.put("step", ChatInputListener.STEP_CUSTOM_MODEL_DATA);
+                break;
+
             case SLOT_SAVE:
                 saveChanges(player, data);
                 break;
@@ -207,6 +239,7 @@ public class EditorGUI {
         plugin.getConfig().set(basePath + name + ".message", data.get("message"));
         plugin.getConfig().set(basePath + name + ".style", data.get("style"));
         plugin.getConfig().set(basePath + name + ".icon", data.get("icon"));
+        plugin.getConfig().set(basePath + name + ".custom-model-data", data.get("custom-model-data"));
 
         plugin.saveConfig();
         if (type.equals("auto-announce")) {
