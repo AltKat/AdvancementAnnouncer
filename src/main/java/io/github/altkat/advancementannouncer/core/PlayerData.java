@@ -1,5 +1,6 @@
-package io.github.altkat.advancementannouncer;
+package io.github.altkat.advancementannouncer.core;
 
+import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 

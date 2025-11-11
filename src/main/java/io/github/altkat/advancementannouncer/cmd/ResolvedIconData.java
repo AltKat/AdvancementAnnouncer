@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.cmd;
 
 /**
  * A simple data class to hold the result from CustomModelDataResolver.

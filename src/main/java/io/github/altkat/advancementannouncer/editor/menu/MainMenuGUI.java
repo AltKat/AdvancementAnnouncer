@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import org.bukkit.Bukkit;

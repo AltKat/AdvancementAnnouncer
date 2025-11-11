@@ -1,8 +1,9 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.feature;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.PlayerData;
-import io.github.altkat.advancementannouncer.guis.MainMenuGUI;
+import io.github.altkat.advancementannouncer.core.PlayerData;
+import io.github.altkat.advancementannouncer.core.AdvancementHandler;
+import io.github.altkat.advancementannouncer.editor.menu.MainMenuGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;

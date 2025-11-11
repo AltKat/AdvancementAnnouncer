@@ -1,7 +1,8 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.feature;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.PlayerData;
+import io.github.altkat.advancementannouncer.core.PlayerData;
+import io.github.altkat.advancementannouncer.core.AdvancementHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

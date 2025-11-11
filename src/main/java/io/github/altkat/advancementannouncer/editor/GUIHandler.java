@@ -1,7 +1,8 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.editor;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.guis.*;
+import io.github.altkat.advancementannouncer.cmd.ResolvedIconData;
+import io.github.altkat.advancementannouncer.editor.menu.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

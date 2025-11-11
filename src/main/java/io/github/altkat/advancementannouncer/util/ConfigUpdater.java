@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.util;
 
 import com.google.common.base.Charsets;
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;

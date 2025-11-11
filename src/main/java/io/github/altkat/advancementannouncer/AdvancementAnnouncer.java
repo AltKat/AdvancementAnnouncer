@@ -4,8 +4,15 @@ import com.fren_gor.ultimateAdvancementAPI.AdvancementMain;
 import com.fren_gor.ultimateAdvancementAPI.UltimateAdvancementAPI;
 import com.fren_gor.ultimateAdvancementAPI.database.impl.SQLite;
 
-import io.github.altkat.advancementannouncer.Handlers.CustomModelDataResolver;
-import io.github.altkat.advancementannouncer.Handlers.*;
+import io.github.altkat.advancementannouncer.cmd.CustomModelDataResolver;
+import io.github.altkat.advancementannouncer.core.PlayerData;
+import io.github.altkat.advancementannouncer.editor.ChatInputListener;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
+import io.github.altkat.advancementannouncer.feature.CommandHandler;
+import io.github.altkat.advancementannouncer.feature.JoinListener;
+import io.github.altkat.advancementannouncer.util.ConfigUpdater;
+import io.github.altkat.advancementannouncer.util.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

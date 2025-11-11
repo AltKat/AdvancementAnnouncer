@@ -1,8 +1,8 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.Handlers.AutoAnnounce;
-import io.github.altkat.advancementannouncer.Handlers.ChatInputListener;
+import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
+import io.github.altkat.advancementannouncer.editor.ChatInputListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

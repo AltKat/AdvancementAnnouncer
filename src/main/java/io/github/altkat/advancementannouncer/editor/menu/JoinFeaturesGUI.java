@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

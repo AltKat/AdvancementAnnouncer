@@ -1,9 +1,10 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.core;
 
 import com.fren_gor.ultimateAdvancementAPI.UltimateAdvancementAPI;
 import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementFrameType;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import io.github.altkat.advancementannouncer.cmd.ResolvedIconData;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

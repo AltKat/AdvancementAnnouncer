@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.cmd;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import org.bukkit.Bukkit;

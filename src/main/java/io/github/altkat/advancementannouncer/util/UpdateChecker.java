@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.util;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import net.md_5.bungee.api.chat.ClickEvent;
