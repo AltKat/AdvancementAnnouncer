@@ -62,14 +62,16 @@ public class AdvancementHandler {
         }
 
         // 4. Check if we should use the API
-        if (plugin.isApiAvailable() && cmdValue > 0) {
+        if (plugin.isApiAvailable()) {
             try {
                 // --- METHOD 1: Use UltimateAdvancementAPI (Supports CMD) ---
 
                 ItemStack iconStack = new ItemStack(Material.matchMaterial(iconMaterial.toUpperCase()));
                 ItemMeta meta = iconStack.getItemMeta();
                 if (meta != null) {
-                    meta.setCustomModelData(cmdValue);
+                    if (cmdValue > 0) {
+                        meta.setCustomModelData(cmdValue);
+                    }
                     iconStack.setItemMeta(meta);
                 }
 

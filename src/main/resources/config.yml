@@ -1,20 +1,21 @@
 # ######################################################################################################
 # ##                                                                                                  ##
-# ##   AdvancementAnnouncer v${project.version} by Altkat(StreetMelodeez)                                            ##
+# ##   AdvancementAnnouncer v${project.version} by Altkat(StreetMelodeez)                             ##
 # ##   Discord: streetmelodeez                                                                        ##
 # ##   Please use /aa reload to apply changes.                                                        ##
 # ##   You can use /aa edit in game chat to edit this file.                                           ##
 # ##                                                                                                  ##
 # ######################################################################################################
-
-#Custom Model Data Usage Examples:
-# custom-model-data: 123456 for direct integer.
-# custom-model-data: itemsadder:fire_sword for ItemsAdder.
-# custom-model-data: nexo:forest_sword for Nexo.
-
+#
+# Custom Model Data Usage Examples:
+#   custom-model-data: 123456 for direct integer.
+#   custom-model-data: itemsadder:fire_sword for ItemsAdder.
+#   custom-model-data: nexo:forest_sword for Nexo.
+#
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
-presets: # you can add as many presets as you want
+
+presets:
   preset1:
     message: "&aThis is &6my cool| &amessage wow!"
     style: "GOAL"
@@ -29,12 +30,12 @@ presets: # you can add as many presets as you want
     message: "&9Join our discord server|&bdiscord.gg/yourdc"
     style: "CHALLENGE"
     icon: "BOOK"
-    custom-model-data: "itemsadder:discord_icon_example"
+    custom-model-data: ""
   greeting:
     message: "&eHello &a%player_name%|&eHow is it going?"
     style: "GOAL"
     icon: "APPLE"
-    custom-model-data: "12345"
+    custom-model-data: ""
 
 
 auto-announce:
@@ -96,7 +97,7 @@ join-features:
 #You can edit these messages
 lang-messages:
   plugin-prefix: "&3[AdvancementAnnouncer] &r"
-  config-reloaded: "&3[AdvancementAnnouncer] &aConfig reloaded!"
+  config-reloaded: "&aConfig reloaded!"
   wrong-usage: "&cWrong usage! Please use /aa toggle"
   announcements-toggled-on: "&aYou now see the advancement announcements!"
   announcements-toggled-off: "&cYou no longer see the advancement announcements!"

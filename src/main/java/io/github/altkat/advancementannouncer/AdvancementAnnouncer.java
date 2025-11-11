@@ -34,28 +34,17 @@ public class AdvancementAnnouncer extends JavaPlugin {
     private boolean useApi = false;
     private String prefix = null;
 
-    /**
-     * Sends a colored message to the console.
-     * @param message The message to send (supports '&' color codes).
-     */
-    public static void log(String message) {
-        AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
-        String prefix = "&3[AdvancementAnnouncer] &r";
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
-    }
-
-
     @Override
     public void onLoad() {
         try {
             advancementMain = new AdvancementMain(this);
             advancementMain.load();
         } catch (Exception e) {
-            log("&c############################################################");
-            log("&cCRITICAL: Failed to LOAD shaded UltimateAdvancementAPI!");
-            log("&cPlugin may not function correctly.");
-            e.printStackTrace();
-            log("&c############################################################");
+            log("&e############################################################");
+            log("&eWARNING: Failed to load UltimateAdvancementAPI (Shaded).");
+            log("&eThis might be due to an unsupported server version.");
+            log("&ePlugin will continue to run in legacy mode without CustomModelData support.");
+            log("&e############################################################");
         }
     }
 
@@ -85,20 +74,34 @@ public class AdvancementAnnouncer extends JavaPlugin {
                 advancementMain.load();
             }
 
-            advancementMain.enable(() -> new SQLite(advancementMain, new File(getDataFolder(), "database.db")));
+            File dataFolder = new File(getDataFolder(), "data");
+            if (!dataFolder.exists()) {
+                boolean created = dataFolder.mkdirs();
+                if (!created) {
+                    log("&c############################################################");
+                    log("&cCRITICAL: Could not create the '/data/' folder.");
+                    log("&cPlease check file permissions or delete any 'data' file.");
+                    log("&cAPI will not be loaded. Falling back to legacy mode.");
+                    log("&c############################################################");
+                    throw new IOException("Failed to create data folder.");
+                }
+            }
+
+            File databaseFile = new File(dataFolder, "uadb.db");
+            advancementMain.enable(() -> new SQLite(advancementMain, databaseFile));
 
             ultimateAdvancementAPI = UltimateAdvancementAPI.getInstance(this);
             useApi = true;
 
-            log("&aCustomModelData support is ENABLED (API is shaded).");
+            log("&aCustomModelData (CMD) support is active.");
             cmdResolver.detectExternalPlugins();
 
         } catch (Exception e) {
-            log("&c############################################################");
-            log("&cCRITICAL: Failed to ENABLE shaded UltimateAdvancementAPI!");
-            log("&cCustomModelData support will be DISABLED.");
-            e.printStackTrace();
-            log("&c############################################################");
+            log("&e############################################################");
+            log("&eWARNING: Failed to enable UltimateAdvancementAPI (Shaded).");
+            log("&eYour server version might be incompatible with this shaded version of UAPI.");
+            log("&ePlugin is falling back to 'legacy' mode without CustomModelData support.");
+            log("&e############################################################");
             useApi = false;
         }
 
@@ -147,6 +150,12 @@ public class AdvancementAnnouncer extends JavaPlugin {
         }
 
         log("&cPlugin has been disabled!");
+    }
+
+    public static void log(String message) {
+        AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
+        String prefix = "&3[AdvancementAnnouncer] &r";
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
     }
 
     public static AdvancementAnnouncer getInstance() {

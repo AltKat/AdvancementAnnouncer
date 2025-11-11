@@ -98,7 +98,8 @@ public class EditorGUI {
         iconCmdLore.add(ChatColor.GRAY + "Current: " + (currentCmd.isEmpty() ? "None" : currentCmd));
         iconCmdLore.add(" ");
         iconCmdLore.add(ChatColor.GREEN + "Click to change via chat.");
-        iconCmdLore.add(ChatColor.GRAY + "(e.g., '12345' or 'itemsadder:my_item' or 'none')");
+        iconCmdLore.add(ChatColor.GRAY + "(e.g., '12345', 'itemsadder:my_item',");
+        iconCmdLore.add(ChatColor.GRAY + "'nexo:my_item', or 'none' to clear.)");
         iconCmdLore.add(" ");
         if (!plugin.isApiAvailable()) {
             iconCmdLore.add(ChatColor.RED + "WARNING: This feature is disabled.");
@@ -157,7 +158,7 @@ public class EditorGUI {
             case SLOT_SET_CUSTOM_MODEL_DATA:
                 player.closeInventory();
                 player.sendMessage(ChatColor.GREEN + "Please type the new CustomModelData value.");
-                player.sendMessage(ChatColor.GRAY + "(e.g., '12345', 'itemsadder:my_item', or 'none' to clear)");
+                player.sendMessage(ChatColor.GRAY + "(e.g., '12345', 'itemsadder:my_item', 'nexo:my_item', or 'none' to clear)");
                 player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("custom-model-data"));
                 data.put("step", ChatInputListener.STEP_CUSTOM_MODEL_DATA);
                 break;
