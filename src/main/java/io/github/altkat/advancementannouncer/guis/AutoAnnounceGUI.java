@@ -52,29 +52,22 @@ public class AutoAnnounceGUI {
         ConfigurationSection messagesSection = aaSection.getConfigurationSection("messages");
         if (messagesSection != null) {
             for (String key : messagesSection.getKeys(false)) {
-                Material iconMaterial;
-                try {
-                    iconMaterial = Material.valueOf(messagesSection.getString(key + ".icon").toUpperCase());
-                } catch (IllegalArgumentException | NullPointerException e) {
-                    iconMaterial = Material.PAPER;
-                }
+                String iconStr = messagesSection.getString(key + ".icon", "PAPER");
+                String cmdStr = messagesSection.getString(key + ".custom-model-data", "");
+                String displayName = ChatColor.GREEN + key;
 
-                ItemStack item = new ItemStack(iconMaterial);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.WHITE + "Message: ");
                 addFormattedMessage(lore, messagesSection.getString(key + ".message"));
                 lore.add(" ");
                 lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
-                lore.add(ChatColor.WHITE + "Icon: " + messagesSection.getString(key + ".icon"));
-                String cmd = messagesSection.getString(key + ".custom-model-data", "");
-                lore.add(ChatColor.WHITE + "CustomModelData: " + (cmd.isEmpty() ? "None" : cmd));
+                lore.add(ChatColor.WHITE + "Icon: " + iconStr);
+                lore.add(ChatColor.WHITE + "CustomModelData: " + (cmdStr.isEmpty() ? "None" : cmdStr));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit.");
                 lore.add(ChatColor.RED + "Right click to delete.");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+
+                ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
             }
         }

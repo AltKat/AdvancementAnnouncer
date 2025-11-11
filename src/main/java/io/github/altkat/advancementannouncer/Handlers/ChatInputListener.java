@@ -39,9 +39,11 @@ public class ChatInputListener implements Listener {
         event.setCancelled(true);
         String message = event.getMessage();
 
+        final String prefix = plugin.getPrefix();
+
         if (message.equalsIgnoreCase("cancel")) {
             data.remove("step");
-            player.sendMessage(ChatColor.RED + "Input cancelled.");
+            player.sendMessage(prefix + ChatColor.RED + "Input cancelled.");
 
             if (!data.containsKey("type")) {
                 activeSessions.remove(playerUUID);
@@ -57,24 +59,24 @@ public class ChatInputListener implements Listener {
             switch (step) {
                 case STEP_NAME:
                     if (message.contains(".") || message.contains(" ")) {
-                        player.sendMessage(ChatColor.RED + "The name cannot contain periods or spaces. Please try again.");
+                        player.sendMessage(prefix + ChatColor.RED + "The name cannot contain periods or spaces. Please try again.");
                         return;
                     } else {
                         data.put("name", message);
-                        player.sendMessage(ChatColor.GREEN + "Name set to '" + message + "'");
+                        player.sendMessage(prefix + ChatColor.GREEN + "Name set to '" + message + "'");
                     }
                     break;
                 case STEP_MESSAGE:
                     data.put("message", message);
-                    player.sendMessage(ChatColor.GREEN + "Message updated!");
+                    player.sendMessage(prefix + ChatColor.GREEN + "Message updated!");
                     break;
                 case STEP_STYLE:
                     try {
                         AdvancementHandler.Style.valueOf(message.toUpperCase());
                         data.put("style", message.toUpperCase());
-                        player.sendMessage(ChatColor.GREEN + "Style set to " + message.toUpperCase());
+                        player.sendMessage(prefix + ChatColor.GREEN + "Style set to " + message.toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid style! Please use GOAL, TASK, or CHALLENGE.");
+                        player.sendMessage(prefix + ChatColor.RED + "Invalid style! Please use GOAL, TASK, or CHALLENGE.");
                         return;
                     }
                     break;
@@ -82,9 +84,9 @@ public class ChatInputListener implements Listener {
                     try {
                         Material.valueOf(message.toUpperCase());
                         data.put("icon", message.toUpperCase());
-                        player.sendMessage(ChatColor.GREEN + "Icon set to " + message.toUpperCase());
+                        player.sendMessage(prefix + ChatColor.GREEN + "Icon set to " + message.toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid material name! Please try again.");
+                        player.sendMessage(prefix + ChatColor.RED + "Invalid material name! Please try again.");
                         return;
                     }
                     break;
@@ -92,10 +94,10 @@ public class ChatInputListener implements Listener {
                 case STEP_CUSTOM_MODEL_DATA:
                     if (message.equalsIgnoreCase("none") || message.equalsIgnoreCase("0")) {
                         data.put("custom-model-data", "");
-                        player.sendMessage(ChatColor.GREEN + "CustomModelData cleared.");
+                        player.sendMessage(prefix + ChatColor.GREEN + "CustomModelData cleared.");
                     } else {
                         data.put("custom-model-data", message);
-                        player.sendMessage(ChatColor.GREEN + "CustomModelData set to: " + message);
+                        player.sendMessage(prefix + ChatColor.GREEN + "CustomModelData set to: " + message);
                     }
                     break;
 
@@ -106,12 +108,12 @@ public class ChatInputListener implements Listener {
                         plugin.saveConfig();
                         AutoAnnounce.stopAutoAnnounce();
                         AutoAnnounce.startAutoAnnounce();
-                        player.sendMessage(ChatColor.GREEN + "Interval has been set to " + interval + " seconds.");
+                        player.sendMessage(prefix + ChatColor.GREEN + "Interval has been set to " + interval + " seconds.");
                         activeSessions.remove(playerUUID);
                         AutoAnnounceGUI.open(player);
                         return;
                     } catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid number. Please type a valid interval in seconds. Type 'cancel' to exit.");
+                        player.sendMessage(prefix + ChatColor.RED + "Invalid number. Please type a valid interval in seconds. Type 'cancel' to exit.");
                         return;
                     }
             }

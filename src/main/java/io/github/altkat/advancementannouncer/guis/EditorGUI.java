@@ -111,7 +111,6 @@ public class EditorGUI {
         iconCmdItem.setItemMeta(iconCmdMeta);
         gui.setItem(SLOT_SET_CUSTOM_MODEL_DATA, iconCmdItem);
 
-
         ItemStack saveItem = new ItemStack(Material.GREEN_WOOL);
         ItemMeta saveMeta = saveItem.getItemMeta();
         saveMeta.setDisplayName(ChatColor.GREEN + "Save");
@@ -155,7 +154,6 @@ public class EditorGUI {
             case SLOT_SET_ICON:
                 IconSelectionGUI.open(player, 0);
                 break;
-
             case SLOT_SET_CUSTOM_MODEL_DATA:
                 player.closeInventory();
                 player.sendMessage(ChatColor.GREEN + "Please type the new CustomModelData value.");
@@ -163,7 +161,6 @@ public class EditorGUI {
                 player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("custom-model-data"));
                 data.put("step", ChatInputListener.STEP_CUSTOM_MODEL_DATA);
                 break;
-
             case SLOT_SAVE:
                 saveChanges(player, data);
                 break;
@@ -195,10 +192,11 @@ public class EditorGUI {
     }
 
     private static void saveChanges(Player player, Map<String, Object> data) {
+        final String prefix = plugin.getPrefix();
         String name = (String) data.get("name");
 
         if (name == null || name.isBlank() || name.equals("<not set>")) {
-            player.sendMessage(ChatColor.RED + "You must set a name before saving!");
+            player.sendMessage(prefix + ChatColor.RED + "You must set a name before saving!");
             return;
         }
 
@@ -221,7 +219,8 @@ public class EditorGUI {
                 basePath = "join-features.first-join-messages.messages.";
                 break;
             default:
-                player.sendMessage(ChatColor.RED + "Error: Unknown data type.");
+
+                player.sendMessage(prefix + ChatColor.RED + "Error: Unknown data type.");
                 return;
         }
 
@@ -230,7 +229,8 @@ public class EditorGUI {
         }
 
         if (plugin.getConfig().contains(basePath + name) && (isCreator || !originalName.equals(name))) {
-            player.sendMessage(ChatColor.RED + "An item with this name already exists!");
+
+            player.sendMessage(prefix + ChatColor.RED + "An item with this name already exists!");
             return;
         }
 
@@ -246,7 +246,8 @@ public class EditorGUI {
             AutoAnnounce.stopAutoAnnounce();
             AutoAnnounce.startAutoAnnounce();
         }
-        player.sendMessage(ChatColor.GREEN + "Changes saved successfully!");
+
+        player.sendMessage(prefix + ChatColor.GREEN + "Changes saved successfully!");
 
         returnToPreviousMenu(player, type);
     }

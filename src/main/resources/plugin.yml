@@ -2,8 +2,9 @@ name: AdvancementAnnouncer
 version: '${project.version}'
 main: io.github.altkat.advancementannouncer.AdvancementAnnouncer
 api-version: 1.16
+load: STARTUP
 authors: [StreetMelodeez(AltKat)]
-softdepend: ["PlaceholderAPI", "UltimateAdvancementAPI"]
+softdepend: ["PlaceholderAPI"]
 commands:
   advancementannouncer:
     usage: /advancementannouncer send <style> <icon> <target> <message>

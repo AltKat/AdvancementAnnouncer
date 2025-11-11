@@ -56,7 +56,7 @@ public class UpdateChecker implements Listener {
 
                 int statusCode = connection.getResponseCode();
                 if (statusCode != 200) {
-                    plugin.getLogger().warning("GitHub API returned status: " + statusCode);
+                    AdvancementAnnouncer.log("&eGitHub API returned status: " + statusCode);
                     return;
                 }
 
@@ -75,17 +75,17 @@ public class UpdateChecker implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &eA new update is available! Version: &a" + latestVersion));
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&eDownload from Github: &6" + GITHUB_REPO_URL));
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&eDownload from Spigot: &6" + SPIGOT_URL));
+                                AdvancementAnnouncer.log("&eA new update is available! Version: &a" + latestVersion);
+                                AdvancementAnnouncer.log("&eDownload from Github: &6" + GITHUB_REPO_URL);
+                                AdvancementAnnouncer.log("&eDownload from Spigot: &6" + SPIGOT_URL);
                             }
                         }.runTaskLater(plugin, CONSOLE_LOG_DELAY);
                     } else {
-                        plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aYou are using the latest version. (&e" + currentVersion + "&a)"));
+                        AdvancementAnnouncer.log("&aYou are using the latest version. (&e" + currentVersion + "&a)");
                     }
                 }
             } catch (IOException exception) {
-                plugin.getLogger().warning("Unable to check for updates: " + exception.getMessage());
+                AdvancementAnnouncer.log("&cUnable to check for updates: " + exception.getMessage());
             } finally {
                 if (connection != null) {
                     try {
@@ -102,9 +102,11 @@ public class UpdateChecker implements Listener {
         if (player.hasPermission("advancementannouncer.admin") && latestVersion != null) {
             if (isNewerVersion(plugin.getDescription().getVersion(), latestVersion)) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &eA new version is available: &a" + latestVersion));
+                    final String prefix = plugin.getPrefix();
 
-                    TextComponent downloadFrom = new TextComponent(ChatColor.YELLOW + "Download from: ");
+                    player.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&eA new version is available: &a" + latestVersion));
+
+                    TextComponent downloadFrom = new TextComponent(prefix + ChatColor.YELLOW + "Download from: ");
 
                     TextComponent githubLink = new TextComponent(ChatColor.GREEN + "[GitHub]");
                     githubLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, GITHUB_REPO_URL));

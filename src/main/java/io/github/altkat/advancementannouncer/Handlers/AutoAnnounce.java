@@ -25,7 +25,7 @@ public class AutoAnnounce {
             ConfigurationSection mainSection = plugin.getConfig().getConfigurationSection("auto-announce");
             ConfigurationSection subSection = mainSection.getConfigurationSection("messages");
             if (subSection == null) {
-                plugin.getLogger().warning("No messages section found in the configuration. AutoAnnounce will not start.");
+                AdvancementAnnouncer.log("&eNo messages section found in the configuration. AutoAnnounce will not start.");
                 return;
             }
             String mode = mainSection.getString("mode");
@@ -37,13 +37,13 @@ public class AutoAnnounce {
             int messageCount = keyList.size();
 
             if (messageCount == 0) {
-                plugin.getLogger().warning("No messages found in the configuration. AutoAnnounce will not start.");
+                AdvancementAnnouncer.log("&eNo messages found in the configuration. AutoAnnounce will not start.");
                 return;
             }
             if(mode.equalsIgnoreCase("random")) {
                 taskID = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                     if(failedAttempts == 10){
-                        plugin.getServer().getConsoleSender().sendMessage("§3[AdvancementAnnouncer] §cFailed to find a valid message after 10 attempts. Stopping auto announcements... Please fix the issue in the config then reload the plugin.");
+                        AdvancementAnnouncer.log("&cFailed to find a valid message after 10 attempts. Stopping auto announcements... Please fix the issue in the config then reload the plugin.");
                         stopAutoAnnounce();
                         return;
                     }
@@ -62,13 +62,13 @@ public class AutoAnnounce {
                     try {
                         style = AdvancementHandler.Style.valueOf(styleString);
                     } catch (IllegalArgumentException e) {
-                        plugin.getLogger().warning("Invalid style: " + styleString + ". Skipping announcement (" + keyList.get(order) + "). Remaining attempts before disabling auto announcements: " + (10 - failedAttempts));
+                        AdvancementAnnouncer.log("&eInvalid style: " + styleString + ". Skipping announcement (" + keyList.get(order) + "). Remaining attempts: " + (10 - failedAttempts));
                         failedAttempts++;
                         return;
                     }
                     String icon = subSection.getConfigurationSection(keyList.get(order)).getString("icon").toLowerCase();
                     if (Material.matchMaterial(icon) == null) {
-                        plugin.getLogger().warning("Invalid icon: " + icon + ". Skipping announcement (" + keyList.get(order) + "). Remaining attempts before disabling auto announcements: " + (10 - failedAttempts));
+                        AdvancementAnnouncer.log("&eInvalid icon: " + icon + ". Skipping announcement (" + keyList.get(order) + "). Remaining attempts: " + (10 - failedAttempts));
                         failedAttempts++;
                         return;
                     }
@@ -80,7 +80,7 @@ public class AutoAnnounce {
                     for(Player player : playerList) {
 
                         if(failedAttempts > 0){
-                            plugin.getLogger().warning("Valid message found after " + failedAttempts + " attempts. Continuing auto announcements.");
+                            AdvancementAnnouncer.log("&aValid message found after " + failedAttempts + " attempts. Continuing auto announcements.");
                             failedAttempts = 0;
                         }
 
@@ -99,13 +99,13 @@ public class AutoAnnounce {
                     try {
                         style = AdvancementHandler.Style.valueOf(styleString);
                     } catch (IllegalArgumentException e) {
-                        plugin.getLogger().warning("Invalid style: " + styleString + ". Skipping announcement (" + keyList.get(order) + ").");
+                        AdvancementAnnouncer.log("&eInvalid style: " + styleString + ". Skipping announcement (" + keyList.get(order) + ").");
                         order++;
                         return;
                     }
                     String icon = subSection.getConfigurationSection(keyList.get(order)).getString("icon").toLowerCase();
                     if (Material.matchMaterial(icon) == null) {
-                        plugin.getLogger().warning("Invalid icon: " + icon + ". Skipping announcement (" + keyList.get(order) + ").");
+                        AdvancementAnnouncer.log("&eInvalid icon: " + icon + ". Skipping announcement (" + keyList.get(order) + ").");
                         order++;
                         return;
                     }

@@ -24,6 +24,7 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/releases/</url>
         </repository>
+
         <repository>
             <id>fren_gor</id>
             <url>https://nexus.frengor.com/repository/public/</url>
@@ -34,26 +35,36 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>1.16.5-R0.1-SNAPSHOT</version> <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.frengor</groupId>
-            <artifactId>ultimateadvancementapi</artifactId>
-            <version>2.7.1</version>
-            <scope>provided</scope>
+            <artifactId>ultimateadvancementapi-shadeable</artifactId>
+            <version>2.7.1</version> <scope>compile</scope>
+
+            <classifier>mojang-mapped</classifier>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bstats</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -68,15 +79,22 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <minimizeJar>false</minimizeJar>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>io.github.altkat.advancementannouncer</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.fren_gor.ultimateadvancementapi</pattern>
+                            <shadedPattern>io.github.altkat.advancementannouncer.lib.ultimateadvancementapi</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -90,12 +108,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
 </project>

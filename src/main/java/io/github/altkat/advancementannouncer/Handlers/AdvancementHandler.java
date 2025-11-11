@@ -24,9 +24,6 @@ import java.util.Map;
  */
 public class AdvancementHandler {
 
-    // Note: All non-static fields and methods from the original file have been moved
-    // into the private inner class 'LegacyAdvancementHandler' to keep the legacy code separate.
-
     /**
      * The primary static method to display a toast.
      * It accepts a customModelData string and decides which backend to use.
@@ -43,17 +40,17 @@ public class AdvancementHandler {
 
         // 1. Validate the icon material
         if (iconMaterial == null || iconMaterial.isBlank() || Material.matchMaterial(iconMaterial.toUpperCase()) == null) {
-            iconMaterial = "PAPER"; // A safe default
+            iconMaterial = "PAPER";
         }
 
         // 2. Resolve the CustomModelData string (if it exists)
-        // This uses the CustomModelDataResolver class
         if (customModelDataInput != null && !customModelDataInput.isBlank()) {
             ResolvedIconData data = plugin.getCmdResolver().resolve(customModelDataInput, iconMaterial);
             if (data != null) {
                 cmdValue = data.getValue();
             } else {
-                plugin.getLogger().warning("Could not resolve custom-model-data: '" + customModelDataInput + "' for icon '" + iconMaterial + "'. Using 0.");
+                // GÜNCELLENDİ: Use new log method
+                AdvancementAnnouncer.log("&eCould not resolve custom-model-data: '" + customModelDataInput + "' for icon '" + iconMaterial + "'. Using 0.");
             }
         }
 
@@ -64,26 +61,20 @@ public class AdvancementHandler {
         }
 
         // 4. Check if we should use the API
-        // Use API if:
-        // 1. It is enabled in config AND loaded on the server (isApiAvailable())
-        // 2. We actually have a CustomModelData value to display (cmdValue > 0)
         if (plugin.isApiAvailable() && cmdValue > 0) {
             try {
                 // --- METHOD 1: Use UltimateAdvancementAPI (Supports CMD) ---
 
-                // Create the icon ItemStack with CustomModelData
                 ItemStack iconStack = new ItemStack(Material.matchMaterial(iconMaterial.toUpperCase()));
-                ItemMeta meta = iconStack.getItemMeta(); // We know meta is not null from 1.16.5+
+                ItemMeta meta = iconStack.getItemMeta();
                 if (meta != null) {
                     meta.setCustomModelData(cmdValue);
                     iconStack.setItemMeta(meta);
                 }
 
                 UltimateAdvancementAPI api = plugin.getAdvancementAPI();
-                // Convert our enum to the API's enum
                 AdvancementFrameType frameType = AdvancementFrameType.valueOf(style.name());
 
-                // Call the API's toast method
                 api.displayCustomToast(
                         player,
                         iconStack,
@@ -91,29 +82,21 @@ public class AdvancementHandler {
                         frameType
                 );
             } catch (Exception e) {
-                plugin.getLogger().severe("Failed to display toast using UltimateAdvancementAPI: " + e.getMessage());
-                // Fallback to legacy method if API fails
+                AdvancementAnnouncer.log("&cFailed to display toast using UltimateAdvancementAPI: " + e.getMessage());
                 LegacyAdvancementHandler.displayTo(player, iconMaterial, finalMessage, style);
             }
         } else {
-            // --- METHOD 2: Use Legacy Bukkit.getUnsafe() (No CMD) ---
-            // (Used if API is disabled, not installed, or cmdValue is 0)
             LegacyAdvancementHandler.displayTo(player, iconMaterial, finalMessage, style);
         }
     }
 
     /**
      * Overloaded method for legacy calls (from original code).
-     * This now redirects to the new main method with a 'null' customModelDataInput.
      */
     public static void displayTo(Player player, String icon, String message, Style style) {
-        // Call the new main method with null CMD
         displayTo(player, icon, null, message, style);
     }
 
-    /**
-     * Enum for the toast frame type.
-     */
     public static enum Style {
         GOAL,
         TASK,
@@ -121,12 +104,9 @@ public class AdvancementHandler {
     }
 
 
-    // --- LEGACY HANDLER INNER CLASS ---
-
     /**
-     * This private inner class holds the original, legacy logic from AdvancementHandler.java
-     * for sending advancements using Bukkit.getUnsafe().
-     * This logic does NOT support CustomModelData and is used as a fallback.
+     * This private inner class holds the original, legacy logic for sending
+     * advancements using Bukkit.getUnsafe().
      */
     private static class LegacyAdvancementHandler {
         private final NamespacedKey key;
@@ -142,7 +122,6 @@ public class AdvancementHandler {
             this.message = message;
             this.style = style;
 
-            // Legacy cache ID, does not include CMD
             String cacheId = icon.toLowerCase() + "_" + style.toString().toLowerCase() + "_" + Integer.toHexString(message.hashCode());
 
             if (!cachedKeys.containsKey(cacheId)) {
@@ -167,8 +146,6 @@ public class AdvancementHandler {
 
         @SuppressWarnings("deprecation")
         private void createAdvancement() {
-            // FIXED: Use the new isModernVersion() check from the main class
-            // to correctly handle 1.20.5+ ('id') vs pre-1.20.5 ('item')
             String itemKey = plugin.isModernVersion() ? "id" : "item";
 
             String advancementJson = "{\n" +
@@ -203,7 +180,7 @@ public class AdvancementHandler {
             try {
                 Bukkit.getUnsafe().loadAdvancement(key, advancementJson);
             } catch (Exception e) {
-                plugin.getLogger().warning("Error creating legacy advancement: " + e.getMessage());
+                AdvancementAnnouncer.log("&cError creating legacy advancement: " + e.getMessage());
             }
         }
 
@@ -233,7 +210,6 @@ public class AdvancementHandler {
          * The entry point for the legacy handler.
          */
         public static void displayTo(Player player, String icon, String message, Style style) {
-            // Message is already color-translated and PAPI-parsed by the main displayTo method
             new LegacyAdvancementHandler(icon, message, style).start(player);
         }
     }

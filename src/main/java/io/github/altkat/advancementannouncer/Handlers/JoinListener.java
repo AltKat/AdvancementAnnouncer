@@ -63,7 +63,7 @@ public class JoinListener implements Listener {
             }, 20L);
 
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid style or icon in join messages configuration: " + randomKey);
+            AdvancementAnnouncer.log("&eInvalid style or icon in join messages configuration: " + randomKey);
         }
     }
 }

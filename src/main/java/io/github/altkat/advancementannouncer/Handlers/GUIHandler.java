@@ -3,10 +3,13 @@ package io.github.altkat.advancementannouncer.Handlers;
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.guis.*;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -65,5 +68,52 @@ public class GUIHandler implements Listener {
                 title.equals("Select a Style") ||
                 title.startsWith("Select an Icon") ||
                 title.equals("Confirm Deletion");
+    }
+
+    /**
+     * Creates an ItemStack for a GUI, applying CustomModelData if available and enabled.
+     * Falls back to the base material if CMD fails or is disabled.
+     *
+     * @param icon     The base material name (e.g., "DIAMOND")
+     * @param cmdInput The CustomModelData string (e.g., "12345" or "itemsadder:my_item")
+     * @param displayName The display name for the item
+     * @param lore     The lore for the item
+     * @return An ItemStack, potentially with CustomModelData.
+     */
+    public static ItemStack createDisplayItem(String icon, String cmdInput, String displayName, List<String> lore) {
+        AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
+        Material material;
+
+        try {
+            material = Material.valueOf(icon.toUpperCase());
+        } catch (Exception e) {
+            material = Material.PAPER;
+        }
+
+        ItemStack item = new ItemStack(material);
+        int cmdValue = 0;
+
+        if (plugin.isApiAvailable() && cmdInput != null && !cmdInput.isBlank()) {
+            ResolvedIconData data = plugin.getCmdResolver().resolve(cmdInput, icon);
+            if (data != null) {
+                cmdValue = data.getValue();
+            }
+        }
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            meta.setLore(lore);
+
+            if (cmdValue > 0) {
+                try {
+                    meta.setCustomModelData(cmdValue);
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Failed to apply CustomModelData to GUI icon: " + e.getMessage());
+                }
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 }

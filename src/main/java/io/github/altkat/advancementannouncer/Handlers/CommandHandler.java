@@ -23,26 +23,28 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+        final String prefix = plugin.getPrefix();
+
         if (args.length > 0 && args[0].equalsIgnoreCase("edit")) {
             if (sender instanceof Player) {
                 if (sender.hasPermission("advancementannouncer.admin")) {
                     MainMenuGUI.open((Player) sender);
                 } else {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
                 }
             } else {
-                sender.sendMessage(ChatColor.RED + "You must be a player to use this command!");
+                sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
             }
             return true;
         }
 
         if (!sender.hasPermission("advancementannouncer.admin")) {
             if (args.length != 1 || !args[0].equalsIgnoreCase("toggle")) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage")));
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage")));
                 return true;
             } else {
                 if (!sender.hasPermission("advancementannouncer.toggle")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
                     return true;
                 }
                 handleToggle(sender);
@@ -57,7 +59,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("toggle")) {
             if (!sender.hasPermission("advancementannouncer.toggle")) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
                 return true;
             }
             handleToggle(sender);
@@ -67,9 +69,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         if (args[0].equalsIgnoreCase("reload")) {
             AutoAnnounce.stopAutoAnnounce();
             plugin.reloadConfig();
+            plugin.clearPrefixCache();
             AutoAnnounce.startAutoAnnounce();
             PlayerData.reloadPlayerData();
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.config-reloaded")));
+            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.config-reloaded")));
             return true;
         }
 
@@ -83,20 +86,23 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private void handleToggle(CommandSender sender) {
+        final String prefix = plugin.getPrefix();
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "You must be a player to use this command!");
+            sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
             return;
         }
         UUID playerUUID = ((Player) sender).getUniqueId();
         PlayerData.setToggleData(playerUUID, !PlayerData.returnToggleData(playerUUID));
         if (PlayerData.returnToggleData(playerUUID)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on")));
+            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on")));
         } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off")));
+            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off")));
         }
     }
 
     private void handleSendCommand(CommandSender sender, String[] args) {
+        final String prefix = plugin.getPrefix();
+
         if (args.length < 2) {
             sendHelpMessage(sender);
             return;
@@ -104,7 +110,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         if (args[1].equalsIgnoreCase("preset")) {
             if (args.length < 4) {
-                sender.sendMessage(ChatColor.RED + "Usage: /aa send preset <presetName> <target>");
+                sender.sendMessage(prefix + ChatColor.RED + "Usage: /aa send preset <presetName> <target>");
                 return;
             }
             String presetName = args[2];
@@ -112,7 +118,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
             ConfigurationSection presetSection = plugin.getConfig().getConfigurationSection("presets." + presetName);
             if (presetSection == null) {
-                sender.sendMessage(ChatColor.RED + "Preset not found: " + presetName);
+                sender.sendMessage(prefix + ChatColor.RED + "Preset not found: " + presetName);
                 return;
             }
 
@@ -149,8 +155,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             try {
                 style = AdvancementHandler.Style.valueOf(args[1].toUpperCase());
             } catch (final IllegalArgumentException t) {
-                sender.sendMessage(ChatColor.RED + "Invalid style or option: " + args[1]);
-                sender.sendMessage(ChatColor.GRAY + "Did you mean '/aa send preset'?");
+                sender.sendMessage(prefix + ChatColor.RED + "Invalid style or option: " + args[1]);
+                sender.sendMessage(prefix + ChatColor.GRAY + "Did you mean '/aa send preset'?");
                 return;
             }
 
@@ -158,7 +164,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             try {
                 Material.valueOf(materialName.toUpperCase());
             } catch (final IllegalArgumentException t) {
-                sender.sendMessage(ChatColor.RED + "Invalid material: " + materialName);
+                sender.sendMessage(prefix + ChatColor.RED + "Invalid material: " + materialName);
                 return;
             }
 
@@ -179,7 +185,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             }
 
             if (message == null || message.isEmpty()) {
-                sender.sendMessage(ChatColor.RED + "Could not find message for preset or custom input.");
+                sender.sendMessage(prefix + ChatColor.RED + "Could not find message for preset or custom input.");
                 return;
             }
 
@@ -187,14 +193,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return;
         }
 
-        sender.sendMessage(ChatColor.YELLOW + "Usage 1: /aa send preset <presetName> <target>");
-        sender.sendMessage(ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
+        sender.sendMessage(prefix + ChatColor.YELLOW + "Usage 1: /aa send preset <presetName> <target>");
+        sender.sendMessage(prefix + ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
     }
 
     private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon, String customModelData) {
+        final String prefix = plugin.getPrefix();
         if (targetName.equalsIgnoreCase("all")) {
             if (sender.getServer().getOnlinePlayers().isEmpty()) {
-                sender.sendMessage(ChatColor.RED + "There are no online players in the server!");
+                sender.sendMessage(prefix + ChatColor.RED + "There are no online players in the server!");
                 return;
             }
             int sentCount = 0;
@@ -205,15 +212,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
                 sentCount++;
             }
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + sentCount + " player(s)"));
+            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + sentCount + " player(s)"));
         } else {
             Player player = sender.getServer().getPlayer(targetName);
             if (player == null) {
-                sender.sendMessage(ChatColor.RED + "Player not found: " + targetName);
+                sender.sendMessage(prefix + ChatColor.RED + "Player not found: " + targetName);
                 return;
             }
             AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aAdvancement message sent to " + player.getName()));
+            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + player.getName()));
         }
     }
 
@@ -292,11 +299,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelpMessage(CommandSender sender) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aCommands: "));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send preset <presetName> <player/all>"));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player/all> <message/presetName>"));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle"));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));
+        final String prefix = plugin.getPrefix();
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aCommands: "));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send preset <presetName> <player/all>"));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player/all> <message/presetName>"));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle"));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));
     }
 }

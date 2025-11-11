@@ -31,29 +31,21 @@ public class PresetsGUI {
                 if (preset == null) continue;
 
                 String iconStr = preset.getString("icon", "PAPER");
-                Material iconMaterial;
-                try {
-                    iconMaterial = Material.valueOf(iconStr.toUpperCase());
-                } catch (Exception e) {
-                    iconMaterial = Material.PAPER;
-                }
+                String cmdStr = preset.getString("custom-model-data", "");
+                String displayName = ChatColor.GREEN + key;
 
-                ItemStack item = new ItemStack(iconMaterial);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.translateAlternateColorCodes('&', "&f&nCurrent Message:"));
                 lore.add(" ");
                 addFormattedMessage(lore, preset.getString("message"));
                 lore.add(" ");
                 lore.add(ChatColor.GRAY + "Style: " + ChatColor.WHITE + preset.getString("style", "GOAL"));
-                String cmd = preset.getString("custom-model-data", "");
-                lore.add(ChatColor.GRAY + "CustomModelData: " + ChatColor.WHITE + (cmd.isEmpty() ? "None" : cmd));
+                lore.add(ChatColor.GRAY + "CustomModelData: " + ChatColor.WHITE + (cmdStr.isEmpty() ? "None" : cmdStr));
                 lore.add(" ");
                 lore.add(ChatColor.YELLOW + "Left click to edit this preset.");
                 lore.add(ChatColor.RED + "Right click to delete this preset.");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+
+                ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
             }
         }
