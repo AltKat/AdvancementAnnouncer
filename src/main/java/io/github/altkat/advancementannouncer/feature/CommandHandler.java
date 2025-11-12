@@ -31,7 +31,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 if (sender.hasPermission("advancementannouncer.admin")) {
                     MainMenuGUI.open((Player) sender);
                 } else {
-                    sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
                 }
             } else {
                 sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
@@ -40,15 +40,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
 
         if (!sender.hasPermission("advancementannouncer.admin")) {
-            if (args.length != 1 || !args[0].equalsIgnoreCase("toggle")) {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage")));
-                return true;
-            } else {
+            if (args.length > 0 && args[0].equalsIgnoreCase("toggle")) {
                 if (!sender.hasPermission("advancementannouncer.toggle")) {
-                    sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
                     return true;
                 }
-                handleToggle(sender);
+                handleNewToggle(sender, args);
+            } else {
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage", "&cWrong usage! Please use /aa toggle")));
             }
             return true;
         }
@@ -60,10 +59,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("toggle")) {
             if (!sender.hasPermission("advancementannouncer.toggle")) {
-                sender.sendMessage(prefix + ChatColor.RED + "You don't have permission to use this command.");
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
                 return true;
             }
-            handleToggle(sender);
+            handleNewToggle(sender, args);
             return true;
         }
 
@@ -86,18 +85,45 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private void handleToggle(CommandSender sender) {
+    private void handleNewToggle(CommandSender sender, String[] args) {
         final String prefix = plugin.getPrefix();
         if (!(sender instanceof Player)) {
             sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
             return;
         }
+
         UUID playerUUID = ((Player) sender).getUniqueId();
-        PlayerData.setToggleData(playerUUID, !PlayerData.returnToggleData(playerUUID));
-        if (PlayerData.returnToggleData(playerUUID)) {
-            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on")));
+
+        final String wrongUsageMsg = ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("lang-messages.wrong-usage", "&cWrong usage! Please use /aa toggle <announcements|sounds>"));
+
+        if (args.length == 1) {
+            sender.sendMessage(prefix + wrongUsageMsg);
+            return;
+        }
+
+        if (args[1].equalsIgnoreCase("announcements")) {
+            boolean newStatus = !PlayerData.returnToggleData(playerUUID);
+            PlayerData.setToggleData(playerUUID, newStatus);
+
+            if (newStatus) {
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on", "&aAnnouncements are now enabled!")));
+            } else {
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off", "&cAnnouncements are now disabled!")));
+            }
+
+        } else if (args[1].equalsIgnoreCase("sounds")) {
+            boolean newStatus = !PlayerData.areSoundsEnabled(playerUUID);
+            PlayerData.setSoundsEnabled(playerUUID, newStatus);
+
+            if (newStatus) {
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.sounds-toggled-on", "&aAnnouncement sounds are now enabled!")));
+            } else {
+                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.sounds-toggled-off", "&cAnnouncement sounds are now disabled! (You will still see announcements)")));
+            }
+
         } else {
-            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off")));
+            sender.sendMessage(prefix + wrongUsageMsg);
         }
     }
 
@@ -233,7 +259,16 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         final List<String> tab = new ArrayList<>();
         if (!sender.hasPermission("advancementannouncer.admin")) {
             if (args.length == 1) {
-                tab.add("toggle");
+                if ("toggle".startsWith(args[0].toLowerCase())) {
+                    tab.add("toggle");
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle")) {
+                if ("announcements".startsWith(args[1].toLowerCase())) {
+                    tab.add("announcements");
+                }
+                if ("sounds".startsWith(args[1].toLowerCase())) {
+                    tab.add("sounds");
+                }
             }
             return tab;
         }
@@ -244,6 +279,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             tab.add("edit");
             tab.add("send");
             return filter(tab, args);
+        }
+
+        if (args[0].equalsIgnoreCase("toggle")) {
+            if (args.length == 2) {
+                tab.add("announcements");
+                tab.add("sounds");
+            }
         }
 
         if (args[0].equalsIgnoreCase("send")) {
@@ -308,7 +350,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send preset <presetName> <player/all>"));
         sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player/all> <message/presetName>"));
         sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle"));
+        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle <announcements|sounds>"));
         sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));
     }
 }

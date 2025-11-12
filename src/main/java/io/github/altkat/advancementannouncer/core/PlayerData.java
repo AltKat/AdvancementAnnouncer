@@ -41,6 +41,7 @@ public class PlayerData {
     public static void addPlayerData(UUID uuid) {
         config.createSection(uuid.toString());
         config.getConfigurationSection(uuid.toString()).set("toggleStatus", true);
+        config.getConfigurationSection(uuid.toString()).set("soundsEnabled", true);
         config.getConfigurationSection(uuid.toString()).set("playerName", plugin.getServer().getPlayer(uuid).getName());
         save();
     }
@@ -54,14 +55,35 @@ public class PlayerData {
         if(config.getConfigurationSection(uuid.toString()) == null) {
             addPlayerData(uuid);
         }
+        checkAndAddDefaults(uuid);
         return config.getConfigurationSection(uuid.toString()).getBoolean("toggleStatus", true);
     }
 
-    public static void updatePlayerData(UUID uuid) {
-        if (!config.getConfigurationSection(uuid.toString()).contains("toggleStatus")) {
-            config.getConfigurationSection(uuid.toString()).set("toggleStatus", false);
+
+    public static void setSoundsEnabled(UUID uuid, boolean status) {
+        if(config.getConfigurationSection(uuid.toString()) == null) {
+            addPlayerData(uuid);
         }
+        config.getConfigurationSection(uuid.toString()).set("soundsEnabled", status);
         save();
+    }
+
+    public static boolean areSoundsEnabled(UUID uuid) {
+        if(config.getConfigurationSection(uuid.toString()) == null) {
+            addPlayerData(uuid);
+        }
+        checkAndAddDefaults(uuid);
+        return config.getConfigurationSection(uuid.toString()).getBoolean("soundsEnabled", true);
+    }
+
+
+    private static void checkAndAddDefaults(UUID uuid) {
+        if (config.getConfigurationSection(uuid.toString()) != null) {
+            if (!config.getConfigurationSection(uuid.toString()).contains("soundsEnabled")) {
+                config.getConfigurationSection(uuid.toString()).set("soundsEnabled", true);
+                save();
+            }
+        }
     }
 
     public static void reloadPlayerData() {
