@@ -14,7 +14,7 @@
 #
 # Sound Usage:
 # You can add a sound to any announcement.
-# sound: "entity.player.levelup"
+# sound: "ENTITY_PLAYER_LEVELUP"
 # A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 # Leave "" for no sound.
 #
@@ -27,7 +27,7 @@ presets:
     style: "GOAL"
     icon: "DIAMOND"
     custom-model-data: ""
-    sound: ""
+    sound: "ENTITY_PLAYER_LEVELUP"
   store-preset:
     message: "&6You can get ranks|&6on our store &b/store"
     style: "TASK"

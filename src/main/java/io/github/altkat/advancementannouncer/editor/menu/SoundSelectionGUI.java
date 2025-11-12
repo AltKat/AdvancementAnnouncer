@@ -76,6 +76,9 @@ public class SoundSelectionGUI {
                 ChatColor.GRAY + "This menu only shows common sounds.",
                 ChatColor.GRAY + "Use 'Input via Chat' for any other sound.",
                 " ",
+                ChatColor.GRAY + "You can use custom sounds from",
+                ChatColor.GRAY + "a resource pack (e.g. 'my.sound.effect')",
+                " ",
                 ChatColor.YELLOW + "Click for a full list of sounds."
         ));
         infoItem.setItemMeta(infoMeta);
@@ -124,7 +127,7 @@ public class SoundSelectionGUI {
         if (slot == SLOT_CHAT_INPUT) {
             player.closeInventory();
             player.sendMessage(ChatColor.GREEN + "Please type the new sound name.");
-            player.sendMessage(ChatColor.GRAY + "(e.g., 'entity.player.levelup', or 'none' to clear)");
+            player.sendMessage(ChatColor.GRAY + "(e.g., 'ENTITY_PLAYER_LEVELUP', or 'none' to clear)");
             player.sendMessage(ChatColor.GRAY + "(A list can be found on the Spigot Javadocs for 'Sound')");
             player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("sound"));
             data.put("step", ChatInputListener.STEP_SOUND);

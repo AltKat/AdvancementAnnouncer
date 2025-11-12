@@ -102,13 +102,14 @@ public class AdvancementHandler {
             return;
         }
 
+        String finalSoundKey = soundKey.toLowerCase().trim().replace('_', '.');
+
         try {
-            Sound sound = Sound.valueOf(soundKey.toUpperCase().trim());
-            player.playSound(player.getLocation(), sound, 1.0F, 1.0F);
+            player.playSound(player.getLocation(), finalSoundKey, 1.0F, 1.0F);
         } catch (IllegalArgumentException e) {
             AdvancementAnnouncer.log("&c[Sound Error] Invalid sound name in config: '" + soundKey + "'");
         } catch (Exception e) {
-            AdvancementAnnouncer.log("&c[Sound Error] Could not play sound '" + soundKey + "': " + e.getMessage());
+            AdvancementAnnouncer.log("&c[Sound Error] An unexpected error occurred while trying to play sound '" + finalSoundKey + "': " + e.getMessage());
         }
     }
 
