@@ -1,6 +1,7 @@
 package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,6 +37,8 @@ public class MainMenuGUI {
         presetsMeta.setDisplayName(ChatColor.GREEN + "Edit Presets");
         presetsItem.setItemMeta(presetsMeta);
         gui.setItem(SLOT_EDIT_PRESETS, presetsItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }

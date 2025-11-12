@@ -12,6 +12,12 @@
 #   custom-model-data: itemsadder:fire_sword for ItemsAdder.
 #   custom-model-data: nexo:forest_sword for Nexo.
 #
+# Sound Usage:
+# You can add a sound to any announcement.
+# sound: "entity.player.levelup"
+# A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+# Leave "" for no sound.
+#
 # you can use placeholders from PlaceholderAPI in the messages. like %player_name%
 # use | to print on a new line
 
@@ -21,21 +27,25 @@ presets:
     style: "GOAL"
     icon: "DIAMOND"
     custom-model-data: ""
+    sound: ""
   store-preset:
     message: "&6You can get ranks|&6on our store &b/store"
     style: "TASK"
     icon: "EMERALD"
     custom-model-data: ""
+    sound: ""
   discord-preset:
     message: "&9Join our discord server|&bdiscord.gg/yourdc"
     style: "CHALLENGE"
     icon: "BOOK"
     custom-model-data: ""
+    sound: ""
   greeting:
     message: "&eHello &a%player_name%|&eHow is it going?"
     style: "GOAL"
     icon: "APPLE"
     custom-model-data: ""
+    sound: ""
 
 
 auto-announce:
@@ -48,16 +58,19 @@ auto-announce:
       style: "GOAL"   # GOAL, TASK, CHALLENGE
       icon: "EMERALD" # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
       custom-model-data: ""
+      sound: ""
     custommessage2:
       message: "&9Join our discord server|&bdiscord.gg/yourdc"
       style: "TASK"
       icon: "DIAMOND"
       custom-model-data: ""
+      sound: ""
     vipmessage:
       message: "&6You can get ranks|&6on our store &b/store"
       style: "CHALLENGE"
       icon: "GOLD_INGOT"
       custom-model-data: ""
+      sound: ""
 
 
 # Messages to be displayed when players join the server.
@@ -71,11 +84,13 @@ join-features:
         style: GOAL
         icon: GOLDEN_APPLE
         custom-model-data: ""
+        sound: ""
       welcome-back-2:
         message: '&7[&a+&7] &f%player_name%'
         style: TASK
         icon: OAK_DOOR
         custom-model-data: ""
+        sound: ""
 
   first-join-messages:
     enabled: true
@@ -85,11 +100,13 @@ join-features:
         style: CHALLENGE
         icon: CAKE
         custom-model-data: ""
+        sound: ""
       first-join-2:
         message: '&b%player_name% &ejoined for the first time!'
         style: GOAL
         icon: TOTEM_OF_UNDYING
         custom-model-data: ""
+        sound: ""
 
 
 

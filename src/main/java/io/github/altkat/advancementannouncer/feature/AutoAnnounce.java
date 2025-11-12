@@ -76,6 +76,8 @@ public class AutoAnnounce {
 
                     String customModelData = subSection.getConfigurationSection(keyList.get(order)).getString("custom-model-data", null);
 
+                    String soundString = subSection.getConfigurationSection(keyList.get(order)).getString("sound", "");
+
                     Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
                     if(playerList.isEmpty()) return;
                     for(Player player : playerList) {
@@ -86,7 +88,7 @@ public class AutoAnnounce {
                         }
 
                         if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
-                        AdvancementHandler.displayTo(player, icon, customModelData, message, style);
+                        AdvancementHandler.displayTo(player, icon, customModelData, message, style, soundString);
                     }
                     lastMessageIndex = order;
                 }, 60L, mainSection.getInt("interval") * 20L).getTaskId();
@@ -113,11 +115,13 @@ public class AutoAnnounce {
 
                     String customModelData = subSection.getConfigurationSection(keyList.get(order)).getString("custom-model-data", null);
 
+                    String soundString = subSection.getConfigurationSection(keyList.get(order)).getString("sound", "");
+
                     Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
                     if(playerList.isEmpty()) return;
                     for(Player player : playerList) {
                         if(!PlayerData.returnToggleData(player.getUniqueId())) continue;
-                        AdvancementHandler.displayTo(player, icon, customModelData, message, style);
+                        AdvancementHandler.displayTo(player, icon, customModelData, message, style, soundString);
                     }
                     order++;
                 }, 60L, mainSection.getInt("interval") * 20L).getTaskId();

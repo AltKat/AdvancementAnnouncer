@@ -1,6 +1,7 @@
 package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
 import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
 import io.github.altkat.advancementannouncer.editor.ChatInputListener;
 import org.bukkit.Bukkit;
@@ -18,11 +19,12 @@ import java.util.Map;
 
 public class EditorGUI {
     private static final AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
-    private static final int SLOT_SET_NAME = 10;
+    private static final int SLOT_SET_NAME = 11;
     private static final int SLOT_SET_MESSAGE = 13;
-    private static final int SLOT_SET_STYLE = 16;
-    private static final int SLOT_SET_ICON = 19;
-    private static final int SLOT_SET_CUSTOM_MODEL_DATA = 22;
+    private static final int SLOT_SET_STYLE = 15;
+    private static final int SLOT_SET_ICON = 29;
+    private static final int SLOT_SET_CUSTOM_MODEL_DATA = 31;
+    private static final int SLOT_SET_SOUND = 33;
     private static final int SLOT_SAVE = 49;
     private static final int SLOT_CANCEL = 45;
 
@@ -36,6 +38,7 @@ public class EditorGUI {
         Inventory gui = Bukkit.createInventory(null, 54, title);
 
         data.putIfAbsent("custom-model-data", "");
+        data.putIfAbsent("sound", "");
 
         ChatInputListener.activeSessions.put(player.getUniqueId(), data);
 
@@ -112,6 +115,18 @@ public class EditorGUI {
         iconCmdItem.setItemMeta(iconCmdMeta);
         gui.setItem(SLOT_SET_CUSTOM_MODEL_DATA, iconCmdItem);
 
+        ItemStack soundItem = new ItemStack(Material.NOTE_BLOCK);
+        ItemMeta soundMeta = soundItem.getItemMeta();
+        soundMeta.setDisplayName(ChatColor.AQUA + "Set Sound");
+        List<String> soundLore = new ArrayList<>();
+        String currentSound = data.get("sound").toString();
+        soundLore.add(ChatColor.GRAY + "Current: " + (currentSound.isEmpty() ? "None" : currentSound));
+        soundLore.add(" ");
+        soundLore.add(ChatColor.GREEN + "Click to select a sound.");
+        soundMeta.setLore(soundLore);
+        soundItem.setItemMeta(soundMeta);
+        gui.setItem(SLOT_SET_SOUND, soundItem);
+
         ItemStack saveItem = new ItemStack(Material.GREEN_WOOL);
         ItemMeta saveMeta = saveItem.getItemMeta();
         saveMeta.setDisplayName(ChatColor.GREEN + "Save");
@@ -123,6 +138,8 @@ public class EditorGUI {
         backMeta.setDisplayName(ChatColor.RED + "Cancel");
         backItem.setItemMeta(backMeta);
         gui.setItem(SLOT_CANCEL, backItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }
@@ -161,6 +178,9 @@ public class EditorGUI {
                 player.sendMessage(ChatColor.GRAY + "(e.g., '12345', 'itemsadder:my_item', 'nexo:my_item', or 'none' to clear)");
                 player.sendMessage(ChatColor.GRAY + "Current value: " + data.get("custom-model-data"));
                 data.put("step", ChatInputListener.STEP_CUSTOM_MODEL_DATA);
+                break;
+            case SLOT_SET_SOUND:
+                SoundSelectionGUI.open(player);
                 break;
             case SLOT_SAVE:
                 saveChanges(player, data);
@@ -241,6 +261,7 @@ public class EditorGUI {
         plugin.getConfig().set(basePath + name + ".style", data.get("style"));
         plugin.getConfig().set(basePath + name + ".icon", data.get("icon"));
         plugin.getConfig().set(basePath + name + ".custom-model-data", data.get("custom-model-data"));
+        plugin.getConfig().set(basePath + name + ".sound", data.get("sound"));
 
         plugin.saveConfig();
         if (type.equals("auto-announce")) {

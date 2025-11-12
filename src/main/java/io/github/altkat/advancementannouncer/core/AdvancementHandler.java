@@ -6,10 +6,7 @@ import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementFrameT
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.cmd.ResolvedIconData;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +32,7 @@ public class AdvancementHandler {
      * @param message The message to display.
      * @param style The frame style (GOAL, TASK, CHALLENGE).
      */
-    public static void displayTo(Player player, String iconMaterial, String customModelDataInput, String message, Style style) {
+    public static void displayTo(Player player, String iconMaterial, String customModelDataInput, String message, Style style, String sound) {
         AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
         int cmdValue = 0;
 
@@ -50,7 +47,6 @@ public class AdvancementHandler {
             if (data != null) {
                 cmdValue = data.getValue();
             } else {
-                // GÜNCELLENDİ: Use new log method
                 AdvancementAnnouncer.log("&eCould not resolve custom-model-data: '" + customModelDataInput + "' for icon '" + iconMaterial + "'. Using 0.");
             }
         }
@@ -91,13 +87,29 @@ public class AdvancementHandler {
         } else {
             LegacyAdvancementHandler.displayTo(player, iconMaterial, finalMessage, style);
         }
+        playSound(player, sound);
     }
 
     /**
      * Overloaded method for legacy calls (from original code).
      */
     public static void displayTo(Player player, String icon, String message, Style style) {
-        displayTo(player, icon, null, message, style);
+        displayTo(player, icon, null, message, style, null);
+    }
+
+    private static void playSound(Player player, String soundKey) {
+        if (soundKey == null || soundKey.isBlank()) {
+            return;
+        }
+
+        try {
+            Sound sound = Sound.valueOf(soundKey.toUpperCase().trim());
+            player.playSound(player.getLocation(), sound, 1.0F, 1.0F);
+        } catch (IllegalArgumentException e) {
+            AdvancementAnnouncer.log("&c[Sound Error] Invalid sound name in config: '" + soundKey + "'");
+        } catch (Exception e) {
+            AdvancementAnnouncer.log("&c[Sound Error] Could not play sound '" + soundKey + "': " + e.getMessage());
+        }
     }
 
     public static enum Style {

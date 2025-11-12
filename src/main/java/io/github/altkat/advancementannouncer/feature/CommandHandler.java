@@ -127,17 +127,20 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             String styleStr;
             String iconStr;
             String customModelDataStr;
+            String soundStr;
 
             if (plugin.getConfig().isConfigurationSection("presets." + presetName)) {
                 message = presetSection.getString("message");
                 styleStr = presetSection.getString("style", "GOAL");
                 iconStr = presetSection.getString("icon", "STONE");
                 customModelDataStr = presetSection.getString("custom-model-data", null);
+                soundStr = presetSection.getString("sound", "");
             } else {
                 message = plugin.getConfig().getString("presets." + presetName);
                 styleStr = "GOAL";
                 iconStr = "PAPER";
                 customModelDataStr = null;
+                soundStr = "";
             }
 
             AdvancementHandler.Style style;
@@ -147,7 +150,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 style = AdvancementHandler.Style.GOAL;
             }
 
-            sendToTarget(sender, targetName, message, style, iconStr, customModelDataStr);
+            sendToTarget(sender, targetName, message, style, iconStr, customModelDataStr, soundStr);
             return;
         }
 
@@ -190,7 +193,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            sendToTarget(sender, targetName, message, style, materialName, null);
+            sendToTarget(sender, targetName, message, style, materialName, null, null);
             return;
         }
 
@@ -198,7 +201,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         sender.sendMessage(prefix + ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
     }
 
-    private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon, String customModelData) {
+    private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon, String customModelData, String sound) {
         final String prefix = plugin.getPrefix();
         if (targetName.equalsIgnoreCase("all")) {
             if (sender.getServer().getOnlinePlayers().isEmpty()) {
@@ -210,7 +213,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 if (!PlayerData.returnToggleData(player.getUniqueId())) {
                     continue;
                 }
-                AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
+                AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style, sound);
                 sentCount++;
             }
             sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + sentCount + " player(s)"));
@@ -220,7 +223,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 sender.sendMessage(prefix + ChatColor.RED + "Player not found: " + targetName);
                 return;
             }
-            AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style);
+            AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style, sound);
             sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + player.getName()));
         }
     }

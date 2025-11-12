@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,6 +19,14 @@ public class GUIHandler implements Listener {
     private final AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
     public static final Map<UUID, Runnable> confirmationActions = new HashMap<>();
     private final Set<UUID> isNavigating = new HashSet<>();
+    public static final ItemStack FILLER_GLASS;
+
+    static {
+        FILLER_GLASS = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta meta = FILLER_GLASS.getItemMeta();
+        meta.setDisplayName(" ");
+        FILLER_GLASS.setItemMeta(meta);
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -53,6 +62,8 @@ public class GUIHandler implements Listener {
             StyleSelectionGUI.handleClick(event);
         } else if (title.startsWith("Select an Icon")) {
             IconSelectionGUI.handleClick(event);
+        } else if (title.equals("Select a Sound")) {
+            SoundSelectionGUI.handleClick(event);
         } else if (title.equals("Confirm Deletion")) {
             ConfirmationGUI.handleClick(event);
         }
@@ -68,7 +79,16 @@ public class GUIHandler implements Listener {
                 title.startsWith("Creating ") ||
                 title.equals("Select a Style") ||
                 title.startsWith("Select an Icon") ||
+                title.equals("Select a Sound") ||
                 title.equals("Confirm Deletion");
+    }
+
+    public static void fillBackground(Inventory gui) {
+        for (int i = 0; i < gui.getSize(); i++) {
+            if (gui.getItem(i) == null || gui.getItem(i).getType() == Material.AIR) {
+                gui.setItem(i, FILLER_GLASS);
+            }
+        }
     }
 
     /**

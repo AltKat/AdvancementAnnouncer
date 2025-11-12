@@ -38,6 +38,8 @@ public class ConfirmationGUI {
         cancelItem.setItemMeta(cancelMeta);
         gui.setItem(15, cancelItem);
 
+        GUIHandler.fillBackground(gui);
+
         player.openInventory(gui);
     }
 

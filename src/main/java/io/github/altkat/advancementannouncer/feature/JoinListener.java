@@ -53,13 +53,15 @@ public class JoinListener implements Listener {
 
         String customModelDataString = plugin.getConfig().getString(messagePath + ".custom-model-data", null);
 
+        String soundString = plugin.getConfig().getString(messagePath + ".sound", "");
+
         try {
             AdvancementHandler.Style style = AdvancementHandler.Style.valueOf(styleString);
             Material icon = Material.valueOf(iconString);
 
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
-                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), customModelDataString, message, style);
+                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), customModelDataString, message, style, soundString);
                 }
             }, 20L);
 

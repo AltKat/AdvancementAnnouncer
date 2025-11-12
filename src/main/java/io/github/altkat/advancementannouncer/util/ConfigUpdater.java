@@ -16,7 +16,6 @@ public class ConfigUpdater {
 
     public static void update(AdvancementAnnouncer plugin) throws IOException {
 
-        // Step 1: Migrate very old string-only presets
         migratePresets(plugin);
 
         File configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -29,7 +28,6 @@ public class ConfigUpdater {
         userConfig.options().copyHeader(true);
         userConfig.options().header(defaultConfig.options().header());
 
-        // Step 2: Add new top-level keys
         for (String key : defaultConfig.getKeys(true)) {
             if (key.startsWith("presets.") ||
                     key.startsWith("auto-announce.messages.") ||
@@ -43,13 +41,11 @@ public class ConfigUpdater {
             }
         }
 
-        // Step 3: Add 'custom-model-data' field to all existing messages
-        addMissingCmdField(userConfig.getConfigurationSection("presets"));
-        addMissingCmdField(userConfig.getConfigurationSection("auto-announce.messages"));
-        addMissingCmdField(userConfig.getConfigurationSection("join-features.join-messages.messages"));
-        addMissingCmdField(userConfig.getConfigurationSection("join-features.first-join-messages.messages"));
+        addMissingMessageFields(userConfig.getConfigurationSection("presets"));
+        addMissingMessageFields(userConfig.getConfigurationSection("auto-announce.messages"));
+        addMissingMessageFields(userConfig.getConfigurationSection("join-features.join-messages.messages"));
+        addMissingMessageFields(userConfig.getConfigurationSection("join-features.first-join-messages.messages"));
 
-        // Step 4: Ensure base sections exist
         if (!userConfig.contains("presets")) {
             userConfig.createSection("presets");
         }
@@ -66,10 +62,7 @@ public class ConfigUpdater {
         userConfig.save(configFile);
     }
 
-    /**
-     * Iterates over a message section and adds 'custom-model-data: ""' if it's missing.
-     */
-    private static void addMissingCmdField(ConfigurationSection section) {
+    private static void addMissingMessageFields(ConfigurationSection section) {
         if (section == null) {
             return;
         }
@@ -78,8 +71,13 @@ public class ConfigUpdater {
             if (section.isConfigurationSection(key)) {
                 ConfigurationSection messageConfig = section.getConfigurationSection(key);
 
-                if (messageConfig != null && !messageConfig.isSet("custom-model-data")) {
-                    messageConfig.set("custom-model-data", "");
+                if (messageConfig != null) {
+                    if (!messageConfig.isSet("custom-model-data")) {
+                        messageConfig.set("custom-model-data", "");
+                    }
+                    if (!messageConfig.isSet("sound")) {
+                        messageConfig.set("sound", "");
+                    }
                 }
             }
         }

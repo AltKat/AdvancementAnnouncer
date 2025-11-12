@@ -54,18 +54,21 @@ public class AutoAnnounceGUI {
             for (String key : messagesSection.getKeys(false)) {
                 String iconStr = messagesSection.getString(key + ".icon", "PAPER");
                 String cmdStr = messagesSection.getString(key + ".custom-model-data", "");
+                String styleStr = messagesSection.getString(key + ".style");
+                String soundStr = messagesSection.getString(key + ".sound", "");
                 String displayName = ChatColor.GREEN + key;
 
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.WHITE + "Message: ");
                 addFormattedMessage(lore, messagesSection.getString(key + ".message"));
                 lore.add(" ");
-                lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
-                lore.add(ChatColor.WHITE + "Icon: " + iconStr);
-                lore.add(ChatColor.WHITE + "CustomModelData: " + (cmdStr.isEmpty() ? "None" : cmdStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bStyle: &f" + styleStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bIcon: &f" + iconStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bCustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bSound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left click to edit.");
-                lore.add(ChatColor.RED + "Right click to delete.");
+                lore.add(ChatColor.YELLOW + "Left-click to edit.");
+                lore.add(ChatColor.RED + "Right-click to delete.");
 
                 ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
@@ -83,6 +86,8 @@ public class AutoAnnounceGUI {
         addMeta.setDisplayName(ChatColor.GREEN + "Add Message");
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }
@@ -132,6 +137,7 @@ public class AutoAnnounceGUI {
                 data.put("style", "GOAL");
                 data.put("icon", "STONE");
                 data.put("custom-model-data", "");
+                data.put("sound", "");
                 EditorGUI.open(player, data);
                 break;
             default:
@@ -158,6 +164,7 @@ public class AutoAnnounceGUI {
                         editData.put("style", plugin.getConfig().getString(path + ".style", "GOAL"));
                         editData.put("icon", plugin.getConfig().getString(path + ".icon", "STONE"));
                         editData.put("custom-model-data", plugin.getConfig().getString(path + ".custom-model-data", ""));
+                        editData.put("sound", plugin.getConfig().getString(path + ".sound", ""));
                         EditorGUI.open(player, editData);
                     }
                 }

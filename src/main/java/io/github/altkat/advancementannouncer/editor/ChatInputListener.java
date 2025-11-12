@@ -26,6 +26,7 @@ public class ChatInputListener implements Listener {
     public static final String STEP_STYLE = "style";
     public static final String STEP_ICON = "icon";
     public static final String STEP_CUSTOM_MODEL_DATA = "custom_model_data";
+    public static final String STEP_SOUND = "sound";
     public static final String STEP_INTERVAL = "interval";
 
     @EventHandler
@@ -100,6 +101,16 @@ public class ChatInputListener implements Listener {
                     } else {
                         data.put("custom-model-data", message);
                         player.sendMessage(prefix + ChatColor.GREEN + "CustomModelData set to: " + message);
+                    }
+                    break;
+
+                case STEP_SOUND:
+                    if (message.equalsIgnoreCase("none") || message.equalsIgnoreCase("clear")) {
+                        data.put("sound", "");
+                        player.sendMessage(prefix + ChatColor.GREEN + "Sound cleared.");
+                    } else {
+                        data.put("sound", message.toLowerCase().trim());
+                        player.sendMessage(prefix + ChatColor.GREEN + "Sound set to: " + message.toLowerCase().trim());
                     }
                     break;
 

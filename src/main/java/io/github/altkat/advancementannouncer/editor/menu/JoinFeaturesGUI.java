@@ -1,5 +1,6 @@
 package io.github.altkat.advancementannouncer.editor.menu;
 
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -48,6 +49,8 @@ public class JoinFeaturesGUI {
         backMeta.setDisplayName(ChatColor.RED + "Back");
         backItem.setItemMeta(backMeta);
         gui.setItem(26, backItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }

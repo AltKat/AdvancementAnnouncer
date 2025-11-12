@@ -32,18 +32,23 @@ public class PresetsGUI {
 
                 String iconStr = preset.getString("icon", "PAPER");
                 String cmdStr = preset.getString("custom-model-data", "");
+                String styleStr = preset.getString("style", "GOAL");
+                String soundStr = preset.getString("sound", "");
                 String displayName = ChatColor.GREEN + key;
 
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&f&nCurrent Message:"));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&fCurrent Message:"));
                 lore.add(" ");
                 addFormattedMessage(lore, preset.getString("message"));
                 lore.add(" ");
-                lore.add(ChatColor.GRAY + "Style: " + ChatColor.WHITE + preset.getString("style", "GOAL"));
-                lore.add(ChatColor.GRAY + "CustomModelData: " + ChatColor.WHITE + (cmdStr.isEmpty() ? "None" : cmdStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bStyle: &f" + styleStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bIcon: &f" + iconStr));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bCustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bSound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
+
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left click to edit this preset.");
-                lore.add(ChatColor.RED + "Right click to delete this preset.");
+                lore.add(ChatColor.YELLOW + "Left-click to edit this preset.");
+                lore.add(ChatColor.RED + "Right-click to delete this preset.");
 
                 ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
@@ -61,6 +66,8 @@ public class PresetsGUI {
         addMeta.setDisplayName(ChatColor.GREEN + "Add Preset");
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }
@@ -114,6 +121,7 @@ public class PresetsGUI {
                 data.put("style", preset.getString("style", "GOAL"));
                 data.put("icon", preset.getString("icon", "STONE"));
                 data.put("custom-model-data", preset.getString("custom-model-data", ""));
+                data.put("sound", preset.getString("sound", ""));
                 EditorGUI.open(player, data);
             }
         }
