@@ -19,6 +19,7 @@
 #   sound: "ENTITY_PLAYER_LEVELUP"
 #   A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 #   Leave "" for no sound.
+#   Recommendation: Use sounds with only TASK and GOAL types since CHALLENGE type has its own sound effect.
 #
 # ######################################################################################################
 #
@@ -51,7 +52,7 @@
 
 presets:
   preset1:
-    message: "&aThis is &6my cool| &amessage wow!"
+    message: "&aThis is my &6cool|&amessage wow!"
     style: "GOAL"
     icon: "DIAMOND"
     custom-model-data: ""
@@ -87,7 +88,7 @@ auto-announce:
       style: "TASK"
       icon: "DIAMOND"
       custom-model-data: ""
-      sound: ""
+      sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
     vipmessage:
       message: "&6You can get ranks|&6on our store &b/store"
       style: "CHALLENGE"
