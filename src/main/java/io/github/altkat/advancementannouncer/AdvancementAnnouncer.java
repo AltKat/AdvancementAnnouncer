@@ -12,6 +12,7 @@ import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
 import io.github.altkat.advancementannouncer.feature.CommandHandler;
 import io.github.altkat.advancementannouncer.feature.JoinListener;
 import io.github.altkat.advancementannouncer.util.ConfigUpdater;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import io.github.altkat.advancementannouncer.util.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -153,9 +154,8 @@ public class AdvancementAnnouncer extends JavaPlugin {
     }
 
     public static void log(String message) {
-        AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
-        String prefix = "&3[AdvancementAnnouncer] &r";
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
+        String prefix = "&#7688FF[Advancement Announcer] &r";
+        Bukkit.getConsoleSender().sendMessage(TextUtil.color(prefix + message));
     }
 
     public static AdvancementAnnouncer getInstance() {
@@ -190,7 +190,8 @@ public class AdvancementAnnouncer extends JavaPlugin {
 
     public String getPrefix() {
         if (this.prefix == null) {
-            this.prefix = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lang-messages.plugin-prefix", "&3[AdvancementAnnouncer] &r"));
+            String configPrefix = getConfig().getString("lang-messages.plugin-prefix", "&#7688FF[Advancement Announcer] &r");
+            this.prefix = TextUtil.color(configPrefix);
         }
         return this.prefix;
     }

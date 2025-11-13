@@ -5,6 +5,7 @@ import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementFrameT
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.cmd.ResolvedIconData;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
@@ -36,12 +37,10 @@ public class AdvancementHandler {
         AdvancementAnnouncer plugin = AdvancementAnnouncer.getInstance();
         int cmdValue = 0;
 
-        // 1. Validate the icon material
         if (iconMaterial == null || iconMaterial.isBlank() || Material.matchMaterial(iconMaterial.toUpperCase()) == null) {
             iconMaterial = "PAPER";
         }
 
-        // 2. Resolve the CustomModelData string (if it exists)
         if (customModelDataInput != null && !customModelDataInput.isBlank()) {
             ResolvedIconData data = plugin.getCmdResolver().resolve(customModelDataInput, iconMaterial);
             if (data != null) {
@@ -51,17 +50,13 @@ public class AdvancementHandler {
             }
         }
 
-        // 3. Apply Placeholders and Colors
-        String finalMessage = ChatColor.translateAlternateColorCodes('&', message);
+        String finalMessage = TextUtil.color(message);
         if (plugin.isPAPIEnabled()) {
             finalMessage = PlaceholderAPI.setPlaceholders(player, finalMessage);
         }
 
-        // 4. Check if we should use the API
         if (plugin.isApiAvailable()) {
             try {
-                // --- METHOD 1: Use UltimateAdvancementAPI (Supports CMD) ---
-
                 ItemStack iconStack = new ItemStack(Material.matchMaterial(iconMaterial.toUpperCase()));
                 ItemMeta meta = iconStack.getItemMeta();
                 if (meta != null) {

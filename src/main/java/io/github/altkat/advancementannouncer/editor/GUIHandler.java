@@ -3,6 +3,7 @@ package io.github.altkat.advancementannouncer.editor;
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.cmd.ResolvedIconData;
 import io.github.altkat.advancementannouncer.editor.menu.*;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,11 +45,11 @@ public class GUIHandler implements Listener {
         isNavigating.add(player.getUniqueId());
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> isNavigating.remove(player.getUniqueId()), 5L);
 
-        if (title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title")))) {
+        if (title.equals(TextUtil.color("&#7688FFAdvancement Announcer Edit"))) {
             MainMenuGUI.handleClick(event);
-        } else if (title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title")))) {
+        } else if (title.equals(TextUtil.color("&#7688FFAdvancement Announcer Presets"))) {
             PresetsGUI.handleClick(event);
-        } else if (title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title")))) {
+        } else if (title.equals(TextUtil.color("&#7688FFAuto Announce Config"))) {
             AutoAnnounceGUI.handleClick(event);
         } else if (title.contains("Join Features") || title.contains("Join Messages")) {
             if (title.contains("Join Features")) {
@@ -70,11 +71,11 @@ public class GUIHandler implements Listener {
     }
 
     private boolean isRelevantGUI(String title) {
-        return title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.edit-gui-title"))) ||
-                title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title"))) ||
-                title.equals(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title"))) ||
-                title.contains("Join Features") ||
-                title.contains("Join Messages") ||
+        return title.equals(TextUtil.color("&#7688FFAdvancement Announcer Edit")) ||
+                title.equals(TextUtil.color("&#7688FFAdvancement Announcer Presets")) ||
+                title.equals(TextUtil.color("&#7688FFAuto Announce Config")) ||
+                title.contains(TextUtil.color("Join Features")) ||
+                title.contains(TextUtil.color("Join Messages")) ||
                 title.startsWith("Editing ") ||
                 title.startsWith("Creating ") ||
                 title.equals("Select a Style") ||

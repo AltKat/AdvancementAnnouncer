@@ -2,6 +2,7 @@ package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,7 +24,7 @@ public class PresetsGUI {
     private static final int SLOT_ADD_ITEM = 53;
 
     public static void open(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.presets-gui-title")));
+        Inventory gui = Bukkit.createInventory(null, 54, TextUtil.color("&#7688FFAdvancement Announcer Presets"));
         ConfigurationSection presetsSection = plugin.getConfig().getConfigurationSection("presets");
         if (presetsSection != null) {
             for (String key : presetsSection.getKeys(false)) {
@@ -34,21 +35,21 @@ public class PresetsGUI {
                 String cmdStr = preset.getString("custom-model-data", "");
                 String styleStr = preset.getString("style", "GOAL");
                 String soundStr = preset.getString("sound", "");
-                String displayName = ChatColor.GREEN + key;
+                String displayName = TextUtil.color("&#76FF90" + key);
 
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&fCurrent Message:"));
+                lore.add(TextUtil.color("&fCurrent Message:"));
                 lore.add(" ");
                 addFormattedMessage(lore, preset.getString("message"));
                 lore.add(" ");
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bStyle: &f" + styleStr));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bIcon: &f" + iconStr));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bCustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bSound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Style: &f" + styleStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Icon: &f" + iconStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90CustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Sound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
 
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left-click to edit this preset.");
-                lore.add(ChatColor.RED + "Right-click to delete this preset.");
+                lore.add(TextUtil.color("&#FCD05CLeft-click to edit this preset."));
+                lore.add(TextUtil.color("&#F86B6BRight-click to delete this preset."));
 
                 ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
@@ -57,13 +58,13 @@ public class PresetsGUI {
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "Back");
+        backMeta.setDisplayName(TextUtil.color("&#F86B6BBack"));
         backItem.setItemMeta(backMeta);
         gui.setItem(SLOT_BACK_BUTTON, backItem);
 
         ItemStack addItem = new ItemStack(Material.EMERALD);
         ItemMeta addMeta = addItem.getItemMeta();
-        addMeta.setDisplayName(ChatColor.GREEN + "Add Preset");
+        addMeta.setDisplayName(TextUtil.color("&#76FF90Add Preset"));
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
 
@@ -107,7 +108,7 @@ public class PresetsGUI {
                 GUIHandler.confirmationActions.put(player.getUniqueId(), () -> {
                     plugin.getConfig().set("presets." + presetName, null);
                     plugin.saveConfig();
-                    player.sendMessage(ChatColor.GREEN + "Preset '" + presetName + "' has been deleted.");
+                    player.sendMessage(TextUtil.color("&#76FF90Preset '" + presetName + "&#76FF90' has been deleted."));
                     open(player);
                 });
             } else if (event.isLeftClick()) {
@@ -130,10 +131,10 @@ public class PresetsGUI {
     private static void addFormattedMessage(List<String> lore, String message) {
         if (message != null && message.contains("|")) {
             for (String line : message.split("\\|")) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                lore.add(TextUtil.color(line));
             }
         } else if (message != null) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', message));
+            lore.add(TextUtil.color(message));
         }
     }
 }

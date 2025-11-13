@@ -2,6 +2,7 @@ package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +26,7 @@ public class JoinMessageListGUI {
 
     public static void open(Player player, String type) {
         String configPath = type.equals("join") ? "join-features.join-messages" : "join-features.first-join-messages";
-        String title = type.equals("join") ? ChatColor.BLUE + "Normal Join Messages" : ChatColor.GOLD + "First Join Messages";
+        String title = TextUtil.color(type.equals("join") ? "&bNormal Join Messages" : "&6First Join Messages");
 
         Inventory gui = Bukkit.createInventory(null, 54, title);
         ConfigurationSection mainSection = plugin.getConfig().getConfigurationSection(configPath);
@@ -38,7 +39,7 @@ public class JoinMessageListGUI {
         boolean isEnabled = mainSection.getBoolean("enabled");
         ItemStack toggleItem = new ItemStack(isEnabled ? Material.LIME_DYE : Material.GRAY_DYE);
         ItemMeta toggleMeta = toggleItem.getItemMeta();
-        toggleMeta.setDisplayName(ChatColor.YELLOW + "Status: " + (isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled"));
+        toggleMeta.setDisplayName(TextUtil.color("&#FCD05CStatus: " + (isEnabled ? "&#76FF90Enabled" : "&#F86B6BDisabled")));
         toggleItem.setItemMeta(toggleMeta);
         gui.setItem(SLOT_TOGGLE, toggleItem);
 
@@ -49,19 +50,19 @@ public class JoinMessageListGUI {
                 String cmdStr = messagesSection.getString(key + ".custom-model-data", "");
                 String styleStr = messagesSection.getString(key + ".style");
                 String soundStr = messagesSection.getString(key + ".sound", "");
-                String displayName = ChatColor.GREEN + key;
+                String displayName = TextUtil.color("&#76FF90" + key);
 
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.WHITE + "Message: ");
+                lore.add(TextUtil.color("&fMessage: "));
                 addFormattedMessage(lore, messagesSection.getString(key + ".message"));
                 lore.add(" ");
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bStyle: &f" + styleStr));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bIcon: &f" + iconStr));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bCustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&e» &bSound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Style: &f" + styleStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Icon: &f" + iconStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90CustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Sound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left-click to edit.");
-                lore.add(ChatColor.RED + "Right-click to delete.");
+                lore.add(TextUtil.color("&#FCD05CLeft-click to edit."));
+                lore.add(TextUtil.color("&#F86B6BRight-click to delete."));
 
                 ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
@@ -70,13 +71,13 @@ public class JoinMessageListGUI {
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "Back");
+        backMeta.setDisplayName(TextUtil.color("&#F86B6BBack"));
         backItem.setItemMeta(backMeta);
         gui.setItem(SLOT_BACK_BUTTON, backItem);
 
         ItemStack addItem = new ItemStack(Material.EMERALD);
         ItemMeta addMeta = addItem.getItemMeta();
-        addMeta.setDisplayName(ChatColor.GREEN + "Add Message");
+        addMeta.setDisplayName(TextUtil.color("&#76FF90Add Message"));
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
 
@@ -128,7 +129,7 @@ public class JoinMessageListGUI {
                 GUIHandler.confirmationActions.put(player.getUniqueId(), () -> {
                     plugin.getConfig().set(configPath + ".messages." + messageName, null);
                     plugin.saveConfig();
-                    player.sendMessage(ChatColor.GREEN + "Message '" + messageName + "' has been deleted.");
+                    player.sendMessage(TextUtil.color("&#76FF90Message '" + messageName + "&#76FF90' has been deleted."));
                     open(player, type);
                 });
             } else if (event.isLeftClick()) {
@@ -151,10 +152,10 @@ public class JoinMessageListGUI {
     private static void addFormattedMessage(List<String> lore, String message) {
         if (message != null && message.contains("|")) {
             for (String line : message.split("\\|")) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                lore.add(TextUtil.color(line));
             }
         } else if (message != null) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', message));
+            lore.add(TextUtil.color(message));
         }
     }
 }

@@ -4,7 +4,7 @@ import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import io.github.altkat.advancementannouncer.core.PlayerData;
 import io.github.altkat.advancementannouncer.core.AdvancementHandler;
 import io.github.altkat.advancementannouncer.editor.menu.MainMenuGUI;
-import org.bukkit.ChatColor;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,10 +31,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 if (sender.hasPermission("advancementannouncer.admin")) {
                     MainMenuGUI.open((Player) sender);
                 } else {
-                    sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
+                    sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.no-permission", "&#F86B6BYou don't have permission to use this command.")));
                 }
             } else {
-                sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BYou must be a player to use this command!"));
             }
             return true;
         }
@@ -42,12 +42,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         if (!sender.hasPermission("advancementannouncer.admin")) {
             if (args.length > 0 && args[0].equalsIgnoreCase("toggle")) {
                 if (!sender.hasPermission("advancementannouncer.toggle")) {
-                    sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
+                    sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.no-permission", "&#F86B6BYou don't have permission to use this command.")));
                     return true;
                 }
                 handleNewToggle(sender, args);
             } else {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.wrong-usage", "&cWrong usage! Please use /aa toggle")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.wrong-usage", "&#F86B6BWrong usage! Please use /aa toggle")));
             }
             return true;
         }
@@ -59,7 +59,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("toggle")) {
             if (!sender.hasPermission("advancementannouncer.toggle")) {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command.")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.no-permission", "&#F86B6BYou don't have permission to use this command.")));
                 return true;
             }
             handleNewToggle(sender, args);
@@ -72,7 +72,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             plugin.clearPrefixCache();
             AutoAnnounce.startAutoAnnounce();
             PlayerData.reloadPlayerData();
-            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.config-reloaded")));
+            sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.config-reloaded")));
             return true;
         }
 
@@ -88,14 +88,17 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private void handleNewToggle(CommandSender sender, String[] args) {
         final String prefix = plugin.getPrefix();
         if (!(sender instanceof Player)) {
-            sender.sendMessage(prefix + ChatColor.RED + "You must be a player to use this command!");
+            sender.sendMessage(prefix + TextUtil.color("&cYou must be a player to use this command!"));
             return;
         }
 
         UUID playerUUID = ((Player) sender).getUniqueId();
 
-        final String wrongUsageMsg = ChatColor.translateAlternateColorCodes('&',
+        final String wrongUsageMsg = TextUtil.color(
                 plugin.getConfig().getString("lang-messages.wrong-usage", "&cWrong usage! Please use /aa toggle <announcements|sounds>"));
+
+        final String noPermMsg = prefix + TextUtil.color(
+                plugin.getConfig().getString("lang-messages.no-permission", "&cYou don't have permission to use this command."));
 
         if (args.length == 1) {
             sender.sendMessage(prefix + wrongUsageMsg);
@@ -103,23 +106,35 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
 
         if (args[1].equalsIgnoreCase("announcements")) {
+
+            if (!sender.hasPermission("advancementannouncer.toggle.announcements")) {
+                sender.sendMessage(noPermMsg);
+                return;
+            }
+
             boolean newStatus = !PlayerData.returnToggleData(playerUUID);
             PlayerData.setToggleData(playerUUID, newStatus);
 
             if (newStatus) {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-on", "&aAnnouncements are now enabled!")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.announcements-toggled-on", "&aAnnouncements are now enabled!")));
             } else {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.announcements-toggled-off", "&cAnnouncements are now disabled!")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.announcements-toggled-off", "&cAnnouncements are now disabled!")));
             }
 
         } else if (args[1].equalsIgnoreCase("sounds")) {
+
+            if (!sender.hasPermission("advancementannouncer.toggle.sounds")) {
+                sender.sendMessage(noPermMsg);
+                return;
+            }
+
             boolean newStatus = !PlayerData.areSoundsEnabled(playerUUID);
             PlayerData.setSoundsEnabled(playerUUID, newStatus);
 
             if (newStatus) {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.sounds-toggled-on", "&aAnnouncement sounds are now enabled!")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.sounds-toggled-on", "&aAnnouncement sounds are now enabled!")));
             } else {
-                sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.sounds-toggled-off", "&cAnnouncement sounds are now disabled! (You will still see announcements)")));
+                sender.sendMessage(prefix + TextUtil.color(plugin.getConfig().getString("lang-messages.sounds-toggled-off", "&cAnnouncement sounds are now disabled! (You will still see announcements)")));
             }
 
         } else {
@@ -137,7 +152,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
         if (args[1].equalsIgnoreCase("preset")) {
             if (args.length < 4) {
-                sender.sendMessage(prefix + ChatColor.RED + "Usage: /aa send preset <presetName> <target>");
+                sender.sendMessage(prefix + TextUtil.color("&#FCD05CPreset Usage: \n&7- &#76FF90/aa send preset <presetName> <target>"));
                 return;
             }
             String presetName = args[2];
@@ -145,7 +160,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
             ConfigurationSection presetSection = plugin.getConfig().getConfigurationSection("presets." + presetName);
             if (presetSection == null) {
-                sender.sendMessage(prefix + ChatColor.RED + "Preset not found: " + presetName);
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BPreset not found: " + presetName));
                 return;
             }
 
@@ -185,8 +200,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             try {
                 style = AdvancementHandler.Style.valueOf(args[1].toUpperCase());
             } catch (final IllegalArgumentException t) {
-                sender.sendMessage(prefix + ChatColor.RED + "Invalid style or option: " + args[1]);
-                sender.sendMessage(prefix + ChatColor.GRAY + "Did you mean '/aa send preset'?");
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BInvalid style or option: " + args[1]));
+                sender.sendMessage(prefix + TextUtil.color("&#FCD05CDid you mean '/aa send preset'?"));
                 return;
             }
 
@@ -194,7 +209,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             try {
                 Material.valueOf(materialName.toUpperCase());
             } catch (final IllegalArgumentException t) {
-                sender.sendMessage(prefix + ChatColor.RED + "Invalid material: " + materialName);
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BInvalid material: " + materialName));
                 return;
             }
 
@@ -215,7 +230,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             }
 
             if (message == null || message.isEmpty()) {
-                sender.sendMessage(prefix + ChatColor.RED + "Could not find message for preset or custom input.");
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BCould not find message for preset or custom input."));
                 return;
             }
 
@@ -223,15 +238,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return;
         }
 
-        sender.sendMessage(prefix + ChatColor.YELLOW + "Usage 1: /aa send preset <presetName> <target>");
-        sender.sendMessage(prefix + ChatColor.YELLOW + "Usage 2: /aa send <style> <icon> <target> <message/presetName>");
+        sender.sendMessage(prefix + TextUtil.color("&#FCD05CSend Usages: \n&#FCD05CUsage 1: \n&7- &#76FF90/aa send preset <presetName> <target>"));
+        sender.sendMessage(TextUtil.color("&#FCD05CUsage 2: \n&7- &#76FF90/aa send <style> <icon> <target> <message/presetName>"));
     }
 
     private void sendToTarget(CommandSender sender, String targetName, String message, AdvancementHandler.Style style, String icon, String customModelData, String sound) {
         final String prefix = plugin.getPrefix();
         if (targetName.equalsIgnoreCase("all")) {
             if (sender.getServer().getOnlinePlayers().isEmpty()) {
-                sender.sendMessage(prefix + ChatColor.RED + "There are no online players in the server!");
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BThere are no online players in the server!"));
                 return;
             }
             int sentCount = 0;
@@ -242,15 +257,15 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style, sound);
                 sentCount++;
             }
-            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + sentCount + " player(s)"));
+            sender.sendMessage(prefix + TextUtil.color("&#76FF90Advancement message sent to &#FCD05C" + sentCount + " &#76FF90player(s)"));
         } else {
             Player player = sender.getServer().getPlayer(targetName);
             if (player == null) {
-                sender.sendMessage(prefix + ChatColor.RED + "Player not found: " + targetName);
+                sender.sendMessage(prefix + TextUtil.color("&#F86B6BPlayer not found: " + targetName));
                 return;
             }
             AdvancementHandler.displayTo(player, icon.toLowerCase(), customModelData, message, style, sound);
-            sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aAdvancement message sent to " + player.getName()));
+            sender.sendMessage(prefix + TextUtil.color("&#76FF90Advancement message sent to &#FCD05C" + player.getName()));
         }
     }
 
@@ -346,11 +361,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private void sendHelpMessage(CommandSender sender) {
         final String prefix = plugin.getPrefix();
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aCommands: "));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send preset <presetName> <player/all>"));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa send <style> <material> <player/all> <message/presetName>"));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa reload"));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa toggle <announcements|sounds>"));
-        sender.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&7- &a/aa edit"));
+        sender.sendMessage(prefix + TextUtil.color("&#FCD05CCommands: "));
+        sender.sendMessage(TextUtil.color("&#FCD05C-----------------------------------------------------"));
+        sender.sendMessage(TextUtil.color("&#FCD05C Sends a Configured Preset \n &7- &#76FF90/aa send preset <presetName> <player/all>\n "));
+        sender.sendMessage(TextUtil.color("&#FCD05C Sends a Custom Message / Overrides a Configured Preset \n &7- &#76FF90/aa send <style> <material> <player/all> <message/presetName>\n "));
+        sender.sendMessage(TextUtil.color("&#FCD05C Reloads AdvancementAnnouncer Plugin \n &7- &#76FF90/aa reload\n "));
+        sender.sendMessage(TextUtil.color("&#FCD05C Toggles Announcement Display / Announcement Sounds \n &7- &#76FF90/aa toggle <announcements|sounds>\n "));
+        sender.sendMessage(TextUtil.color("&#FCD05C Opens AdvancementAnnouncer GUI \n &7- &#76FF90/aa edit"));
+        sender.sendMessage(TextUtil.color("&#FCD05C-----------------------------------------------------"));
     }
 }

@@ -41,6 +41,19 @@ public class ConfigUpdater {
             }
         }
 
+        if (userConfig.isSet("lang-messages.edit-gui-title")) {
+            userConfig.set("lang-messages.edit-gui-title", null);
+        }
+        if (userConfig.isSet("lang-messages.presets-gui-title")) {
+            userConfig.set("lang-messages.presets-gui-title", null);
+        }
+        if (userConfig.isSet("lang-messages.auto-announce-gui-title")) {
+            userConfig.set("lang-messages.auto-announce-gui-title", null);
+        }
+        if (userConfig.isSet("lang-messages.input-cancelled")) {
+            userConfig.set("lang-messages.input-cancelled", null);
+        }
+
         addMissingMessageFields(userConfig.getConfigurationSection("presets"));
         addMissingMessageFields(userConfig.getConfigurationSection("auto-announce.messages"));
         addMissingMessageFields(userConfig.getConfigurationSection("join-features.join-messages.messages"));

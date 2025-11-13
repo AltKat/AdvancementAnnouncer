@@ -12,14 +12,42 @@
 #   custom-model-data: itemsadder:fire_sword for ItemsAdder.
 #   custom-model-data: nexo:forest_sword for Nexo.
 #
-# Sound Usage:
-# You can add a sound to any announcement.
-# sound: "ENTITY_PLAYER_LEVELUP"
-# A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
-# Leave "" for no sound.
+# ######################################################################################################
 #
-# you can use placeholders from PlaceholderAPI in the messages. like %player_name%
-# use | to print on a new line
+# Sound Usage:
+#   You can add a sound to any announcement.
+#   sound: "ENTITY_PLAYER_LEVELUP"
+#   A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+#   Leave "" for no sound.
+#
+# ######################################################################################################
+#
+# Hex Color Usage:
+#   This plugin supports Hex colors.
+#   Use the format &#RRGGBB (e.g., &#FF0000) in any message.
+#
+# ######################################################################################################
+#
+# Auto-Announce & Message Options:
+#   enabled: true/false - should the plugin announce messages automatically.
+#   interval: in seconds - time between auto-announcements.
+#   mode: "ORDERED" or "RANDOM" - the order of messages.
+#   style: "GOAL", "TASK", or "CHALLENGE" - the frame style of the toast.
+#   icon: Any valid Material name from Spigot.
+#     (e.g., "DIAMOND", "GOLDEN_APPLE")
+#     List: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+#
+# ######################################################################################################
+#
+# Placeholder Usage:
+#   You can use placeholders from PlaceholderAPI in the messages. like %player_name%
+#
+# ######################################################################################################
+#
+# How to print multiple lines:
+#   Use | to print on a new line (If you print a one line message top line will be minecraft's default line (e.g, Goal Reached!)
+#
+# ######################################################################################################
 
 presets:
   preset1:
@@ -49,14 +77,14 @@ presets:
 
 
 auto-announce:
-  enabled: false    # should the plugin announce messages automatically
-  interval: 30      # in seconds
-  mode: "ORDERED"   # ORDERED, RANDOM
-  messages:         # you can add as many messages as you want
+  enabled: false
+  interval: 30
+  mode: "ORDERED"
+  messages:
     custommessage1:
       message: "&eHello &a%player_name%|&eHow is it going?"
-      style: "GOAL"   # GOAL, TASK, CHALLENGE
-      icon: "EMERALD" # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+      style: "GOAL"
+      icon: "EMERALD"
       custom-model-data: ""
       sound: ""
     custommessage2:
@@ -113,15 +141,11 @@ join-features:
 #These are the messages shown to players
 #You can edit these messages
 lang-messages:
-  plugin-prefix: "&3[AdvancementAnnouncer] &r"
-  config-reloaded: "&aConfig reloaded!"
-  wrong-usage: "&cWrong usage! Please use &e/aa toggle <announcements|sounds>"
-  announcements-toggled-on: "&aYou now see the advancement announcements!"
-  announcements-toggled-off: "&cYou no longer see the advancement announcements!"
-  sounds-toggled-on: "&aAnnouncement sounds are now enabled!"
-  sounds-toggled-off: "&cAnnouncement sounds are now disabled! (You will still see announcements)"
-  edit-gui-title: "&3Advancement Announcer Edit"
-  presets-gui-title: "&3Advancement Announcer Presets"
-  auto-announce-gui-title: "&3Auto Announce Config"
-  input-cancelled: "&cInput process cancelled."
-  no-permission: "&cYou don't have permission to use this command."
+  plugin-prefix: "&#7688FF[Advancement Announcer] &r"
+  config-reloaded: "&#76FF90Config reloaded!"
+  wrong-usage: "&#F86B6BWrong usage! Please use &e/aa toggle <announcements|sounds>"
+  announcements-toggled-on: "&#76FF90You now see the advancement announcements!"
+  announcements-toggled-off: "&#F86B6BYou no longer see the advancement announcements!"
+  sounds-toggled-on: "&#76FF90Announcement sounds are now enabled!"
+  sounds-toggled-off: "&#F86B6BAnnouncement sounds are now disabled!"
+  no-permission: "&#F86B6BYou don't have permission to use this command."

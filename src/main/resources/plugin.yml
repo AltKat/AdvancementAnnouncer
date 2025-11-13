@@ -7,13 +7,22 @@ authors: [StreetMelodeez(AltKat)]
 softdepend: ["PlaceholderAPI"]
 commands:
   advancementannouncer:
-    usage: /advancementannouncer send <style> <icon> <target> <message>
+    usage: /aa <command>
+    description: Main command for AdvancementAnnouncer
     aliases:
       - aa
 permissions:
   advancementannouncer.admin:
     description: Allows full control of Advancement Announcer
     default: op
+
   advancementannouncer.toggle:
-    description: Allows toggling announcements
+    description: Allows players to use the /aa toggle command
     default: true
+    children:
+      advancementannouncer.toggle.announcements:
+        description: Allows toggling announcements
+        default: true
+      advancementannouncer.toggle.sounds:
+        description: Allows toggling announcement sounds
+        default: true
