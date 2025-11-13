@@ -69,11 +69,12 @@ presets:
     custom-model-data: ""
     sound: ""
   greeting:
-    message: "&eHello &a%player_name%|&eHow is it going?"
-    style: "GOAL"
-    icon: "APPLE"
+    message: "&#54DAF4H&#54BBE5e&#549CD5l&#547DC6l&#545EB6o &e%player_name% &#54DAF4H&#54D2F0o&#54C9ECw
+        &#54B9E3i&#54B1DFs &#54A0D7i&#5498D3t &#5487CBg&#547FC7o&#5477C2i&#546FBEn&#5466BAg&#545EB6?"
+    style: GOAL
+    icon: SUNFLOWER
     custom-model-data: ""
-    sound: ""
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
 
 auto-announce:
@@ -81,13 +82,7 @@ auto-announce:
   interval: 30
   mode: "ORDERED"
   messages:
-    custommessage1:
-      message: "&eHello &a%player_name%|&eHow is it going?"
-      style: "GOAL"
-      icon: "EMERALD"
-      custom-model-data: ""
-      sound: ""
-    custommessage2:
+    custommessage:
       message: "&9Join our discord server|&bdiscord.gg/yourdc"
       style: "TASK"
       icon: "DIAMOND"
@@ -116,7 +111,7 @@ join-features:
       welcome-back-2:
         message: '&7[&a+&7] &f%player_name%'
         style: TASK
-        icon: OAK_DOOR
+        icon: TOTEM_OF_UNDYING
         custom-model-data: ""
         sound: ""
 
