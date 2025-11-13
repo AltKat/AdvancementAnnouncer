@@ -17,7 +17,7 @@ import java.util.List;
 public class JoinFeaturesGUI {
 
     public static void open(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 27, TextUtil.color("&bJoin Features"));
+        Inventory gui = Bukkit.createInventory(null, 27, TextUtil.color("&#7688FFJoin Features"));
 
         ItemStack joinMsgItem = new ItemStack(Material.OAK_SIGN);
         ItemMeta joinMsgMeta = joinMsgItem.getItemMeta();

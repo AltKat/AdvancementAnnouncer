@@ -26,7 +26,7 @@ public class JoinMessageListGUI {
 
     public static void open(Player player, String type) {
         String configPath = type.equals("join") ? "join-features.join-messages" : "join-features.first-join-messages";
-        String title = TextUtil.color(type.equals("join") ? "&bNormal Join Messages" : "&6First Join Messages");
+        String title = TextUtil.color(type.equals("join") ? "&#7688FFNormal Join Messages" : "&#7688FFFirst Join Messages");
 
         Inventory gui = Bukkit.createInventory(null, 54, title);
         ConfigurationSection mainSection = plugin.getConfig().getConfigurationSection(configPath);
