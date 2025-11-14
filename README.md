@@ -1,15 +1,23 @@
 <div align="center">
-  <h1><img src="https://altkat.github.io/AdvancementAnnouncer/new-logo-banner.png" alt="Title Image"></h1>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/greeting.png" alt="toast-example1"><br><br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/cool.png" alt="toast-example2"><br><br>
-  <img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3"><br><br>
+  <h1><img src="https://altkat.github.io/AdvancementAnnouncer/new-logo-banner.png" alt="Title Image" width="600"></h1>
 
+### 🎉 Custom Toast Advancement Messages for Your Server
+
+<img src="https://altkat.github.io/AdvancementAnnouncer/greeting.png" alt="toast-example1" width="500"><br><br>
+<img src="https://altkat.github.io/AdvancementAnnouncer/cool.png" alt="toast-example2" width="500"><br><br>
+<img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3" width="500"><br><br>
 </div>
+
+---
+
+<p align="center">
+  <strong>Create stunning advancement announcements with full color support, custom sounds, and model data!</strong>
+</p>
 
 <p align="center">
   <br/>
-    <img src="https://img.shields.io/badge/MC-1.16.5+-green?style=for-the-badge" alt="Minecraft 1.21+" />
-  <img src="https://img.shields.io/badge/Java-17+-blueviolet?style=for-the-badge" alt="Java 17+" />
+  <img src="https://img.shields.io/badge/MC-1.16.5+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.21+" />
+  <img src="https://img.shields.io/badge/Java-17+-blueviolet?style=for-the-badge&logo=java" alt="Java 17+" />
   <a href="https://github.com/altkat/AdvancementAnnouncer/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License: MIT" />
   </a>
@@ -18,88 +26,169 @@
   </a>
   <br>
   <a href="https://discordapp.com/users/247441109888925697">
-    <img src="https://img.shields.io/badge/Discord-Profile-5865F2?style=for-the-badge&logo=discord" alt="Discord Profile" />
+    <img src="https://img.shields.io/badge/Discord-💬%20Contact%20Me-5865F2?style=for-the-badge&logo=discord" alt="Discord Profile" />
+  </a>
+  <a href="https://github.com/altkat/AdvancementAnnouncer">
+    <img src="https://img.shields.io/github/stars/altkat/AdvancementAnnouncer?style=for-the-badge&logo=github" alt="GitHub Stars" />
   </a>
 </p>
 
+---
 
-**Advancement Announcer** gives you the ability to send toast advancement messages to desired players.
+## ✨ Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🎨 Full Color Support</h3>
+      <p>Legacy colors (<code>&a</code>), gradients, and <strong>Hex colors</strong> (<code>&#RRGGBB</code>) in all messages and GUI elements</p>
+    </td>
+    <td width="50%">
+      <h3>🔊 Custom Sounds</h3>
+      <p>Add custom sounds to announcements. Supports default Minecraft sounds and custom resource pack sounds</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>✏️ Custom Model Data (CMD)</h3>
+      <p>Display items with custom model data. Supports integers, <strong>ItemsAdder</strong>, and <strong>Nexo</strong></p>
+    </td>
+    <td width="50%">
+      <h3>🎮 Advanced Player Toggles</h3>
+      <p>Players can independently toggle announcements or just sounds with <code>/aa toggle</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>⚙️ In-Game GUI Editor</h3>
+      <p>Manage everything from an easy-to-use interface (<code>/aa edit</code>). No YAML editing needed!</p>
+    </td>
+    <td width="50%">
+      <h3>👋 Join Messages</h3>
+      <p>Welcome players with unique announcements on join or first join with random selection</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>⏰ Automated Messages</h3>
+      <p>Set up unlimited auto-broadcast messages on a timer with ORDERED or RANDOM mode</p>
+    </td>
+    <td width="50%">
+      <h3>🔌 PlaceholderAPI Support</h3>
+      <p>Use any PAPI placeholders in your messages for dynamic content</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>📦 Multiple Presets</h3>
+      <p>Create and manage unlimited message presets with different styles and settings</p>
+    </td>
+    <td width="50%">
+      <h3>🔄 Update Checker</h3>
+      <p>Automatic notifications for new versions available</p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-### Advancement Announcer Features
-- **Full Color Support**: Supports all legacy colors (`&a`), gradient colors, and **Hex colors** (`&#RRGGBB`) in all messages and GUI elements.
-- **Custom Sound Support**: Add custom sounds to any announcement. Supports both default Minecraft sounds (`ENTITY_PLAYER_LEVELUP`) and custom sounds from resource packs (`my.custom.sound`).
-- **Custom Model Data (CMD) Support**: Display items with custom model data in your announcements. Fully supports integers (`12345`) and integrations with **ItemsAdder** and **Nexo** (`itemsadder:my_item` `nexo:my_item`).
-- **Advanced Player Toggles**: Players can use `/aa toggle <announcements|sounds>` to independently mute announcements or just their sounds, allowing for silent notifications.
-- **In-Game GUI Editor**: Manage everything from an easy-to-use in-game interface (`/aa edit`). No more YAML editing!
-- **Join & First Join Messages**: Welcome players with unique, random-picker announcements when they first join or return.
-- **Automated Messages**: Set up unlimited automated messages (presets or custom) to broadcast on a timer.
-- **PlaceholderAPI (PAPI) Support**: Use any PAPI placeholders in your messages.
-- **Update Checker**: Notifies admins when a new version is available.
-- Tested on Minecraft versions **1.16.5 - 1.21.x**
-- Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a> for questions, issues, or suggestions.
+## 📋 Commands
+
+### 🎯 Main Commands
+
+| Command | Usage | Permission | Description |
+|---------|-------|-----------|-------------|
+| `/aa edit` | Open GUI | `advancementannouncer.admin` | Opens the main configuration GUI |
+| `/aa reload` | Reload config | `advancementannouncer.admin` | Reloads the configuration file |
+| `/aa toggle` | Toggle settings | `advancementannouncer.toggle` | Toggle announcements or sounds |
+
+### 📤 Send Commands
+
+```
+/aa send preset <presetName> <target>
+```
+Sends a pre-configured preset with saved style, icon, sound, and custom model data.
+
+```
+/aa send <style> <icon> <target> <message/presetName>
+```
+Send a fully custom message or override a preset's visual settings.
+
+**Options:**
+- **Style:** `GOAL`, `TASK`, `CHALLENGE`
+- **Icon:** Any valid [Material name](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
+- **Target:** Player name or `all`
+
+### 🔀 Toggle Command
+
+```
+/aa toggle <announcements|sounds>
+```
+- `announcements` - Toggle visibility of announcements
+- `sounds` - Toggle announcement sounds (silently notify)
 
 ---
 
-### Commands
-- **`/aa edit`**: Opens the main configuration GUI. From here, you can manage presets, auto-announcements, and join features.
-- **`/aa send` Commands**:
-    - **Send a Preset:** `/aa send preset <presetname> <target>`
-        - Sends a pre-configured preset with its saved style, icon, sound, and CMD.
-    - **Send Custom/Override:** `/aa send <style> <icon> <target> <message/presetname>`
-        - Send a fully custom message OR override a preset's visual settings while keeping its message.
-    - Possible options for **style**: `GOAL`, `TASK`, `CHALLENGE`.
-    - Possible options for **icon** can be found <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html" target="_blank">here</a>.
-    - Target a specific player's name or use `all`.
-- **`/aa toggle <announcements|sounds>`**: Allows players to individually toggle whether they see announcements or hear their custom sounds.
-- **`/aa reload`**: Reloads the configuration file.
+## 🔐 Permissions
 
-### Permissions
-- **`advancementannouncer.admin`**: Full access to all plugin features and commands.
-- **`advancementannouncer.toggle`**: Parent permission to use the `/aa toggle` command.
-    - **`advancementannouncer.toggle.announcements`**: Allows players to use `/aa toggle announcements`.
-    - **`advancementannouncer.toggle.sounds`**: Allows players to use `/aa toggle sounds`.
+```yaml
+advancementannouncer.admin
+  ├─ Full access to all commands and GUI
+  └─ Includes all sub-permissions
+
+advancementannouncer.toggle
+  ├─ advancementannouncer.toggle.announcements
+  │  └─ Toggle announcements visibility
+  └─ advancementannouncer.toggle.sounds
+     └─ Toggle announcement sounds
+```
 
 ---
-### The In-Game GUI Editor
-Manage everything with the new `/aa edit` command. Add, remove, or edit presets and auto-messages on the fly without ever needing to open the config file.
+
+## 🎮 GUI Editor
+
+The in-game GUI makes configuration effortless! Access it with `/aa edit`
 
 <div align="center">
-  <img src="https://altkat.github.io/AdvancementAnnouncer/main_menu.gif" alt="main-menu-gif"><br>
+  <img src="https://altkat.github.io/AdvancementAnnouncer/main_menu.gif" alt="main-menu-gif" width="600"><br>
 </div>
-<br>
 
-### Images from Advancement Announcer
+### Features:
+✅ Add, edit, and delete presets without YAML  
+✅ Configure auto-announcements on the fly  
+✅ Set up join/first-join messages  
+✅ Real-time preview of messages  
 
-- Due to file limitations, GIFs are low quality
-<div align="center">
-
-#### Sending Presets
-
-  <img src="https://altkat.github.io/AdvancementAnnouncer/new_preset_command.gif" alt="new-preset-command"><br>
-
-#### Join Messages
-  
-<img src="https://altkat.github.io/AdvancementAnnouncer/join.gif" alt="join-feature-gif"><br>
-  
-#### Sending Custom Messages
-
-<img src="https://altkat.github.io/AdvancementAnnouncer/new_send_command.gif" alt="new-send-command-gif"><br>
-</div>
- 
 ---
 
-### Configuration (YAML)
-While you can manage everything from the in-game GUI, you can still edit the `config.yml` manually.
+## 📸 Demo Screenshots
+
+<div align="center">
+
+### Sending Presets
+<img src="https://altkat.github.io/AdvancementAnnouncer/new_preset_command.gif" alt="new-preset-command" width="600"><br>
+
+### Join Messages
+<img src="https://altkat.github.io/AdvancementAnnouncer/join.gif" alt="join-feature-gif" width="600"><br>
+
+### Sending Custom Messages
+<img src="https://altkat.github.io/AdvancementAnnouncer/new_send_command.gif" alt="new-send-command-gif" width="600"><br>
+
+</div>
+
+---
+
+## ⚙️ Configuration
+
+All settings are editable through the in-game GUI or the `config.yml` file.
 
 <details>
-  <summary>Click to see default config</summary>
+  <summary><strong>📝 Click to expand config.yml</strong></summary>
 
 ```yaml
 # ######################################################################################################
 # ##                                                                                                  ##
-# ##   AdvancementAnnouncer v${project.version} by Altkat(StreetMelodeez)                             ##
+# ##   AdvancementAnnouncer v1.6.0 by Altkat(StreetMelodeez)                                          ##
 # ##   Discord: streetmelodeez                                                                        ##
 # ##   Please use /aa reload to apply changes.                                                        ##
 # ##   You can use /aa edit in game chat to edit this file.                                           ##
@@ -118,6 +207,7 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 #   sound: "ENTITY_PLAYER_LEVELUP"
 #   A list of sounds can be found here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 #   Leave "" for no sound.
+#   Recommendation: Use sounds with only TASK and GOAL types since CHALLENGE type has its own sound effect.
 #
 # ######################################################################################################
 #
@@ -150,7 +240,7 @@ While you can manage everything from the in-game GUI, you can still edit the `co
 
 presets:
   preset1:
-    message: "&aThis is &6my cool| &amessage wow!"
+    message: "&aThis is my &6cool|&amessage wow!"
     style: "GOAL"
     icon: "DIAMOND"
     custom-model-data: ""
@@ -186,6 +276,12 @@ auto-announce:
       style: "TASK"
       icon: "DIAMOND"
       custom-model-data: ""
+      sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    custommessage2:
+      message: "&eHello|&eHow is it going?"
+      style: "GOAL"
+      icon: "EMERALD"
+      custom-model-data: ""
       sound: ""
     vipmessage:
       message: "&6You can get ranks|&6on our store &b/store"
@@ -206,13 +302,13 @@ join-features:
         style: GOAL
         icon: GOLDEN_APPLE
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_PLAYER_LEVELUP"
       welcome-back-2:
         message: '&7[&a+&7] &f%player_name%'
         style: TASK
         icon: TOTEM_OF_UNDYING
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
   first-join-messages:
     enabled: true
@@ -222,13 +318,13 @@ join-features:
         style: CHALLENGE
         icon: CAKE
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_PLAYER_LEVELUP"
       first-join-2:
         message: '&b%player_name% &ejoined for the first time!'
         style: GOAL
         icon: TOTEM_OF_UNDYING
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
 
 
@@ -243,9 +339,43 @@ lang-messages:
   sounds-toggled-on: "&#76FF90Announcement sounds are now enabled!"
   sounds-toggled-off: "&#F86B6BAnnouncement sounds are now disabled!"
   no-permission: "&#F86B6BYou don't have permission to use this command."
-
 ```
 
 </details>
 
-Need help? Feel free to contact me via <a href="https://discordapp.com/users/247441109888925697" target="_blank">Discord</a>.
+---
+
+## 🔧 Compatibility
+
+| Server Type | Version | Status |
+|------------|---------|--------|
+| Paper | 1.16.5 - 1.21.x | ✅ Fully Supported |
+| Spigot | 1.16.5 - 1.21.x | ✅ Supported (Legacy Mode) |
+| Bukkit | 1.16.5 - 1.21.x | ✅ Supported (Legacy Mode) |
+
+**Soft Dependencies:**
+- PlaceholderAPI (Optional) - Enable placeholder support
+- ItemsAdder (Optional) - Custom model data integration
+- Nexo (Optional) - Custom model data integration
+
+---
+
+## 💬 Support
+
+Have questions or found a bug? Reach out!
+
+- **Discord:** [Message me](https://discordapp.com/users/247441109888925697)
+- **Issues:** [GitHub Issues](https://github.com/altkat/AdvancementAnnouncer/issues)
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <p><strong>Made with ❤️ by AltKat (StreetMelodeez)</strong></p>
+  <p><a href="https://discordapp.com/users/247441109888925697">💬 Contact</a> • <a href="https://github.com/altkat/AdvancementAnnouncer">⭐ Star</a> • <a href="https://github.com/altkat/AdvancementAnnouncer/issues">🐛 Report Bug</a></p>
+</div>
