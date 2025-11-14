@@ -1,6 +1,7 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
-import io.github.altkat.advancementannouncer.Handlers.ChatInputListener;
+import io.github.altkat.advancementannouncer.editor.ChatInputListener;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,7 +35,7 @@ public class IconSelectionGUI {
                 ItemMeta meta = item.getItemMeta();
 
                 if (meta != null) {
-                    meta.setDisplayName(ChatColor.GREEN + material.name());
+                    meta.setDisplayName(TextUtil.color("&#76FF90" + material.name()));
                     item.setItemMeta(meta);
                     gui.setItem(i, item);
                 }
@@ -47,7 +48,7 @@ public class IconSelectionGUI {
         if (page > 0) {
             ItemStack prevPage = new ItemStack(Material.ARROW);
             ItemMeta prevMeta = prevPage.getItemMeta();
-            prevMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
+            prevMeta.setDisplayName(TextUtil.color("&#FCD05CPrevious Page"));
             prevPage.setItemMeta(prevMeta);
             gui.setItem(45, prevPage);
         }
@@ -55,21 +56,23 @@ public class IconSelectionGUI {
         if (page < totalPages - 1) {
             ItemStack nextPage = new ItemStack(Material.ARROW);
             ItemMeta nextMeta = nextPage.getItemMeta();
-            nextMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
+            nextMeta.setDisplayName(TextUtil.color("&#FCD05CNext Page"));
             nextPage.setItemMeta(nextMeta);
             gui.setItem(53, nextPage);
         }
 
         ItemStack chatItem = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta chatMeta = chatItem.getItemMeta();
-        chatMeta.setDisplayName(ChatColor.AQUA + "Input via Chat");
-        chatMeta.setLore(Arrays.asList(ChatColor.GRAY + "Click to type the material", ChatColor.GRAY + "name in chat."));
+        chatMeta.setDisplayName(TextUtil.color("&bInput via Chat"));
+        chatMeta.setLore(Arrays.asList(
+                TextUtil.color("&7Click to type the material"),
+                TextUtil.color("&7name in chat.")));
         chatItem.setItemMeta(chatMeta);
         gui.setItem(48, chatItem);
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "Back");
+        backMeta.setDisplayName(TextUtil.color("&#F86B6BBack"));
         backItem.setItemMeta(backMeta);
         gui.setItem(49, backItem);
 
@@ -85,7 +88,7 @@ public class IconSelectionGUI {
 
         if (clickedItem.getType() == Material.WRITABLE_BOOK) {
             player.closeInventory();
-            player.sendMessage(ChatColor.GREEN + "Please type the material name for the icon in chat. (Type 'cancel' to abort)");
+            player.sendMessage(TextUtil.color("&#76FF90Please type the material name for the icon in chat. &7(Type 'cancel' to abort)"));
             ChatInputListener.activeSessions.get(player.getUniqueId()).put("step", ChatInputListener.STEP_ICON);
             return;
         }
@@ -115,7 +118,7 @@ public class IconSelectionGUI {
         Map<String, Object> data = ChatInputListener.activeSessions.get(player.getUniqueId());
         if (data != null) {
             data.put("icon", selectedMaterial.name());
-            player.sendMessage(ChatColor.GREEN + "Icon set to " + selectedMaterial.name() + "!");
+            player.sendMessage(TextUtil.color("&#76FF90Icon set to " + selectedMaterial.name() + "&#76FF90!"));
             EditorGUI.open(player, data);
         }
     }

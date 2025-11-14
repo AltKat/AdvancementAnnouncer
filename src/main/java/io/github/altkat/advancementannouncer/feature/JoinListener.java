@@ -1,7 +1,8 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.feature;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.PlayerData;
+import io.github.altkat.advancementannouncer.core.PlayerData;
+import io.github.altkat.advancementannouncer.core.AdvancementHandler;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -50,18 +51,22 @@ public class JoinListener implements Listener {
         String styleString = plugin.getConfig().getString(messagePath + ".style", "GOAL").toUpperCase();
         String iconString = plugin.getConfig().getString(messagePath + ".icon", "STONE").toUpperCase();
 
+        String customModelDataString = plugin.getConfig().getString(messagePath + ".custom-model-data", null);
+
+        String soundString = plugin.getConfig().getString(messagePath + ".sound", "");
+
         try {
             AdvancementHandler.Style style = AdvancementHandler.Style.valueOf(styleString);
             Material icon = Material.valueOf(iconString);
 
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
-                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), message, style);
+                    AdvancementHandler.displayTo(player, icon.name().toLowerCase(), customModelDataString, message, style, soundString);
                 }
             }, 20L);
 
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid style or icon in join messages configuration: " + randomKey);
+            AdvancementAnnouncer.log("&eInvalid style or icon in join messages configuration: " + randomKey);
         }
     }
 }

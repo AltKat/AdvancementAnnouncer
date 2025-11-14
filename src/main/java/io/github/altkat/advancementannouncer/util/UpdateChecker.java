@@ -1,4 +1,4 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.util;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +33,7 @@ public class UpdateChecker implements Listener {
     private static final int CONNECT_TIMEOUT_MS = 3000;
     private static final int READ_TIMEOUT_MS = 3000;
     private static final String GITHUB_API_URL = "https://api.github.com/repos/%s/releases/latest";
-    private static final Pattern TAG_PATTERN = Pattern.compile("\"tag_name\":\"([^\"]+)\"");
+    private static final Pattern TAG_PATTERN = Pattern.compile("\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
 
     public UpdateChecker(AdvancementAnnouncer plugin, String githubRepo) {
         this.plugin = plugin;
@@ -56,7 +55,7 @@ public class UpdateChecker implements Listener {
 
                 int statusCode = connection.getResponseCode();
                 if (statusCode != 200) {
-                    plugin.getLogger().warning("GitHub API returned status: " + statusCode);
+                    AdvancementAnnouncer.log("&#FCD05CGitHub API returned status: " + statusCode);
                     return;
                 }
 
@@ -75,17 +74,17 @@ public class UpdateChecker implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &eA new update is available! Version: &a" + latestVersion));
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&eDownload from Github: &6" + GITHUB_REPO_URL));
-                                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&eDownload from Spigot: &6" + SPIGOT_URL));
+                                AdvancementAnnouncer.log("&#FCD05CA new update is available! Version: &#76FF90" + latestVersion);
+                                AdvancementAnnouncer.log("&#FCD05CDownload from Github: &6" + GITHUB_REPO_URL);
+                                AdvancementAnnouncer.log("&#FCD05CDownload from Spigot: &6" + SPIGOT_URL);
                             }
                         }.runTaskLater(plugin, CONSOLE_LOG_DELAY);
                     } else {
-                        plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &aYou are using the latest version. (&e" + currentVersion + "&a)"));
+                        AdvancementAnnouncer.log("&#76FF90You are using the latest version. (&#FCD05C" + currentVersion + "&#76FF90)");
                     }
                 }
             } catch (IOException exception) {
-                plugin.getLogger().warning("Unable to check for updates: " + exception.getMessage());
+                AdvancementAnnouncer.log("&cUnable to check for updates: " + exception.getMessage());
             } finally {
                 if (connection != null) {
                     try {
@@ -102,19 +101,33 @@ public class UpdateChecker implements Listener {
         if (player.hasPermission("advancementannouncer.admin") && latestVersion != null) {
             if (isNewerVersion(plugin.getDescription().getVersion(), latestVersion)) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3[AdvancementAnnouncer] &eA new version is available: &a" + latestVersion));
+                    final String prefix = plugin.getPrefix();
 
-                    TextComponent downloadFrom = new TextComponent(ChatColor.YELLOW + "Download from: ");
+                    player.sendMessage(prefix + TextUtil.color("&#FCD05CA new version is available: &#76FF90" + latestVersion));
 
-                    TextComponent githubLink = new TextComponent(ChatColor.GREEN + "[GitHub]");
+                    TextComponent downloadFrom = new TextComponent(TextComponent.fromLegacyText(
+                            prefix + TextUtil.color("&#FCD05CDownload from: ")
+                    ));
+
+                    TextComponent githubLink = new TextComponent(TextComponent.fromLegacyText(
+                            TextUtil.color("&#76FF90[GitHub]")
+                    ));
                     githubLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, GITHUB_REPO_URL));
-                    githubLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open GitHub page").color(net.md_5.bungee.api.ChatColor.GREEN).create()));
+                    githubLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            TextComponent.fromLegacyText(TextUtil.color("&#76FF90Click to open GitHub page"))
+                    ));
 
-                    TextComponent separator = new TextComponent(ChatColor.GRAY + " | ");
+                    TextComponent separator = new TextComponent(TextComponent.fromLegacyText(
+                            TextUtil.color(" &7| ")
+                    ));
 
-                    TextComponent spigotLink = new TextComponent(ChatColor.GOLD + "[SpigotMC]");
+                    TextComponent spigotLink = new TextComponent(TextComponent.fromLegacyText(
+                            TextUtil.color("&6[SpigotMC]")
+                    ));
                     spigotLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, SPIGOT_URL));
-                    spigotLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open SpigotMC page").color(net.md_5.bungee.api.ChatColor.GOLD).create()));
+                    spigotLink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            TextComponent.fromLegacyText(TextUtil.color("&6Click to open SpigotMC page"))
+                    ));
 
                     player.spigot().sendMessage(downloadFrom, githubLink, separator, spigotLink);
                 }, 40L);

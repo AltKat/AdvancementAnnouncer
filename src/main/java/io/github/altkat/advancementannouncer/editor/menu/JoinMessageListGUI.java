@@ -1,7 +1,8 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.Handlers.GUIHandler;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +26,7 @@ public class JoinMessageListGUI {
 
     public static void open(Player player, String type) {
         String configPath = type.equals("join") ? "join-features.join-messages" : "join-features.first-join-messages";
-        String title = type.equals("join") ? ChatColor.BLUE + "Normal Join Messages" : ChatColor.GOLD + "First Join Messages";
+        String title = TextUtil.color(type.equals("join") ? "&#7688FFNormal Join Messages" : "&#7688FFFirst Join Messages");
 
         Inventory gui = Bukkit.createInventory(null, 54, title);
         ConfigurationSection mainSection = plugin.getConfig().getConfigurationSection(configPath);
@@ -38,49 +39,49 @@ public class JoinMessageListGUI {
         boolean isEnabled = mainSection.getBoolean("enabled");
         ItemStack toggleItem = new ItemStack(isEnabled ? Material.LIME_DYE : Material.GRAY_DYE);
         ItemMeta toggleMeta = toggleItem.getItemMeta();
-        toggleMeta.setDisplayName(ChatColor.YELLOW + "Status: " + (isEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled"));
+        toggleMeta.setDisplayName(TextUtil.color("&#FCD05CStatus: " + (isEnabled ? "&#76FF90Enabled" : "&#F86B6BDisabled")));
         toggleItem.setItemMeta(toggleMeta);
         gui.setItem(SLOT_TOGGLE, toggleItem);
 
         ConfigurationSection messagesSection = mainSection.getConfigurationSection("messages");
         if (messagesSection != null) {
             for (String key : messagesSection.getKeys(false)) {
-                Material iconMaterial;
-                try {
-                    iconMaterial = Material.valueOf(messagesSection.getString(key + ".icon").toUpperCase());
-                } catch (IllegalArgumentException | NullPointerException e) {
-                    iconMaterial = Material.PAPER;
-                }
+                String iconStr = messagesSection.getString(key + ".icon", "PAPER");
+                String cmdStr = messagesSection.getString(key + ".custom-model-data", "");
+                String styleStr = messagesSection.getString(key + ".style");
+                String soundStr = messagesSection.getString(key + ".sound", "");
+                String displayName = TextUtil.color("&#76FF90" + key);
 
-                ItemStack item = new ItemStack(iconMaterial);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.WHITE + "Message: ");
+                lore.add(TextUtil.color("&fMessage: "));
                 addFormattedMessage(lore, messagesSection.getString(key + ".message"));
                 lore.add(" ");
-                lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
-                lore.add(ChatColor.WHITE + "Icon: " + messagesSection.getString(key + ".icon"));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Style: &f" + styleStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Icon: &f" + iconStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90CustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Sound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left click to edit.");
-                lore.add(ChatColor.RED + "Right click to delete.");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+                lore.add(TextUtil.color("&#FCD05CLeft-click to edit."));
+                lore.add(TextUtil.color("&#F86B6BRight-click to delete."));
+
+                ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
             }
         }
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "Back");
+        backMeta.setDisplayName(TextUtil.color("&#F86B6BBack"));
         backItem.setItemMeta(backMeta);
         gui.setItem(SLOT_BACK_BUTTON, backItem);
 
         ItemStack addItem = new ItemStack(Material.EMERALD);
         ItemMeta addMeta = addItem.getItemMeta();
-        addMeta.setDisplayName(ChatColor.GREEN + "Add Message");
+        addMeta.setDisplayName(TextUtil.color("&#76FF90Add Message"));
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }
@@ -115,6 +116,8 @@ public class JoinMessageListGUI {
             data.put("message", "Welcome!");
             data.put("style", "GOAL");
             data.put("icon", "GRASS_BLOCK");
+            data.put("custom-model-data", "");
+            data.put("sound", "");
             EditorGUI.open(player, data);
             return;
         }
@@ -126,7 +129,7 @@ public class JoinMessageListGUI {
                 GUIHandler.confirmationActions.put(player.getUniqueId(), () -> {
                     plugin.getConfig().set(configPath + ".messages." + messageName, null);
                     plugin.saveConfig();
-                    player.sendMessage(ChatColor.GREEN + "Message '" + messageName + "' has been deleted.");
+                    player.sendMessage(TextUtil.color("&#76FF90Message '" + messageName + "&#76FF90' has been deleted."));
                     open(player, type);
                 });
             } else if (event.isLeftClick()) {
@@ -139,6 +142,8 @@ public class JoinMessageListGUI {
                 editData.put("message", plugin.getConfig().getString(path + ".message", ""));
                 editData.put("style", plugin.getConfig().getString(path + ".style", "GOAL"));
                 editData.put("icon", plugin.getConfig().getString(path + ".icon", "STONE"));
+                editData.put("custom-model-data", plugin.getConfig().getString(path + ".custom-model-data", ""));
+                editData.put("sound", plugin.getConfig().getString(path + ".sound", ""));
                 EditorGUI.open(player, editData);
             }
         }
@@ -147,10 +152,10 @@ public class JoinMessageListGUI {
     private static void addFormattedMessage(List<String> lore, String message) {
         if (message != null && message.contains("|")) {
             for (String line : message.split("\\|")) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                lore.add(TextUtil.color(line));
             }
         } else if (message != null) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', message));
+            lore.add(TextUtil.color(message));
         }
     }
 }

@@ -1,7 +1,8 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.Handlers.GUIHandler;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,22 +22,24 @@ public class ConfirmationGUI {
 
         ItemStack infoItem = new ItemStack(Material.PAPER);
         ItemMeta infoMeta = infoItem.getItemMeta();
-        infoMeta.setDisplayName(ChatColor.YELLOW + "Are you sure?");
-        infoMeta.setLore(Collections.singletonList(ChatColor.GRAY + "Delete '" + itemName + "'?"));
+        infoMeta.setDisplayName(TextUtil.color("&#FCD05CAre you sure?"));
+        infoMeta.setLore(Collections.singletonList(TextUtil.color("&7Delete '" + itemName + "'?")));
         infoItem.setItemMeta(infoMeta);
         gui.setItem(13, infoItem);
 
         ItemStack confirmItem = new ItemStack(Material.GREEN_WOOL);
         ItemMeta confirmMeta = confirmItem.getItemMeta();
-        confirmMeta.setDisplayName(ChatColor.GREEN + "Confirm");
+        confirmMeta.setDisplayName(TextUtil.color("&#76FF90Confirm"));
         confirmItem.setItemMeta(confirmMeta);
         gui.setItem(11, confirmItem);
 
         ItemStack cancelItem = new ItemStack(Material.RED_WOOL);
         ItemMeta cancelMeta = cancelItem.getItemMeta();
-        cancelMeta.setDisplayName(ChatColor.RED + "Cancel");
+        cancelMeta.setDisplayName(TextUtil.color("&#F86B6BCancel"));
         cancelItem.setItemMeta(cancelMeta);
         gui.setItem(15, cancelItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }

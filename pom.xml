@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>io.github.altkat</groupId>
     <artifactId>AdvancementAnnouncer</artifactId>
-    <version>1.5.0</version>
-
+    <version>1.6.0</version>
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -24,8 +19,11 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/releases/</url>
         </repository>
+        <repository>
+            <id>fren_gor</id>
+            <url>https://nexus.frengor.com/repository/public/</url>
+        </repository>
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -45,8 +43,25 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.frengor</groupId>
+            <artifactId>ultimateadvancementapi-shadeable</artifactId>
+            <version>2.7.1</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bstats</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -63,10 +78,20 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <minimizeJar>false</minimizeJar>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>io.github.altkat.advancementannouncer</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.fren_gor.ultimateadvancementapi</pattern>
+                            <shadedPattern>io.github.altkat.advancementannouncer.lib.ultimateadvancementapi</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.kyori</pattern>
+                            <shadedPattern>io.github.altkat.advancementannouncer.lib.kyori</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -79,6 +104,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>reorganize-licenses</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/jar-temp"/>
+                                <unzip src="${project.build.directory}/${project.artifactId}-${project.version}.jar" dest="${project.build.directory}/jar-temp"/>
+                                <mkdir dir="${project.build.directory}/jar-temp/META-INF/licenses"/>
+                                <move file="${project.build.directory}/jar-temp/LICENSE" todir="${project.build.directory}/jar-temp/META-INF/licenses" failonerror="false"/>
+                                <move file="${project.build.directory}/jar-temp/LGPL" todir="${project.build.directory}/jar-temp/META-INF/licenses" failonerror="false"/>
+                                <move file="${project.build.directory}/jar-temp/NOTICE" todir="${project.build.directory}/jar-temp/META-INF/licenses" failonerror="false"/>
+                                <copy file="${basedir}/LICENSE" todir="${project.build.directory}/jar-temp" failonerror="false"/>
+                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-processed.jar" basedir="${project.build.directory}/jar-temp"/>
+                                <delete file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
+                                <move file="${project.build.directory}/${project.artifactId}-${project.version}-processed.jar" tofile="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
+                                <delete dir="${project.build.directory}/jar-temp"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -87,5 +141,4 @@
             </resource>
         </resources>
     </build>
-
 </project>

@@ -1,10 +1,12 @@
-package io.github.altkat.advancementannouncer.Handlers;
+package io.github.altkat.advancementannouncer.editor;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.guis.AutoAnnounceGUI;
-import io.github.altkat.advancementannouncer.guis.EditorGUI;
+import io.github.altkat.advancementannouncer.core.AdvancementHandler;
+import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
+import io.github.altkat.advancementannouncer.editor.menu.AutoAnnounceGUI;
+import io.github.altkat.advancementannouncer.editor.menu.EditorGUI;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +25,8 @@ public class ChatInputListener implements Listener {
     public static final String STEP_MESSAGE = "message";
     public static final String STEP_STYLE = "style";
     public static final String STEP_ICON = "icon";
+    public static final String STEP_CUSTOM_MODEL_DATA = "custom_model_data";
+    public static final String STEP_SOUND = "sound";
     public static final String STEP_INTERVAL = "interval";
 
     @EventHandler
@@ -38,9 +42,11 @@ public class ChatInputListener implements Listener {
         event.setCancelled(true);
         String message = event.getMessage();
 
+        final String prefix = plugin.getPrefix();
+
         if (message.equalsIgnoreCase("cancel")) {
             data.remove("step");
-            player.sendMessage(ChatColor.RED + "Input cancelled.");
+            player.sendMessage(prefix + TextUtil.color("&#F86B6BInput cancelled."));
 
             if (!data.containsKey("type")) {
                 activeSessions.remove(playerUUID);
@@ -56,24 +62,24 @@ public class ChatInputListener implements Listener {
             switch (step) {
                 case STEP_NAME:
                     if (message.contains(".") || message.contains(" ")) {
-                        player.sendMessage(ChatColor.RED + "The name cannot contain periods or spaces. Please try again.");
+                        player.sendMessage(prefix + TextUtil.color("&#F86B6BThe name cannot contain periods or spaces. Please try again."));
                         return;
                     } else {
                         data.put("name", message);
-                        player.sendMessage(ChatColor.GREEN + "Name set to '" + message + "'");
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Name set to '" + message + "&#76FF90'"));
                     }
                     break;
                 case STEP_MESSAGE:
                     data.put("message", message);
-                    player.sendMessage(ChatColor.GREEN + "Message updated!");
+                    player.sendMessage(prefix + TextUtil.color("&#76FF90Message updated!"));
                     break;
                 case STEP_STYLE:
                     try {
                         AdvancementHandler.Style.valueOf(message.toUpperCase());
                         data.put("style", message.toUpperCase());
-                        player.sendMessage(ChatColor.GREEN + "Style set to " + message.toUpperCase());
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Style set to " + message.toUpperCase()));
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid style! Please use GOAL, TASK, or CHALLENGE.");
+                        player.sendMessage(prefix + TextUtil.color("&#F86B6BInvalid style! Please use GOAL, TASK, or CHALLENGE."));
                         return;
                     }
                     break;
@@ -81,12 +87,33 @@ public class ChatInputListener implements Listener {
                     try {
                         Material.valueOf(message.toUpperCase());
                         data.put("icon", message.toUpperCase());
-                        player.sendMessage(ChatColor.GREEN + "Icon set to " + message.toUpperCase());
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Icon set to " + message.toUpperCase()));
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid material name! Please try again.");
+                        player.sendMessage(prefix + TextUtil.color("&#F86B6BInvalid material name! Please try again."));
                         return;
                     }
                     break;
+
+                case STEP_CUSTOM_MODEL_DATA:
+                    if (message.equalsIgnoreCase("none") || message.equalsIgnoreCase("0")) {
+                        data.put("custom-model-data", "");
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90CustomModelData cleared."));
+                    } else {
+                        data.put("custom-model-data", message);
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90CustomModelData set to: " + message));
+                    }
+                    break;
+
+                case STEP_SOUND:
+                    if (message.equalsIgnoreCase("none") || message.equalsIgnoreCase("clear")) {
+                        data.put("sound", "");
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Sound cleared."));
+                    } else {
+                        data.put("sound", message.toLowerCase().trim());
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Sound set to: " + message.toLowerCase().trim()));
+                    }
+                    break;
+
                 case STEP_INTERVAL:
                     try {
                         int interval = Integer.parseInt(message);
@@ -94,12 +121,12 @@ public class ChatInputListener implements Listener {
                         plugin.saveConfig();
                         AutoAnnounce.stopAutoAnnounce();
                         AutoAnnounce.startAutoAnnounce();
-                        player.sendMessage(ChatColor.GREEN + "Interval has been set to " + interval + " seconds.");
+                        player.sendMessage(prefix + TextUtil.color("&#76FF90Interval has been set to &#FCD05C" + interval + " &#76FF90seconds."));
                         activeSessions.remove(playerUUID);
                         AutoAnnounceGUI.open(player);
                         return;
                     } catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "Invalid number. Please type a valid interval in seconds. Type 'cancel' to exit.");
+                        player.sendMessage(prefix + TextUtil.color("&#F86B6BInvalid number. Please type a valid interval in seconds. Type 'cancel' to exit."));
                         return;
                     }
             }

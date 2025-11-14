@@ -1,9 +1,10 @@
-package io.github.altkat.advancementannouncer.guis;
+package io.github.altkat.advancementannouncer.editor.menu;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
-import io.github.altkat.advancementannouncer.Handlers.AutoAnnounce;
-import io.github.altkat.advancementannouncer.Handlers.ChatInputListener;
-import io.github.altkat.advancementannouncer.Handlers.GUIHandler;
+import io.github.altkat.advancementannouncer.feature.AutoAnnounce;
+import io.github.altkat.advancementannouncer.editor.ChatInputListener;
+import io.github.altkat.advancementannouncer.editor.GUIHandler;
+import io.github.altkat.advancementannouncer.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,66 +29,66 @@ public class AutoAnnounceGUI {
     private static final int SLOT_BACK_BUTTON = 45;
 
     public static void open(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("lang-messages.auto-announce-gui-title")));
+        Inventory gui = Bukkit.createInventory(null, 54, TextUtil.color("&#7688FFAuto Announce Config"));
         ConfigurationSection aaSection = plugin.getConfig().getConfigurationSection("auto-announce");
 
         ItemStack enabledItem = new ItemStack(aaSection.getBoolean("enabled") ? Material.LIME_DYE : Material.GRAY_DYE);
         ItemMeta enabledMeta = enabledItem.getItemMeta();
-        enabledMeta.setDisplayName(ChatColor.YELLOW + "Auto Announce: " + (aaSection.getBoolean("enabled") ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled"));
+        enabledMeta.setDisplayName(TextUtil.color("&#FCD05CAuto Announce: " + (aaSection.getBoolean("enabled") ? "&#76FF90Enabled" : "&#F86B6BDisabled")));
         enabledItem.setItemMeta(enabledMeta);
         gui.setItem(SLOT_AA_TOGGLE, enabledItem);
 
         ItemStack intervalItem = new ItemStack(Material.CLOCK);
         ItemMeta intervalMeta = intervalItem.getItemMeta();
-        intervalMeta.setDisplayName(ChatColor.YELLOW + "Interval: " + ChatColor.GOLD + aaSection.getInt("interval") + "s");
+        intervalMeta.setDisplayName(TextUtil.color("&#FCD05CInterval: &6" + aaSection.getInt("interval") + "s"));
         intervalItem.setItemMeta(intervalMeta);
         gui.setItem(SLOT_AA_INTERVAL, intervalItem);
 
         ItemStack modeItem = new ItemStack(Material.COMPARATOR);
         ItemMeta modeMeta = modeItem.getItemMeta();
-        modeMeta.setDisplayName(ChatColor.YELLOW + "Mode: " + ChatColor.GOLD + aaSection.getString("mode"));
+        modeMeta.setDisplayName(TextUtil.color("&#FCD05CMode: &6" + aaSection.getString("mode")));
         modeItem.setItemMeta(modeMeta);
         gui.setItem(SLOT_AA_MODE, modeItem);
 
         ConfigurationSection messagesSection = aaSection.getConfigurationSection("messages");
         if (messagesSection != null) {
             for (String key : messagesSection.getKeys(false)) {
-                Material iconMaterial;
-                try {
-                    iconMaterial = Material.valueOf(messagesSection.getString(key + ".icon").toUpperCase());
-                } catch (IllegalArgumentException | NullPointerException e) {
-                    iconMaterial = Material.PAPER;
-                }
+                String iconStr = messagesSection.getString(key + ".icon", "PAPER");
+                String cmdStr = messagesSection.getString(key + ".custom-model-data", "");
+                String styleStr = messagesSection.getString(key + ".style");
+                String soundStr = messagesSection.getString(key + ".sound", "");
+                String displayName = TextUtil.color("&#76FF90" + key);
 
-                ItemStack item = new ItemStack(iconMaterial);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GREEN + key);
                 List<String> lore = new ArrayList<>();
-                lore.add(ChatColor.WHITE + "Message: ");
+                lore.add(TextUtil.color("&fMessage: "));
                 addFormattedMessage(lore, messagesSection.getString(key + ".message"));
                 lore.add(" ");
-                lore.add(ChatColor.WHITE + "Style: " + messagesSection.getString(key + ".style"));
-                lore.add(ChatColor.WHITE + "Icon: " + messagesSection.getString(key + ".icon"));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Style: &f" + styleStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Icon: &f" + iconStr));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90CustomModelData: &f" + (cmdStr.isEmpty() ? "None" : cmdStr)));
+                lore.add(TextUtil.color("&#FCD05C» &#76FF90Sound: &f" + (soundStr.isEmpty() ? "None" : soundStr)));
                 lore.add(" ");
-                lore.add(ChatColor.YELLOW + "Left click to edit.");
-                lore.add(ChatColor.RED + "Right click to delete.");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+                lore.add(TextUtil.color("&#FCD05CLeft-click to edit."));
+                lore.add(TextUtil.color("&#F86B6BRight-click to delete."));
+
+                ItemStack item = GUIHandler.createDisplayItem(iconStr, cmdStr, displayName, lore);
                 gui.addItem(item);
             }
         }
 
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta backMeta = backItem.getItemMeta();
-        backMeta.setDisplayName(ChatColor.RED + "Back");
+        backMeta.setDisplayName(TextUtil.color("&#F86B6BBack"));
         backItem.setItemMeta(backMeta);
         gui.setItem(SLOT_BACK_BUTTON, backItem);
 
         ItemStack addItem = new ItemStack(Material.EMERALD);
         ItemMeta addMeta = addItem.getItemMeta();
-        addMeta.setDisplayName(ChatColor.GREEN + "Add Message");
+        addMeta.setDisplayName(TextUtil.color("&#76FF90Add Message"));
         addItem.setItemMeta(addMeta);
         gui.setItem(SLOT_ADD_ITEM, addItem);
+
+        GUIHandler.fillBackground(gui);
 
         player.openInventory(gui);
     }
@@ -112,9 +113,9 @@ public class AutoAnnounceGUI {
                 break;
             case SLOT_AA_INTERVAL:
                 player.closeInventory();
-                player.sendMessage(ChatColor.YELLOW + "Please type the new interval (in seconds) in chat.");
-                player.sendMessage(ChatColor.GRAY + "Current: " + plugin.getConfig().getInt("auto-announce.interval"));
-                player.sendMessage(ChatColor.GRAY + "(Type 'cancel' to exit)");
+                player.sendMessage(TextUtil.color("&#FCD05CPlease type the new interval (in seconds) in chat."));
+                player.sendMessage(TextUtil.color("&7Current: " + plugin.getConfig().getInt("auto-announce.interval")));
+                player.sendMessage(TextUtil.color("&7(Type 'cancel' to exit)"));
                 ChatInputListener.activeSessions.put(player.getUniqueId(), new HashMap<>() {{
                     put("step", ChatInputListener.STEP_INTERVAL);
                 }});
@@ -136,6 +137,8 @@ public class AutoAnnounceGUI {
                 data.put("message", "Default message");
                 data.put("style", "GOAL");
                 data.put("icon", "STONE");
+                data.put("custom-model-data", "");
+                data.put("sound", "");
                 EditorGUI.open(player, data);
                 break;
             default:
@@ -148,7 +151,7 @@ public class AutoAnnounceGUI {
                             plugin.saveConfig();
                             AutoAnnounce.stopAutoAnnounce();
                             AutoAnnounce.startAutoAnnounce();
-                            player.sendMessage(ChatColor.GREEN + "Auto-announce message '" + messageName + "' has been deleted.");
+                            player.sendMessage(TextUtil.color("&#76FF90Auto-announce message '" + messageName + "&#76FF90' has been deleted."));
                             open(player);
                         });
                     } else if (event.isLeftClick()) {
@@ -161,6 +164,8 @@ public class AutoAnnounceGUI {
                         editData.put("message", plugin.getConfig().getString(path + ".message", ""));
                         editData.put("style", plugin.getConfig().getString(path + ".style", "GOAL"));
                         editData.put("icon", plugin.getConfig().getString(path + ".icon", "STONE"));
+                        editData.put("custom-model-data", plugin.getConfig().getString(path + ".custom-model-data", ""));
+                        editData.put("sound", plugin.getConfig().getString(path + ".sound", ""));
                         EditorGUI.open(player, editData);
                     }
                 }
@@ -171,10 +176,10 @@ public class AutoAnnounceGUI {
     private static void addFormattedMessage(List<String> lore, String message) {
         if (message != null && message.contains("|")) {
             for (String line : message.split("\\|")) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+                lore.add(TextUtil.color(line));
             }
         } else if (message != null) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', message));
+            lore.add(TextUtil.color(message));
         }
     }
 }
