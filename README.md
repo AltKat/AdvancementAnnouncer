@@ -1,11 +1,11 @@
 <div align="center">
-  <h1><img src="https://altkat.github.io/AdvancementAnnouncer/new-logo-banner.png" alt="Title Image" width="600"></h1>
+  <h1><img src="https://altkat.github.io/AdvancementAnnouncer/new-logo-banner.png" alt="Title Image" width="400"></h1>
 
 ### 🎉 Custom Toast Advancement Messages for Your Server
 
-<img src="https://altkat.github.io/AdvancementAnnouncer/greeting.png" alt="toast-example1" width="500"><br><br>
-<img src="https://altkat.github.io/AdvancementAnnouncer/cool.png" alt="toast-example2" width="500"><br><br>
-<img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3" width="500"><br><br>
+<img src="https://altkat.github.io/AdvancementAnnouncer/greeting.png" alt="toast-example1" width="300"><br><br>
+<img src="https://altkat.github.io/AdvancementAnnouncer/cool.png" alt="toast-example2" width="300"><br><br>
+<img src="https://altkat.github.io/AdvancementAnnouncer/c.png" alt="toast-example3" width="300"><br><br>
 </div>
 
 ---
