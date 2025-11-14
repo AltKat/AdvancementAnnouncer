@@ -381,6 +381,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <div align="center">
-  <p><strong>Made with ❤️ by AltKat (StreetMelodeez)</strong></p>
   <p><a href="https://discordapp.com/users/247441109888925697">💬 Contact</a> • <a href="https://github.com/altkat/AdvancementAnnouncer">⭐ Star</a> • <a href="https://github.com/altkat/AdvancementAnnouncer/issues">🐛 Report Bug</a></p>
 </div>
