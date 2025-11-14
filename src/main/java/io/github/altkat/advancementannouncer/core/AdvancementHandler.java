@@ -101,12 +101,21 @@ public class AdvancementHandler {
             return;
         }
 
-        String finalSoundKey = soundKey.toLowerCase().trim().replace('_', '.');
+        String finalKey = soundKey.trim();
 
         try {
-            player.playSound(player.getLocation(), finalSoundKey, 1.0F, 1.0F);
+            Sound sound = Sound.valueOf(finalKey.toUpperCase());
+            player.playSound(player.getLocation(), sound, 1.0F, 1.0F);
+
+        } catch (IllegalArgumentException e) {
+            try {
+                String customSoundKey = finalKey.toLowerCase().replace('_', '.');
+                player.playSound(player.getLocation(), customSoundKey, 1.0F, 1.0F);
+            } catch (Exception e2) {
+                AdvancementAnnouncer.log("&c[Sound Error] Could not play sound: '" + finalKey + "'. Is it a valid Sound enum or custom sound string?");
+            }
         } catch (Exception e) {
-            AdvancementAnnouncer.log("&c[Sound Error] An unexpected error occurred while trying to play sound '" + finalSoundKey + "': " + e.getMessage());
+            AdvancementAnnouncer.log("&c[Sound Error] An unexpected error occurred while playing sound '" + finalKey + "': " + e.getMessage());
         }
     }
 

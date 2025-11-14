@@ -33,7 +33,7 @@ public class UpdateChecker implements Listener {
     private static final int CONNECT_TIMEOUT_MS = 3000;
     private static final int READ_TIMEOUT_MS = 3000;
     private static final String GITHUB_API_URL = "https://api.github.com/repos/%s/releases/latest";
-    private static final Pattern TAG_PATTERN = Pattern.compile("\"tag_name\":\"([^\"]+)\"");
+    private static final Pattern TAG_PATTERN = Pattern.compile("\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
 
     public UpdateChecker(AdvancementAnnouncer plugin, String githubRepo) {
         this.plugin = plugin;

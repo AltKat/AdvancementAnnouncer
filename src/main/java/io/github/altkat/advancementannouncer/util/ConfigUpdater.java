@@ -124,7 +124,7 @@ public class ConfigUpdater {
                 newSection.set("icon", "PAPER");
                 newSection.set("custom-model-data", "");
 
-                AdvancementAnnouncer.log("&aMigrated legacy preset to new format: " + key);
+                AdvancementAnnouncer.log("&#FCD05CMigrated legacy preset to new format: " + key);
                 migrated = true;
             }
         }
@@ -144,9 +144,9 @@ public class ConfigUpdater {
             File backupFile = new File(plugin.getDataFolder(), "config.yml.backup");
 
             Files.copy(configFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            AdvancementAnnouncer.log("&aCreated backup of config.yml before migration.");
+            AdvancementAnnouncer.log("&#FCD05CCreated backup of config.yml before migration.");
         } catch (IOException e) {
-            AdvancementAnnouncer.log("&cFailed to create config backup: " + e.getMessage());
+            AdvancementAnnouncer.log("&#F86B6BFailed to create config backup: " + e.getMessage());
         }
     }
 }

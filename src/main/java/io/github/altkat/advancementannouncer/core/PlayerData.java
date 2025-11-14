@@ -1,6 +1,7 @@
 package io.github.altkat.advancementannouncer.core;
 
 import io.github.altkat.advancementannouncer.AdvancementAnnouncer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -39,10 +40,10 @@ public class PlayerData {
     }
 
     public static void addPlayerData(UUID uuid) {
-        config.createSection(uuid.toString());
-        config.getConfigurationSection(uuid.toString()).set("toggleStatus", true);
-        config.getConfigurationSection(uuid.toString()).set("soundsEnabled", true);
-        config.getConfigurationSection(uuid.toString()).set("playerName", plugin.getServer().getPlayer(uuid).getName());
+        ConfigurationSection section = config.createSection(uuid.toString());
+        section.set("toggleStatus", true);
+        section.set("soundsEnabled", true);
+        section.set("playerName", plugin.getServer().getPlayer(uuid).getName());
         save();
     }
 

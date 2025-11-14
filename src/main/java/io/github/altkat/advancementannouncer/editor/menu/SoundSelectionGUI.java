@@ -137,7 +137,7 @@ public class SoundSelectionGUI {
             return;
         }
 
-        if (slot >= 10 && slot < 20 && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasLore()) {
+        if (slot >= 10 && slot < 20 && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasLore() && !clickedItem.getItemMeta().getLore().isEmpty()) {
 
             String soundName = ChatColor.stripColor(clickedItem.getItemMeta().getLore().get(0));
             if (soundName.equals("None")) {
@@ -152,10 +152,12 @@ public class SoundSelectionGUI {
             } else if (event.isRightClick()) {
                 if (!soundName.isEmpty()) {
                     try {
-                        player.playSound(player.getLocation(), Sound.valueOf(soundName.toUpperCase()), 1.0F, 1.0F);
+                        player.playSound(player.getLocation(), Sound.valueOf(soundName.toUpperCase().replace('.', '_')), 1.0F, 1.0F);
                     } catch (Exception e) {
                         player.sendMessage(TextUtil.color("&#F86B6BCould not preview sound: " + e.getMessage()));
                     }
+                }else {
+                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1.0F);
                 }
             }
         }
