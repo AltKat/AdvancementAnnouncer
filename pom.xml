@@ -48,7 +48,6 @@
             <artifactId>ultimateadvancementapi-shadeable</artifactId>
             <version>2.7.1</version>
             <scope>compile</scope>
-            <classifier>mojang-mapped</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>org.bstats</groupId>
