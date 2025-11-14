@@ -53,6 +53,9 @@ public class ConfigUpdater {
         if (userConfig.isSet("lang-messages.input-cancelled")) {
             userConfig.set("lang-messages.input-cancelled", null);
         }
+        if(userConfig.isSet("bstats")){
+            userConfig.set("bstats", null);
+        }
 
         addMissingMessageFields(userConfig.getConfigurationSection("presets"));
         addMissingMessageFields(userConfig.getConfigurationSection("auto-announce.messages"));
