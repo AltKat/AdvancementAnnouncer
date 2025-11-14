@@ -350,8 +350,7 @@ lang-messages:
 | Server Type | Version | Status |
 |------------|---------|--------|
 | Paper | 1.16.5 - 1.21.x | ✅ Fully Supported |
-| Spigot | 1.16.5 - 1.21.x | ✅ Supported (Legacy Mode) |
-| Bukkit | 1.16.5 - 1.21.x | ✅ Supported (Legacy Mode) |
+| Spigot | 1.16.5 - 1.21.x | ✅ Fully Supported |
 
 **Soft Dependencies:**
 - PlaceholderAPI (Optional) - Enable placeholder support
