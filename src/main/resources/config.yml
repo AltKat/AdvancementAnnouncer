@@ -108,7 +108,7 @@ join-features:
         style: GOAL
         icon: GOLDEN_APPLE
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_PLAYER_LEVELUP"
       welcome-back-2:
         message: '&7[&a+&7] &f%player_name%'
         style: TASK
@@ -124,7 +124,7 @@ join-features:
         style: CHALLENGE
         icon: CAKE
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_PLAYER_LEVELUP"
       first-join-2:
         message: '&b%player_name% &ejoined for the first time!'
         style: GOAL
