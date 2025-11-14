@@ -89,6 +89,12 @@ auto-announce:
       icon: "DIAMOND"
       custom-model-data: ""
       sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    custommessage2:
+      message: "&eHello|&eHow is it going?"
+      style: "GOAL"
+      icon: "EMERALD"
+      custom-model-data: ""
+      sound: ""
     vipmessage:
       message: "&6You can get ranks|&6on our store &b/store"
       style: "CHALLENGE"
@@ -114,7 +120,7 @@ join-features:
         style: TASK
         icon: TOTEM_OF_UNDYING
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
   first-join-messages:
     enabled: true
@@ -130,7 +136,7 @@ join-features:
         style: GOAL
         icon: TOTEM_OF_UNDYING
         custom-model-data: ""
-        sound: ""
+        sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
 
 
