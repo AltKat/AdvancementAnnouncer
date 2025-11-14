@@ -373,6 +373,12 @@ Have questions or found a bug? Reach out!
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
+**Third-party Libraries:**
+- [UltimateAdvancementAPI](https://github.com/fren-gor/UltimateAdvancementAPI) - LGPL License
+- [Adventure](https://github.com/KyoriPowered/adventure) - MIT License
+- [bStats](https://bstats.org/) - MIT License
+
+
 ---
 
 <div align="center">
