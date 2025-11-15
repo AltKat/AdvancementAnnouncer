@@ -92,6 +92,39 @@
 
 ---
 
+## 🎮 GUI Editor
+
+The in-game GUI makes configuration effortless! Access it with `/aa edit`
+
+<div align="center">
+  <img src="https://altkat.github.io/AdvancementAnnouncer/main_menu.gif" alt="main-menu-gif" width="600"><br>
+</div>
+
+### Features:
+✅ Add, edit, and delete presets without YAML  
+✅ Configure auto-announcements on the fly  
+✅ Set up join/first-join messages  
+✅ Real-time preview of messages  
+
+---
+
+## 📸 Demo Screenshots
+
+<div align="center">
+
+### Sending Presets
+<img src="https://altkat.github.io/AdvancementAnnouncer/new_preset_command.gif" alt="new-preset-command" width="600"><br>
+
+### Join Messages
+<img src="https://altkat.github.io/AdvancementAnnouncer/join.gif" alt="join-feature-gif" width="600"><br>
+
+### Sending Custom Messages
+<img src="https://altkat.github.io/AdvancementAnnouncer/new_send_command.gif" alt="new-send-command-gif" width="600"><br>
+
+</div>
+
+---
+
 ## 📋 Commands
 
 ### 🎯 Main Commands
@@ -142,39 +175,6 @@ advancementannouncer.toggle
   └─ advancementannouncer.toggle.sounds
      └─ Toggle announcement sounds
 ```
-
----
-
-## 🎮 GUI Editor
-
-The in-game GUI makes configuration effortless! Access it with `/aa edit`
-
-<div align="center">
-  <img src="https://altkat.github.io/AdvancementAnnouncer/main_menu.gif" alt="main-menu-gif" width="600"><br>
-</div>
-
-### Features:
-✅ Add, edit, and delete presets without YAML  
-✅ Configure auto-announcements on the fly  
-✅ Set up join/first-join messages  
-✅ Real-time preview of messages  
-
----
-
-## 📸 Demo Screenshots
-
-<div align="center">
-
-### Sending Presets
-<img src="https://altkat.github.io/AdvancementAnnouncer/new_preset_command.gif" alt="new-preset-command" width="600"><br>
-
-### Join Messages
-<img src="https://altkat.github.io/AdvancementAnnouncer/join.gif" alt="join-feature-gif" width="600"><br>
-
-### Sending Custom Messages
-<img src="https://altkat.github.io/AdvancementAnnouncer/new_send_command.gif" alt="new-send-command-gif" width="600"><br>
-
-</div>
 
 ---
 
