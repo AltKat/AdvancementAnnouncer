@@ -25,8 +25,8 @@
     <img src="https://img.shields.io/bstats/servers/24282?label=bStats&style=for-the-badge" alt="bStats Servers" />
   </a>
   <br>
-  <a href="https://discordapp.com/users/247441109888925697">
-    <img src="https://img.shields.io/badge/Discord-💬%20Contact%20Me-5865F2?style=for-the-badge&logo=discord" alt="Discord Profile" />
+  <a href="https://discord.gg/nxY3fc7xz9">
+    <img src="https://img.shields.io/badge/Discord-Server-5865F2?style=for-the-badge&logo=discord" alt="Discord Server" />
   </a>
   <a href="https://github.com/altkat/AdvancementAnnouncer">
     <img src="https://img.shields.io/github/stars/altkat/AdvancementAnnouncer?style=for-the-badge&logo=github" alt="GitHub Stars" />
@@ -363,7 +363,7 @@ lang-messages:
 
 Have questions or found a bug? Reach out!
 
-- **Discord:** [Message me](https://discordapp.com/users/247441109888925697)
+- **Discord:** [Join Server](https://discord.gg/nxY3fc7xz9)
 - **Issues:** [GitHub Issues](https://github.com/altkat/AdvancementAnnouncer/issues)
 
 ---
@@ -381,5 +381,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <div align="center">
-  <p><a href="https://discordapp.com/users/247441109888925697">💬 Contact</a> • <a href="https://github.com/altkat/AdvancementAnnouncer">⭐ Star</a> • <a href="https://github.com/altkat/AdvancementAnnouncer/issues">🐛 Report Bug</a></p>
+  <p><a href="https://discord.gg/nxY3fc7xz9">💬 Contact</a> • <a href="https://github.com/altkat/AdvancementAnnouncer">⭐ Star</a> • <a href="https://github.com/altkat/AdvancementAnnouncer/issues">🐛 Report Bug</a></p>
 </div>
